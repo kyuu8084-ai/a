@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phương Pháp Học Tập - StudyWithMe</title>
+    <!-- Import elegant fonts from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global Variables */
+        :root {
+            --primary-dark: #1a5276;
+            --primary-light: #3498db;
+            --accent: #EDDD53;
+            --text-dark: #2C3E50;
+            --text-light: #7F8C8D;
+            --background: #FFFFFF;
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            /* Updated to sky blue gradient background */
+            background: linear-gradient(135deg, #e0f2ff 0%, #87ceeb 50%, #b6e0fe 100%);
+            background-attachment: fixed;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Typography with elegant fonts */
+        h1, h2, h3, h4 {
+            font-family: 'Crimson Text', serif;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(to right, var(--primary-dark), #1a5276);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            color: var(--primary-dark);
+            border-left: 4px solid var(--accent);
+            padding-left: 0.75rem;
+            margin: 2.5rem 0 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            font-size: 1.05rem;
+        }
+
+        /* Layout Components */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2.5rem;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .tagline {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            font-weight: 300;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Card Components */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            padding: 1.8rem;
+            margin-bottom: 1.8rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Filter System */
+        .filter-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 2.5rem;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 0.7rem 1.4rem;
+            background: var(--card-bg);
+            border: 2px solid var(--primary-dark);
+            border-radius: 30px;
+            color: var(--primary-dark);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary-dark);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Methods Grid */
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2.5rem 0;
+        }
+
+        .method-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .method-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .subject-tag {
+            display: inline-block;
+            padding: 0.3rem 0.9rem;
+            background: linear-gradient(to right, var(--primary-light), var(--accent));
+            color: var(--text-dark);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .learn-more {
+            display: inline-block;
+            margin-top: auto;
+            padding: 0.7rem 1.4rem;
+            background: var(--card-bg);
+            color: black;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid #ddd;
+        }
+
+        .learn-more:hover {
+            background: var(--primary-light);
+            color: var(--text-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Quiz Section */
+        .quiz-section {
+            text-align: center;
+            padding: 2.5rem;
+        }
+
+        .start-quiz-btn {
+            padding: 1rem 2.5rem;
+            background: var(--accent);
+            color: var(--text-dark);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-family: 'Crimson Text', serif;
+        }
+
+        .start-quiz-btn:hover {
+            background: #e0c945;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .quiz-container {
+            display: none;
+            max-width: 800px;
+            margin: 2.5rem auto;
+            text-align: left;
+        }
+
+        .quiz-question {
+            margin-bottom: 2rem;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .quiz-option {
+            padding: 1rem;
+            background: var(--card-bg);
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quiz-option:hover {
+            background: #f8f9fa;
+            border-color: var(--primary-light);
+        }
+
+        .submit-quiz {
+            padding: 1rem 2.5rem;
+            background: var(--primary-dark);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: background 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .submit-quiz:hover {
+            background: var(--primary-light);
+        }
+
+        /* Results Section */
+        .results {
+            display: none;
+            margin-top: 2.5rem;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .recommended-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .recommended-method {
+            padding: 1.2rem;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2.5rem 0;
+            margin-top: 4rem;
+            color: white;
+            font-size: 0.9rem;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 16px 16px 0 0;
+        }
+
+        /* Utility Classes */
+        .method-card[data-subjects*="toan"] .subject-tag { background: #FF9AA2; }
+        .method-card[data-subjects*="van"] .subject-tag { background: #FFB7B2; }
+        .method-card[data-subjects*="anh"] .subject-tag { background: #FFDAC1; }
+        .method-card[data-subjects*="khoa-hoc"] .subject-tag { background: #E2F0CB; }
+        .method-card[data-subjects*="lich-su"] .subject-tag { background: #B5EAD7; }
+        .method-card[data-subjects*="dia-ly"] .subject-tag { background: #A2D2FF; }
+        .method-card[data-subjects*="vat-ly"] .subject-tag { background: #CDB4DB; }
+        .method-card[data-subjects*="hoa-hoc"] .subject-tag { background: #FFC8DD; }
+        .method-card[data-subjects*="sinh-hoc"] .subject-tag { background: #BDE0FE; }
+        .method-card[data-subjects*="ky-nang"] .subject-tag { background: #C7CEEA; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Phương Pháp Học Tập - StudyWithMe</h1>
+            <p class="tagline">Khám phá các phương pháp học hiệu quả - Tìm ra phong cách phù hợp nhất với bạn</p>
+        </div>
+    </header>
+
+    
+
+
+    <div class="container">
+        <!-- Introduction -->
+        <section class="card">
+            <h2>Khám Phá Cách Học Tập Hiệu Quả</h2>
+            <p>Trang web này cung cấp cho bạn bộ sưu tập đầy đủ các phương pháp học tập đã được chứng minh hiệu quả, phân loại theo môn học và phong cách học tập. Dù bạn đang học Toán, Văn, Ngoại ngữ hay bất kỳ môn học nào, chúng tôi đều có phương pháp phù hợp.</p>
+            <p>Hãy bắt đầu bằng cách khám phá các phương pháp bên dưới hoặc làm bài trắc nghiệm ngắn 8 câu để tìm ra phương pháp phù hợp nhất với bạn.</p>
+        </section>
+
+        <!-- Filter System -->
+        <section class="card">
+            <h2>Tìm Phương Pháp Theo Môn Học</h2>
+            <div class="filter-section">
+                <button class="filter-btn active" data-filter="all">Tất Cả</button>
+                <button class="filter-btn" data-filter="toan">Toán Học</button>
+                <button class="filter-btn" data-filter="van">Ngữ Văn</button>
+                <button class="filter-btn" data-filter="anh">Tiếng Anh</button>
+                <button class="filter-btn" data-filter="khoa-hoc">Khoa Học</button>
+                <button class="filter-btn" data-filter="lich-su">Lịch Sử</button>
+                <button class="filter-btn" data-filter="dia-ly">Địa Lý</button>
+                <button class="filter-btn" data-filter="vat-ly">Vật Lý</button>
+                <button class="filter-btn" data-filter="hoa-hoc">Hóa Học</button>
+                <button class="filter-btn" data-filter="sinh-hoc">Sinh Học</button>
+                <button class="filter-btn" data-filter="ky-nang">Kỹ Năng</button>
+            </div>
+        </section>
+
+        <!-- Methods List -->
+        <section>
+            <h2>Các Phương Pháp Học Tập</h2>
+            <div class="methods-grid">
+                <!-- Method 1 -->
+                <div class="card method-card" data-subjects="anh van">
+                    <h3>Phương Pháp SQ3R <span class="subject-tag">Tiếng Anh • Văn</span></h3>
+                    <p>SQ3R là phương pháp đọc hiểu hiệu quả, đặc biệt phù hợp với các môn đòi hỏi đọc tài liệu phức tạp. Phương pháp này gồm 5 bước: Survey, Question, Read, Recite, Review.</p>
+                    <a href="https://zim.vn/phuong-phap-hoc-sq3r" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 2 -->
+                <div class="card method-card" data-subjects="toan khoa-hoc vat-ly">
+                    <h3>Sơ Đồ Tư Duy (Mindmap) <span class="subject-tag">Toán • Khoa Học</span></h3>
+                    <p>Sử dụng sơ đồ tư duy giúp bạn tổ chức thông tin một cách trực quan, kết nối các khái niệm và ghi nhớ tốt hơn. Phương pháp này đặc biệt hiệu quả cho các môn có nhiều khái niệm liên quan.</p>
+                    <a href="https://dainam.edu.vn/vi/tin-tuc/ban-do-tu-duy-phuong-phap-day-va-hoc-hieu-qua" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 3 -->
+                <div class="card method-card" data-subjects="ky-nang">
+                    <h3>Kỹ Thuật Pomodoro <span class="subject-tag">Kỹ Năng</span></h3>
+                    <p>Pomodoro giúp bạn quản lý thời gian học tập hiệu quả bằng cách chia nhỏ thời gian thành các phiên tập trung 25 phút, ngắt quãng bởi các khoảng nghỉ ngắn. Phương pháp này phù hợp với mọi môn học.</p>
+                    <a href="https://www.fahasa.com/blog/cai-thien-tap-trung-khi-doc-sach-voi-phuong-phap-qua-ca-chua-pomodoro/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 4 -->
+                <div class="card method-card" data-subjects="toan vat-ly">
+                    <h3>Giải Bài Toán Ngược <span class="subject-tag">Toán • Vật Lý</span></h3>
+                    <p>Bắt đầu từ kết quả và tìm cách chứng minh ngược lại giúp phát triển tư duy logic và hiểu sâu bản chất vấn đề. Phương pháp này đặc biệt hiệu quả với môn Toán và Vật lý.</p>
+                    <a href="https://vi.wikipedia.org/wiki/B%C3%A0i_to%C3%A1n_ng%C6%B0%E1%BB%A3c" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 5 -->
+                <div class="card method-card" data-subjects="lich-su van dia-ly">
+                    <h3>Học Qua Sự Kiện <span class="subject-tag">Lịch Sử • Văn • Địa Lý</span></h3>
+                    <p>Tạo dòng thời gian và kết nối các sự kiện giúp bạn hiểu mối quan hệ nhân quả và ghi nhớ thông tin lâu hơn. Phù hợp với các môn xã hội như Lịch sử, Địa lý, Văn học.</p>
+                </div>
+
+                <!-- Method 6 -->
+                <div class="card method-card" data-subjects="anh van">
+                    <h3>Học Qua Tình Huống <span class="subject-tag">Tiếng Anh • Văn</span></h3>
+                    <p>Áp dụng ngôn ngữ hoặc kiến thức vào các tình huống thực tế giúp tăng khả năng ghi nhớ và ứng dụng. Đặc biệt hiệu quả với việc học ngoại ngữ và văn học.</p>
+                    <a href="https://nld.com.vn/giao-duc-khoa-hoc/phuong-phap-hoc-bang-tinh-huong-48533.htm" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 7 -->
+                <div class="card method-card" data-subjects="toan vat-ly hoa-hoc">
+                    <h3>Học Theo Vấn Đề <span class="subject-tag">Toán • Lý • Hóa</span></h3>
+                    <p>Tập trung vào giải quyết các vấn đề cụ thể thay vì học lý thuyết suông. Phương pháp này giúp phát triển kỹ năng giải quyết vấn đề và tư duy phân tích.</p>
+                    <a href="http://tieuhocauco.pgdrachgia.edu.vn/ppdh-va-ktdh/phuong-phap-va-ky-thuat-day-hoc/cac-phuong-phap-nghien-cuu/phuong-phap-nghien-cuu-hoc-tap-dua-tren-van-de" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 8 -->
+                <div class="card method-card" data-subjects="sinh-hoc hoa-hoc">
+                    <h3>Học Bằng Hình Ảnh <span class="subject-tag">Sinh Học • Hóa Học</span></h3>
+                    <p>Sử dụng hình ảnh, sơ đồ và biểu đồ để hiểu và ghi nhớ các quá trình phức tạp. Đặc biệt hiệu quả với các môn khoa học như Sinh học và Hóa học.</p>
+                    <a href="https://www.verywellmind.com/visual-learning-style-2795162" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 9 -->
+                <div class="card method-card" data-subjects="ky-nang">
+                    <h3>Phương Pháp Feynman <span class="subject-tag">Kỹ Năng</span></h3>
+                    <p>Giải thích một khái niệm phức tạp bằng ngôn ngữ đơn giản như thể bạn đang dạy cho một người mới. Phương pháp này giúp bạn xác định các lỗ hổng trong hiểu biết của mình.</p>
+                    <a href="https://blog.slimcrm.vn/quan-tri/feynman-technique-la-gi" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 10 -->
+                <div class="card method-card" data-subjects="anh">
+                    <h3>Phương Pháp Shadowing <span class="subject-tag">Tiếng Anh</span></h3>
+                    <p>Lặp lại ngay lập tức những gì bạn nghe được trong khi học ngoại ngữ. Phương pháp này giúp cải thiện phát âm, ngữ điệu và phản xạ giao tiếp.</p>
+                    <a href="https://ielts.idp.com/vietnam/prepare/article-what-is-shadowing" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 11 -->
+                <div class="card method-card" data-subjects="toan">
+                    <h3>Học Qua Trò Chơi <span class="subject-tag">Toán Học</span></h3>
+                    <p>Áp dụng các nguyên tắc toán học vào trò chơi và câu đố để làm cho việc học trở nên thú vị và tương tác hơn. Phù hợp cho việc học các khái niệm toán học trừu tượng.</p>
+                    <a href="https://thedeweyschools.edu.vn/hoc-thong-qua-choi/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 12 -->
+                <div class="card method-card" data-subjects="van">
+                    <h3>Phương Pháp Viết Tự Do <span class="subject-tag">Ngữ Văn</span></h3>
+                    <p>Viết liên tục trong một khoảng thời gian nhất định mà không dừng lại để chỉnh sửa. Phương pháp này giúp phát triển kỹ năng viết và khả năng diễn đạt ý tưởng.</p>
+                    <a href="https://www.vietchualanh.vn/post/c%C3%A1c-ph%C6%B0%C6%A1ng-ph%C3%A1p-vi%E1%BA%BFt-vi%E1%BA%BFt-t%E1%BB%B1-do-free-writing" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 13 -->
+                <div class="card method-card" data-subjects="lich-su dia-ly">
+                    <h3>Học Theo Dự Án <span class="subject-tag">Lịch Sử • Địa Lý</span></h3>
+                    <p>Tìm hiểu kiến thức thông qua việc thực hiện một dự án cụ thể. Phương pháp này giúp kết nối lý thuyết với thực tế và phát triển kỹ năng nghiên cứu.</p>
+                    <a href="https://thedeweyschools.edu.vn/hoc-tap-qua-du-an/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 14 -->
+                <div class="card method-card" data-subjects="vat-ly hoa-hoc">
+                    <h3>Học Qua Thí Nghiệm <span class="subject-tag">Vật Lý • Hóa Học</span></h3>
+                    <p>Thực hiện các thí nghiệm để quan sát và hiểu các hiện tượng khoa học. Phương pháp này giúp củng cố lý thuyết và phát triển kỹ năng quan sát, phân tích.</p>
+                </div>
+
+                <!-- Method 15 -->
+                <div class="card method-card" data-subjects="ky-nang">
+                    <h3>Kỹ Thuật Ghi Chú Cornell <span class="subject-tag">Kỹ Năng</span></h3>
+                    <p>Phương pháp ghi chú hệ thống giúp tổ chức thông tin hiệu quả, dễ dàng ôn tập và ghi nhớ. Phù hợp với mọi môn học và các buổi ghi chú bài giảng.</p>
+                    <a href="https://agilebreakfast.vn/cornell-notes-phuong-phap-ghi-chep-hieu-qua/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 16 -->
+                <div class="card method-card" data-subjects="sinh-hoc">
+                    <h3>Học Bằng Sơ Đồ Phân Cấp <span class="subject-tag">Sinh Học</span></h3>
+                    <p>Tổ chức thông tin theo cấu trúc phân cấp từ tổng quát đến chi tiết. Đặc biệt hiệu quả cho các môn có nhiều phân loại và hệ thống phức tạp như Sinh học.</p>
+                </div>
+
+                <!-- Method 17 -->
+                <div class="card method-card" data-subjects="van">
+                    <h3>Phương Pháp Đọc Chủ Động <span class="subject-tag">Ngữ Văn</span></h3>
+                    <p>Tương tác với văn bản bằng cách đặt câu hỏi, ghi chú và tóm tắt trong khi đọc. Phương pháp này giúp hiểu sâu và ghi nhớ nội dung văn bản tốt hơn.</p>
+                    <a href="https://basmo.app/what-is-active-reading/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 18 -->
+                <div class="card method-card" data-subjects="toan">
+                    <h3>Học Qua Giải Bài Tập <span class="subject-tag">Toán Học</span></h3>
+                    <p>Học các khái niệm toán học thông qua việc giải nhiều dạng bài tập khác nhau. Phương pháp này giúp củng cố kiến thức và phát triển kỹ năng giải quyết vấn đề.</p>
+                    <a href="https://www.khanacademy.org/math" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 19 -->
+                <div class="card method-card" data-subjects="anh">
+                    <h3>Phương Pháp Học Từ Vựng <span class="subject-tag">Tiếng Anh</span></h3>
+                    <p>Sử dụng flashcards, ứng dụng và kỹ thuật lặp lại ngắt quãng để ghi nhớ từ vựng hiệu quả. Phương pháp này giúp mở rộng vốn từ vựng nhanh chóng.</p>
+                </div>
+
+                <!-- Method 20 -->
+                <div class="card method-card" data-subjects="lich-su">
+                    <h3>Học Theo Chủ Đề <span class="subject-tag">Lịch Sử</span></h3>
+                    <p>Tập trung vào các chủ đề cụ thể thay vì học theo trình tự thời gian. Phương pháp này giúp hiểu sâu các sự kiện và xu hướng lịch sử theo chủ đề.</p>
+                </div>
+
+                <!-- Method 21 -->
+                <div class="card method-card" data-subjects="dia-ly">
+                    <h3>Học Bằng Bản Đồ <span class="subject-tag">Địa Lý</span></h3>
+                    <p>Sử dụng bản đồ, atlas và công cụ trực quan để học về địa lý tự nhiên và nhân văn. Phương pháp này giúp phát triển kỹ năng không gian và hiểu biết về thế giới.</p>
+                </div>
+
+                <!-- Method 22 -->
+                <div class="card method-card" data-subjects="hoa-hoc">
+                    <h3>Học Bằng Mô Hình <span class="subject-tag">Hóa Học</span></h3>
+                    <p>Sử dụng mô hình phân tử và công cụ trực quan để hiểu cấu trúc và phản ứng hóa học. Phương pháp này giúp hình dung các khái niệm trừu tượng trong hóa học.</p>
+                </div>
+
+                <!-- Method 23 -->
+                <div class="card method-card" data-subjects="vat-ly">
+                    <h3>Học Qua Ứng Dụng <span class="subject-tag">Vật Lý</span></h3>
+                    <p>Áp dụng các nguyên lý vật lý vào các tình huống thực tế và công nghệ hàng ngày. Phương pháp này giúp thấy được sự liên quan của vật lý trong cuộc sống.</p>
+                </div>
+
+                <!-- Method 24 -->
+                <div class="card method-card" data-subjects="ky-nang">
+                    <h3>Phương Pháp Học Nhóm <span class="subject-tag">Kỹ Năng</span></h3>
+                    <p>Học tập cùng với những người khác để thảo luận, chia sẻ ý tưởng và giải quyết vấn đề cùng nhau. Phương pháp này giúp phát triển kỹ năng giao tiếp và hợp tác.</p>
+                    <a href="https://qnextech.com/vi/blog/what-is-group-learning/#h-the-way-of-group-work" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 25 -->
+                <div class="card method-card" data-subjects="sinh-hoc">
+                    <h3>Học Qua Quan Sát <span class="subject-tag">Sinh Học</span></h3>
+                    <p>Quan sát các sinh vật và hiện tượng tự nhiên để hiểu các nguyên lý sinh học. Phương pháp này giúp phát triển kỹ năng quan sát và tư duy khoa học.</p>
+                </div>
+
+                <!-- Method 26 -->
+                <div class="card method-card" data-subjects="van">
+                    <h3>Phương Pháp Phân Tích Văn Bản <span class="subject-tag">Ngữ Văn</span></h3>
+                    <p>Phân tích cấu trúc, ngôn ngữ và ý nghĩa của văn bản văn học. Phương pháp này giúp phát triển kỹ năng phân tích và diễn giải văn học.</p>
+                    <a href="https://owl.purdue.edu/owl/subject_specific_writing/writing_in_literature/literary_terms/index.html" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 27 -->
+                <div class="card method-card" data-subjects="toan">
+                    <h3>Học Qua Câu Đố Logic <span class="subject-tag">Toán Học</span></h3>
+                    <p>Giải các câu đố logic và toán học để phát triển tư duy phản biện và kỹ năng giải quyết vấn đề. Phương pháp này làm cho việc học toán trở nên thú vị và thử thách.</p>
+                </div>
+
+                <!-- Method 28 -->
+                <div class="card method-card" data-subjects="anh">
+                    <h3>Phương Pháp Học Toàn Diện <span class="subject-tag">Tiếng Anh</span></h3>
+                    <p>Kết hợp nhiều kỹ năng nghe, nói, đọc, viết trong một buổi học. Phương pháp này giúp phát triển toàn diện khả năng ngôn ngữ.</p>
+                </div>
+
+                <!-- Method 29 -->
+                <div class="card method-card" data-subjects="ky-nang">
+                    <h3>Kỹ Thuật Tự Hỏi Đáp <span class="subject-tag">Kỹ Năng</span></h3>
+                    <p>Tự đặt câu hỏi và trả lời về nội dung đang học. Phương pháp này giúp kiểm tra sự hiểu biết và củng cố kiến thức.</p>
+                </div>
+
+                <!-- Method 30 -->
+                <div class="card method-card" data-subjects="khoa-hoc">
+                    <h3>Học Qua Thực Hành <span class="subject-tag">Khoa Học</span></h3>
+                    <p>Áp dụng kiến thức khoa học vào các hoạt động thực hành và dự án thực tế. Phương pháp này giúp hiểu sâu các nguyên lý khoa học và phát triển kỹ năng thực hành.</p>
+                </div>
+
+                <!-- Method 31 -->
+                <div class="card method-card" data-subjects="ky-nang">
+                    <h3>Phương Pháp Simon <span class="subject-tag">Kỹ Năng</span></h3>
+                    <p>Một phương pháp ghi nhớ dựa trên việc lặp lại thông tin theo các khoảng thời gian tăng dần. Phương pháp này giúp củng cố trí nhớ dài hạn.</p>
+                    <a href="https://max-edu.org/blog/coaching-cung-thay-max-3/phuong-phap-hoc-simon-hoc-thuoc-nhanh-va-nho-lau-khong-con-qua-kho-151" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 32 -->
+                <div class="card method-card" data-subjects="ky-nang">
+                    <h3>Phương Pháp Blurting <span class="subject-tag">Kỹ Năng</span></h3>
+                    <p>Viết ra tất cả những gì bạn nhớ về một chủ đề mà không nhìn vào tài liệu, sau đó kiểm tra và bổ sung những phần còn thiếu. Phương pháp này giúp đánh giá kiến thức hiện có.</p>
+                    <a href="https://vmptraining.com/phuong-phap-blurting-ghi-nho-thong-tin-trong-hoc-tap-vmp-academy/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 33 -->
+                <div class="card method-card" data-subjects="ky-nang">
+                    <h3>Spaced Repetition <span class="subject-tag">Kỹ Năng</span></h3>
+                    <p>Kỹ thuật học tập dựa trên việc ôn tập thông tin ở các khoảng thời gian tăng dần. Phương pháp này tối ưu hóa quá trình ghi nhớ lâu dài.</p>
+                    <a href="https://zim.vn/spaced-repetition-phuong-phap-lap-lai-ngat-quang" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 34 -->
+                <div class="card method-card" data-subjects="ky-nang">
+                    <h3>Active Recall <span class="subject-tag">Kỹ Năng</span></h3>
+                    <p>Chủ động cố gắng nhớ lại thông tin thay vì chỉ đọc lại. Phương pháp này giúp tăng cường kết nối thần kinh và cải thiện khả năng ghi nhớ.</p>
+                    <a href="https://weset.edu.vn/blog/blog-hoc-tieng-anh/active-recall/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+
+                <!-- Method 35 -->
+                <div class="card method-card" data-subjects="van lich-su">
+                    <h3>Storytelling <span class="subject-tag">Văn • Lịch Sử</span></h3>
+                    <p>Biến thông tin thành những câu chuyện hấp dẫn để dễ dàng ghi nhớ và hiểu sâu hơn. Phương pháp này đặc biệt hiệu quả với các môn xã hội.</p>
+                    <a href="https://www.pace.edu.vn/tin-kho-tri-thuc/storytelling-la-gi" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="card quiz-section">
+            <h2>Tìm Phương Pháp Phù Hợp Với Bạn</h2>
+            <p>Làm bài trắc nghiệm ngắn 8 câu để khám phá phương pháp học tập phù hợp nhất với phong cách và sở thích của bạn.</p>
+            <button class="start-quiz-btn" id="startQuiz">Bắt Đầu Làm Bài Trắc Nghiệm</button>
+
+            <div class="quiz-container" id="quizContainer">
+                <!-- Questions will be added here by JavaScript -->
+            </div>
+
+            <div class="results" id="results">
+                <!-- Results will be displayed here -->
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 Phương Pháp Học Tập - StudyWithMe. Tất cả các phương pháp đều được tổng hợp từ các nguồn uy tín.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Filter System
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const methodCards = document.querySelectorAll('.method-card');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const filterValue = this.getAttribute('data-filter');
+                    
+                    methodCards.forEach(card => {
+                        if (filterValue === 'all' || card.getAttribute('data-subjects').includes(filterValue)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Quiz System
+            const startQuizBtn = document.getElementById('startQuiz');
+            const quizContainer = document.getElementById('quizContainer');
+            const resultsContainer = document.getElementById('results');
+            
+            const quizQuestions = [
+                {
+                    question: "Bạn thích học như thế nào nhất?",
+                    options: [
+                        "Đọc sách và tài liệu",
+                        "Xem video hoặc hình ảnh minh họa",
+                        "Thảo luận với người khác",
+                        "Thực hành trực tiếp"
+                    ]
+                },
+                {
+                    question: "Khi gặp một vấn đề khó, bạn thường:",
+                    options: [
+                        "Tìm kiếm thêm tài liệu để đọc",
+                        "Vẽ sơ đồ hoặc hình ảnh để phân tích",
+                        "Hỏi ý kiến người khác",
+                        "Thử nhiều cách giải quyết khác nhau"
+                    ]
+                },
+                {
+                    question: "Bạn nhớ bài tốt nhất khi:",
+                    options: [
+                        "Viết ra nhiều lần",
+                        "Xem các biểu đồ hoặc hình ảnh",
+                        "Giảng bài cho người khác nghe",
+                        "Áp dụng vào thực tế"
+                    ]
+                },
+                {
+                    question: "Thời gian học tập hiệu quả nhất của bạn là:",
+                    options: [
+                        "Buổi sáng",
+                        "Buổi chiều", 
+                        "Buổi tối",
+                        "Không có thời gian cố định"
+                    ]
+                },
+                {
+                    question: "Khi học một chủ đề mới, bạn thường:",
+                    options: [
+                        "Bắt đầu bằng việc đọc lý thuyết",
+                        "Tìm kiếm hình ảnh hoặc video minh họa",
+                        "Thảo luận với bạn bè về chủ đề đó",
+                        "Tìm cách áp dụng ngay vào thực tế"
+                    ]
+                },
+                {
+                    question: "Môi trường học tập lý tưởng của bạn là:",
+                    options: [
+                        "Thư viện yên tĩnh",
+                        "Nơi có không gian trực quan sinh động",
+                        "Nhóm học tập",
+                        "Nơi bạn có thể thực hành ngay"
+                    ]
+                },
+                {
+                    question: "Khi cần ghi chép, bạn thường:",
+                    options: [
+                        "Ghi chép chi tiết theo dạng văn bản",
+                        "Vẽ sơ đồ, biểu đồ hoặc sử dụng màu sắc",
+                        "Ghi chú ngắn và thảo luận thêm",
+                        "Ghi chú các bước thực hành"
+                    ]
+                },
+                {
+                    question: "Đối với các môn học, bạn thường:",
+                    options: [
+                        "Thích các môn lý thuyết, ngôn ngữ",
+                        "Thích các môn nghệ thuật, thiết kế",
+                        "Thích các môn xã hội, làm việc nhóm",
+                        "Thích các môn thực hành, khoa học ứng dụng"
+                    ]
+                }
+            ];
+            
+            startQuizBtn.addEventListener('click', function() {
+                startQuizBtn.style.display = 'none';
+                quizContainer.style.display = 'block';
+                loadQuiz();
+            });
+            
+            function loadQuiz() {
+                quizContainer.innerHTML = '';
+                
+                quizQuestions.forEach((q, index) => {
+                    const questionElement = document.createElement('div');
+                    questionElement.className = 'quiz-question card';
+                    questionElement.innerHTML = `
+                        <h3>Câu ${index + 1}: ${q.question}</h3>
+                        <div class="quiz-options">
+                            ${q.options.map((option, optIndex) => `
+                                <div class="quiz-option" data-question="${index}" data-option="${optIndex}">
+                                    ${option}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    quizContainer.appendChild(questionElement);
+                });
+                
+                const submitButton = document.createElement('button');
+                submitButton.className = 'submit-quiz';
+                submitButton.textContent = 'Xem Kết Quả';
+                submitButton.addEventListener('click', calculateResults);
+                quizContainer.appendChild(submitButton);
+                
+                // Add event listeners to options
+                const options = document.querySelectorAll('.quiz-option');
+                options.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const questionIndex = this.getAttribute('data-question');
+                        const optionIndex = this.getAttribute('data-option');
+                        
+                        // Remove previous selection for this question
+                        const questionOptions = document.querySelectorAll(`.quiz-option[data-question="${questionIndex}"]`);
+                        questionOptions.forEach(opt => opt.style.background = '');
+                        
+                        // Mark current selection
+                        this.style.background = '#E2F0CB';
+                    });
+                });
+            }
+            
+            function calculateResults() {
+                // Count selections for each learning style
+                const selectedOptions = [];
+                const options = document.querySelectorAll('.quiz-option');
+                
+                quizQuestions.forEach((q, index) => {
+                    const selectedOption = document.querySelector(`.quiz-option[data-question="${index}"]`);
+                    if (selectedOption && selectedOption.style.background) {
+                        selectedOptions.push(parseInt(selectedOption.getAttribute('data-option')));
+                    } else {
+                        selectedOptions.push(0); // Default to first option if not selected
+                    }
+                });
+                
+                // Define learning styles and their characteristics
+                const learningStyles = [
+                    { name: "Học qua Đọc/Viết", description: "Bạn học tốt nhất thông qua đọc và viết. Bạn thích sách, tài liệu và ghi chép." },
+                    { name: "Học qua Hình ảnh", description: "Bạn học tốt nhất thông qua hình ảnh, biểu đồ và các công cụ trực quan." },
+                    { name: "Học qua Thính giác", description: "Bạn học tốt nhất thông qua nghe và thảo luận. Bạn thích học nhóm và giảng giải." },
+                    { name: "Học qua Vận động", description: "Bạn học tốt nhất thông qua thực hành và trải nghiệm thực tế." }
+                ];
+                
+                // Calculate scores for each learning style
+                const styleScores = [0, 0, 0, 0];
+                selectedOptions.forEach(option => {
+                    styleScores[option]++;
+                });
+                
+                // Find the highest scoring style(s)
+                const maxScore = Math.max(...styleScores);
+                const topStyles = [];
+                styleScores.forEach((score, index) => {
+                    if (score === maxScore) {
+                        topStyles.push(index);
+                    }
+                });
+                
+                // Define method recommendations for each style
+                const methodRecommendations = {
+                    0: [
+                        "Phương Pháp SQ3R",
+                        "Phương Pháp Đọc Chủ Động",
+                        "Phương Pháp Viết Tự Do",
+                        "Phương Pháp Phân Tích Văn Bản",
+                        "Kỹ Thuật Ghi Chú Cornell"
+                    ],
+                    1: [
+                        "Sơ Đồ Tư Duy (Mindmap)",
+                        "Học Bằng Hình Ảnh",
+                        "Học Bằng Mô Hình",
+                        "Học Bằng Sơ Đồ Phân Cấp",
+                        "Học Bằng Bản Đồ"
+                    ],
+                    2: [
+                        "Phương Pháp Shadowing",
+                        "Học Qua Tình Huống",
+                        "Phương Pháp Học Nhóm",
+                        "Storytelling",
+                        "Kỹ Thuật Tự Hỏi Đáp"
+                    ],
+                    3: [
+                        "Học Qua Thực Hành",
+                        "Học Qua Dự Án",
+                        "Học Qua Thí Nghiệm",
+                        "Học Qua Ứng Dụng",
+                        "Học Qua Trò Chơi"
+                    ]
+                };
+                
+                // Collect all recommended methods
+                const allRecommendedMethods = [];
+                topStyles.forEach(styleIndex => {
+                    allRecommendedMethods.push(...methodRecommendations[styleIndex]);
+                });
+                
+                // Remove duplicates
+                const uniqueRecommendedMethods = [...new Set(allRecommendedMethods)];
+                
+                // Display results
+                let resultsHTML = `
+                    <h2>Phong Cách Học Tập Của Bạn</h2>
+                    <p>Dựa trên câu trả lời của bạn, bạn có xu hướng học tập theo phong cách:</p>
+                `;
+                
+                topStyles.forEach(styleIndex => {
+                    resultsHTML += `
+                        <div class="recommended-method">
+                            <h3>${learningStyles[styleIndex].name}</h3>
+                            <p>${learningStyles[styleIndex].description}</p>
+                        </div>
+                    `;
+                });
+                
+                resultsHTML += `
+                    <h3>Các Phương Pháp Được Đề Xuất</h3>
+                    <p>Dưới đây là các phương pháp học tập phù hợp với phong cách của bạn:</p>
+                    <div class="recommended-methods">
+                `;
+                
+                uniqueRecommendedMethods.forEach(method => {
+                    resultsHTML += `
+                        <div class="recommended-method">
+                            <h4>${method}</h4>
+                            <p>Hãy tìm hiểu chi tiết về phương pháp này trong danh sách ở trên.</p>
+                        </div>
+                    `;
+                });
+                
+                resultsHTML += `
+                    </div>
+                    <button class="start-quiz-btn" onclick="location.reload()">Làm Lại Bài Trắc Nghiệm</button>
+                `;
+                
+                resultsContainer.innerHTML = resultsHTML;
+                resultsContainer.style.display = 'block';
+                
+                // Scroll to results
+                resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>

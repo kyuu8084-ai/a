@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Định Hướng Nghề Nghiệp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #2ecc71;
+            --text-color: #333;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        nav {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            padding: 1rem 1.5rem;
+            display: block;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--secondary-color);
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            margin: 10px auto;
+            border-radius: 2px;
+        }
+
+        .search-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .search-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .filter-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .nganh-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .nganh-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .nganh-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .nganh-card h3 {
+            color: var(--secondary-color);
+            margin-bottom: 0.8rem;
+        }
+
+        .nganh-card p {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .khoi-thi-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .khoi-thi {
+            display: inline-block;
+            background: var(--light-color);
+            color: var(--dark-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .khoi-thi:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .nganh-link {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nganh-link:hover {
+            background: var(--secondary-color);
+        }
+
+        .truong-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+
+        .truong-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .truong-table th, .truong-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .truong-table th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-weight: 600;
+        }
+
+        .truong-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .truong-link:hover {
+            text-decoration: underline;
+        }
+
+        .quiz-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 3rem;
+        }
+
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .quiz-card {
+            background: var(--light-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .quiz-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .quiz-card h4 {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-card p {
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        footer {
+            background-color: var(--secondary-color);
+            color: var(--light-color);
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+                width: 100%;
+                display: none;
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .search-box {
+                flex-direction: column;
+            }
+            .nganh-grid {
+                grid-template-columns: 1fr;
+            }
+            .truong-table {
+                display: block;
+                overflow-x: auto;
+            }
+            .quiz-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-graduation-cap"></i> Hệ Thống Định Hướng Nghề Nghiệp</h1>
+        <p>Khám phá ngành học, khối thi và tìm trường đại học phù hợp với bạn</p>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-compass"></i> CareerGuide
+            </div>
+            <ul class="nav-links">
+                <li><a href="#nganh-hoc" class="active">Khối Thi & Ngành Học</a></li>
+                <li><a href="#truong-hoc">Trường Đại Học</a></li>
+                <li><a href="#trac-nghiem">Trắc Nghiệm</a></li>
+                <li><a href="#lien-he">Liên Hệ</a></li>
+            </ul>
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="search-section">
+            <h3>Tìm Kiếm Ngành Học Phù Hợp</h3>
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Nhập tên ngành học hoặc từ khóa...">
+                <button class="search-btn" id="searchBtn"><i class="fas fa-search"></i> Tìm Kiếm</button>
+            </div>
+            <div class="filter-options">
+                <div class="filter-group">
+                    <label for="khoiFilter">Chọn khối thi:</label>
+                    <select id="khoiFilter" class="filter-select">
+                        <option value="all">Tất cả các khối</option>
+                        <option value="A00">A00 (Toán, Lý, Hóa)</option>
+                        <option value="A01">A01 (Toán, Lý, Anh)</option>
+                        <option value="B00">B00 (Toán, Hóa, Sinh)</option>
+                        <option value="C00">C00 (Văn, Sử, Địa)</option>
+                        <option value="D01">D01 (Toán, Văn, Anh)</option>
+                        <option value="D07">D07 (Toán, Hóa, Anh)</option>
+                        <option value="A02">A02 (Toán, Lý, Sinh)</option>
+                        <option value="A03">A03 (Toán, Lý, Sử)</option>
+                        <option value="A04">A04 (Toán, Lý, Địa)</option>
+                        <option value="B01">B01 (Toán, Sinh, Sử)</option>
+                        <option value="B02">B02 (Toán, Sinh, Địa)</option>
+                        <option value="B03">B03 (Toán, Sinh, Văn)</option>
+                        <option value="B04">B04 (Toán, Sinh, GDCD)</option>
+                        <option value="C01">C01 (Văn, Toán, Lý)</option>
+                        <option value="C02">C02 (Văn, Toán, Hóa)</option>
+                        <option value="C03">C03 (Văn, Toán, Sử)</option>
+                        <option value="C04">C04 (Văn, Toán, Địa)</option>
+                        <option value="C05">C05 (Văn, Lý, Hóa)</option>
+                        <option value="C06">C06 (Văn, Hóa, Sinh)</option>
+                        <option value="C07">C07 (Văn, Lý, Sinh)</option>
+                        <option value="C08">C08 (Văn, Hóa, Sử)</option>
+                        <option value="C09">C09 (Văn, Lý, Địa)</option>
+                        <option value="C10">C10 (Văn, Hóa, Địa)</option>
+                        <option value="D02">D02 (Toán, Văn, Nga)</option>
+                        <option value="D03">D03 (Toán, Văn, Pháp)</option>
+                        <option value="D04">D04 (Toán, Văn, Trung)</option>
+                        <option value="D05">D05 (Toán, Văn, Đức)</option>
+                        <option value="D06">D06 (Toán, Văn, Nhật)</option>
+                        <option value="D08">D08 (Toán, Sinh, Anh)</option>
+                        <option value="D09">D09 (Toán, Sử, Anh)</option>
+                        <option value="D10">D10 (Toán, Địa, Anh)</option>
+                        <option value="D11">D11 (Văn, Lý, Anh)</option>
+                        <option value="D12">D12 (Văn, Hóa, Anh)</option>
+                        <option value="D13">D13 (Văn, Sinh, Anh)</option>
+                        <option value="D14">D14 (Văn, Sử, Anh)</option>
+                        <option value="D15">D15 (Văn, Địa, Anh)</option>
+                        <option value="D16">D16 (Toán, Địa, Đức)</option>
+                        <option value="D17">D17 (Toán, Địa, Nga)</option>
+                        <option value="D18">D18 (Toán, Địa, Nhật)</option>
+                        <option value="D19">D19 (Toán, Địa, Pháp)</option>
+                        <option value="D20">D20 (Toán, Địa, Trung)</option>
+                        <option value="D21">D21 (Toán, Hóa, Đức)</option>
+                        <option value="D22">D22 (Toán, Hóa, Nga)</option>
+                        <option value="D23">D23 (Toán, Hóa, Nhật)</option>
+                        <option value="D24">D24 (Toán, Hóa, Pháp)</option>
+                        <option value="D25">D25 (Toán, Hóa, Trung)</option>
+                        <option value="D26">D26 (Toán, Văn, Hàn)</option>
+                        <option value="D27">D27 (Toán, Lý, Đức)</option>
+                        <option value="D28">D28 (Toán, Lý, Nga)</option>
+                        <option value="D29">D29 (Toán, Lý, Nhật)</option>
+                        <option value="D30">D30 (Toán, Lý, Pháp)</option>
+                        <option value="D31">D31 (Toán, Lý, Trung)</option>
+                        <option value="D32">D32 (Toán, Sinh, Đức)</option>
+                        <option value="D33">D33 (Toán, Sinh, Nga)</option>
+                        <option value="D34">D34 (Toán, Sinh, Nhật)</option>
+                        <option value="D35">D35 (Toán, Sinh, Pháp)</option>
+                        <option value="D36">D36 (Toán, Sinh, Trung)</option>
+                        <option value="D37">D37 (Toán, Sử, Đức)</option>
+                        <option value="D38">D38 (Toán, Sử, Nga)</option>
+                        <option value="D39">D39 (Toán, Sử, Nhật)</option>
+                        <option value="D40">D40 (Toán, Sử, Pháp)</option>
+                        <option value="D41">D41 (Toán, Sử, Trung)</option>
+                        <option value="D42">D42 (Văn, Địa, Đức)</option>
+                        <option value="D43">D43 (Văn, Địa, Nga)</option>
+                        <option value="D44">D44 (Văn, Địa, Nhật)</option>
+                        <option value="D45">D45 (Văn, Địa, Pháp)</option>
+                        <option value="D46">D46 (Văn, Địa, Trung)</option>
+                        <option value="D47">D47 (Văn, Hóa, Đức)</option>
+                        <option value="D48">D48 (Văn, Hóa, Nga)</option>
+                        <option value="D49">D49 (Văn, Hóa, Nhật)</option>
+                        <option value="D50">D50 (Văn, Hóa, Pháp)</option>
+                        <option value="D51">D51 (Văn, Hóa, Trung)</option>
+                        <option value="D52">D52 (Văn, Lý, Đức)</option>
+                        <option value="D53">D53 (Văn, Lý, Nga)</option>
+                        <option value="D54">D54 (Văn, Lý, Nhật)</option>
+                        <option value="D55">D55 (Văn, Lý, Pháp)</option>
+                        <option value="D56">D56 (Văn, Lý, Trung)</option>
+                        <option value="D57">D57 (Văn, Sinh, Đức)</option>
+                        <option value="D58">D58 (Văn, Sinh, Nga)</option>
+                        <option value="D59">D59 (Văn, Sinh, Nhật)</option>
+                        <option value="D60">D60 (Văn, Sinh, Pháp)</option>
+                        <option value="D61">D61 (Văn, Sinh, Trung)</option>
+                        <option value="D62">D62 (Văn, Sử, Đức)</option>
+                        <option value="D63">D63 (Văn, Sử, Nga)</option>
+                        <option value="D64">D64 (Văn, Sử, Nhật)</option>
+                        <option value="D65">D65 (Văn, Sử, Pháp)</option>
+                        <option value="D66">D66 (Văn, Sử, Trung)</option>
+                        <option value="D67">D67 (Văn, GDCD, Đức)</option>
+                        <option value="D68">D68 (Văn, GDCD, Nga)</option>
+                        <option value="D69">D69 (Văn, GDCD, Nhật)</option>
+                        <option value="D70">D70 (Văn, GDCD, Pháp)</option>
+                        <option value="D71">D71 (Văn, GDCD, Trung)</option>
+                        <option value="D72">D72 (Văn, KHTN, Đức)</option>
+                        <option value="D73">D73 (Văn, KHTN, Nga)</option>
+                        <option value="D74">D74 (Văn, KHTN, Nhật)</option>
+                        <option value="D75">D75 (Văn, KHTN, Pháp)</option>
+                        <option value="D76">D76 (Văn, KHTN, Trung)</option>
+                        <option value="D77">D77 (Văn, KHXH, Đức)</option>
+                        <option value="D78">D78 (Văn, KHXH, Nga)</option>
+                        <option value="D79">D79 (Văn, KHXH, Nhật)</option>
+                        <option value="D80">D80 (Văn, KHXH, Pháp)</option>
+                        <option value="D81">D81 (Văn, KHXH, Trung)</option>
+                        <option value="D82">D82 (Văn, GDCD, Anh)</option>
+                        <option value="D83">D83 (Văn, GDCD, Nga)</option>
+                        <option value="D84">D84 (Văn, GDCD, Pháp)</option>
+                        <option value="D85">D85 (Văn, GDCD, Trung)</option>
+                        <option value="D86">D86 (Toán, GDCD, Anh)</option>
+                        <option value="D87">D87 (Toán, GDCD, Nga)</option>
+                        <option value="D88">D88 (Toán, GDCD, Pháp)</option>
+                        <option value="D89">D89 (Toán, GDCD, Trung)</option>
+                        <option value="D90">D90 (Toán, KHTN, Anh)</option>
+                        <option value="D91">D91 (Toán, KHTN, Nga)</option>
+                        <option value="D92">D92 (Toán, KHTN, Pháp)</option>
+                        <option value="D93">D93 (Toán, KHTN, Trung)</option>
+                        <option value="D94">D94 (Toán, KHXH, Anh)</option>
+                        <option value="D95">D95 (Toán, KHXH, Nga)</option>
+                        <option value="D96">D96 (Toán, KHXH, Pháp)</option>
+                        <option value="D97">D97 (Toán, KHXH, Trung)</option>
+                        <option value="D98">D98 (Toán, GDCD, Anh)</option>
+                        <option value="D99">D99 (Toán, GDCD, Nga)</option>
+                        <option value="H00">H00 (Văn, Năng khiếu vẽ Nghệ thuật 1, Năng khiếu vẽ Nghệ thuật 2)</option>
+                        <option value="H01">H01 (Toán, Văn, Vẽ)</option>
+                        <option value="H02">H02 (Toán, Vẽ Hình họa mỹ thuật, Vẽ trang trí màu)</option>
+                        <option value="H03">H03 (Toán, Khoa học tự nhiên, Vẽ Năng khiếu)</option>
+                        <option value="H04">H04 (Toán, Tiếng Anh, Vẽ Năng khiếu)</option>
+                        <option value="H05">H05 (Văn, Khoa học xã hội, Vẽ Năng khiếu)</option>
+                        <option value="H06">H06 (Văn, Tiếng Anh, Vẽ mỹ thuật)</option>
+                        <option value="H07">H07 (Toán, Hình họa, Trang trí)</option>
+                        <option value="H08">H08 (Văn, Lịch sử, Vẽ mỹ thuật)</option>
+                        <option value="K01">K01 (Toán, Tiếng Anh, Tin học)</option>
+                        <option value="M00">M00 (Văn, Toán, Đọc diễn cảm, Hát)</option>
+                        <option value="M01">M01 (Văn, Lịch sử, Năng khiếu)</option>
+                        <option value="M02">M02 (Toán, Năng khiếu 1, Năng khiếu 2)</option>
+                        <option value="M03">M03 (Văn, Năng khiếu 1, Năng khiếu 2)</option>
+                        <option value="M04">M04 (Toán, Vẽ mỹ thuật, Vẽ trang trí)</option>
+                        <option value="M05">M05 (Văn, Năng khiếu báo chí, Tiếng Anh)</option>
+                        <option value="M06">M06 (Văn, Năng khiếu báo chí, Toán)</option>
+                        <option value="M07">M07 (Văn, Năng khiếu ảnh báo chí, Tiếng Anh)</option>
+                        <option value="M08">M08 (Văn, Năng khiếu ảnh báo chí, Toán)</option>
+                        <option value="M09">M09 (Văn, Năng khiếu quay phim truyền hình, Tiếng Anh)</option>
+                        <option value="M10">M10 (Văn, Năng khiếu quay phim truyền hình, Toán)</option>
+                        <option value="M11">M11 (Văn, Năng khiếu quay phim truyền hình, Vật lý)</option>
+                        <option value="M12">M12 (Văn, Năng khiếu quay phim truyền hình, Lịch sử)</option>
+                        <option value="M13">M13 (Toán, Năng khiếu quay phim truyền hình, Vật lý)</option>
+                        <option value="M14">M14 (Toán, Năng khiếu quay phim truyền hình, Địa lý)</option>
+                        <option value="N00">N00 (Văn, Năng khiếu Âm nhạc 1, Năng khiếu Âm nhạc 2)</option>
+                        <option value="N01">N01 (Văn, Xướng âm, Biểu diễn nghệ thuật)</option>
+                        <option value="N02">N02 (Văn, Ký xướng âm, Hát hoặc biểu diễn nhạc cụ)</option>
+                        <option value="N03">N03 (Văn, Ghi âm - xướng âm, chuyên môn)</option>
+                        <option value="N04">N04 (Văn, Năng khiếu thuyết trình, Năng khiếu)</option>
+                        <option value="N05">N05 (Văn, Xây dựng kịch bản sự kiện, Năng khiếu)</option>
+                        <option value="N06">N06 (Văn, Ghi âm - xướng âm, chuyên môn)</option>
+                        <option value="N07">N07 (Văn, Chuyên môn, Hòa thanh phát triển đề)</option>
+                        <option value="N08">N08 (Văn, Hòa thanh, Bốc thăm đề - chỉ huy tại chỗ)</option>
+                        <option value="R00">R00 (Văn, Lịch sử, Năng khiếu báo chí)</option>
+                        <option value="R01">R01 (Văn, Địa lý, Năng khiếu Biểu diễn nghệ thuật)</option>
+                        <option value="R02">R02 (Văn, Toán, Năng khiếu Biểu diễn nghệ thuật)</option>
+                        <option value="R03">R03 (Văn, Tiếng Anh, Năng khiếu Biểu diễn nghệ thuật)</option>
+                        <option value="R04">R04 (Văn, Năng khiếu Biểu diễn nghệ thuật, Năng khiếu Kiến thức văn hóa - xã hội - nghệ thuật)</option>
+                        <option value="R05">R05 (Văn, Tiếng Anh, Năng khiếu kiến thức truyền thông)</option>
+                        <option value="S00">S00 (Văn, Năng khiếu SKĐA 1, Năng khiếu SKĐA 2)</option>
+                        <option value="S01">S01 (Toán, Năng khiếu 1, Năng khiếu 2)</option>
+                        <option value="T00">T00 (Toán, Sinh học, Năng khiếu TDTT)</option>
+                        <option value="T01">T01 (Toán, Văn, Năng khiếu TDTT)</option>
+                        <option value="T02">T02 (Văn, Sinh, Năng khiếu TDTT)</option>
+                        <option value="T03">T03 (Văn, Địa, Năng khiếu TDTT)</option>
+                        <option value="T04">T04 (Toán, Lý, Năng khiếu TDTT)</option>
+                        <option value="T05">T05 (Văn, Giáo dục công dân, Năng khiếu TDTT)</option>
+                        <option value="V00">V00 (Toán, Lý, Vẽ Hình họa mỹ thuật)</option>
+                        <option value="V01">V01 (Toán, Văn, Vẽ Hình họa mỹ thuật)</option>
+                        <option value="V02">V02 (Toán, Tiếng Anh, Vẽ Mỹ thuật)</option>
+                        <option value="V03">V03 (Toán, Hóa, Vẽ Mỹ thuật)</option>
+                        <option value="V04">V04 (Văn, Lý, Vẽ Mỹ thuật)</option>
+                        <option value="V05">V05 (Văn, Hóa, Vẽ Mỹ thuật)</option>
+                        <option value="V06">V06 (Toán, Địa, Vẽ Mỹ thuật)</option>
+                        <option value="V07">V07 (Toán, tiếng Đức, Vẽ Mỹ thuật)</option>
+                        <option value="V08">V08 (Toán, tiếng Nga, Vẽ Mỹ thuật)</option>
+                        <option value="V09">V09 (Toán, tiếng Nhật, Vẽ Mỹ thuật)</option>
+                        <option value="V10">V10 (Toán, tiếng Pháp, Vẽ Mỹ thuật)</option>
+                        <option value="V11">V11 (Toán, tiếng Trung, Vẽ Mỹ thuật)</option>
+                        <option value="K02">K02 (Toán, Văn, Tiếng Anh)</option>
+                        <option value="K03">K03 (Toán, Văn, Tiếng Pháp)</option>
+                        <option value="K04">K04 (Toán, Văn, Tiếng Nhật)</option>
+                        <option value="K05">K05 (Toán, Văn, Tiếng Trung)</option>
+                        <option value="K06">K06 (Toán, Văn, Tiếng Hàn)</option>
+                        <option value="K07">K07 (Toán, Văn, Tiếng Đức)</option>
+                        <option value="K08">K08 (Toán, Văn, Tiếng Nga)</option>
+                        <option value="K09">K09 (Toán, Văn, Tiếng Ý)</option>
+                        <option value="K10">K10 (Toán, Văn, Tiếng Tây Ban Nha)</option>
+                        <option value="K11">K11 (Toán, Văn, Tiếng Bồ Đào Nha)</option>
+                        <option value="K12">K12 (Toán, Văn, Tiếng Ả Rập)</option>
+                        <option value="K13">K13 (Toán, Văn, Tiếng Thái)</option>
+                        <option value="K14">K14 (Toán, Văn, Tiếng Lào)</option>
+                        <option value="K15">K15 (Toán, Văn, Tiếng Campuchia)</option>
+                        <option value="K16">K16 (Toán, Văn, Tiếng Indonesia)</option>
+                        <option value="K17">K17 (Toán, Văn, Tiếng Malaysia)</option>
+                        <option value="K18">K18 (Toán, Văn, Tiếng Myanmar)</option>
+                        <option value="K19">K19 (Toán, Văn, Tiếng Philippines)</option>
+                        <option value="K20">K20 (Toán, Văn, Tiếng Hindi)</option>
+                        <option value="K21">K21 (Toán, Văn, Tiếng Urdu)</option>
+                        <option value="K22">K22 (Toán, Văn, Tiếng Bengali)</option>
+                        <option value="K23">K23 (Toán, Văn, Tiếng Tamil)</option>
+                        <option value="K24">K24 (Toán, Văn, Tiếng Telugu)</option>
+                        <option value="K25">K25 (Toán, Văn, Tiếng Marathi)</option>
+                        <option value="K26">K26 (Toán, Văn, Tiếng Gujarati)</option>
+                        <option value="K27">K27 (Toán, Văn, Tiếng Kannada)</option>
+                        <option value="K28">K28 (Toán, Văn, Tiếng Malayalam)</option>
+                        <option value="K29">K29 (Toán, Văn, Tiếng Odia)</option>
+                        <option value="K30">K30 (Toán, Văn, Tiếng Punjabi)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="nhomNganhFilter">Nhóm ngành:</label>
+                    <select id="nhomNganhFilter" class="filter-select">
+                        <option value="all">Tất cả nhóm ngành</option>
+                        <option value="cong-nghe">Công nghệ - Kỹ thuật</option>
+                        <option value="kinh-te">Kinh tế - Quản lý</option>
+                        <option value="y-duoc">Y dược - Sức khỏe</option>
+                        <option value="su-pham">Sư phạm - Giáo dục</option>
+                        <option value="ngon-ngu">Ngôn ngữ - Văn hóa</option>
+                        <option value="xahoi">Khoa học xã hội</option>
+                        <option value="nong-lam">Nông - Lâm - Ngư nghiệp</option>
+                        <option value="vanhoa-nghethuat">Văn hóa - Nghệ thuật</option>
+                        <option value="phap-luat">Pháp luật</option>
+                        <option value="quan-su">Quân sự - An ninh</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section id="nganh-hoc">
+            <h2 class="section-title">Các Ngành Học</h2>
+            <div class="nganh-grid" id="nganhHocContainer">
+                <!-- Nội dung ngành học sẽ được thêm bằng JavaScript -->
+            </div>
+        </section>
+
+        <section id="truong-hoc">
+            <h2 class="section-title">Danh Sách Các Trường Đại Học</h2>
+            <div class="truong-section">
+                <table class="truong-table" id="truongHocTable">
+                    <thead>
+                        <tr>
+                            <th>Tên Trường</th>
+                            <th>Địa Điểm</th>
+                            <th>Website Chính Thức</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dữ liệu trường học sẽ được thêm bằng JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="trac-nghiem">
+            <h2 class="section-title">Trắc Nghiệm Nghề Nghiệp</h2>
+            <div class="quiz-section">
+                <p>Tham gia các bài trắc nghiệm dưới đây để hiểu rõ hơn về bản thân và tìm ra ngành nghề phù hợp nhất với tính cách, sở thích và năng lực của bạn.</p>
+                <div class="quiz-grid">
+                    <a href="https://www.16personalities.com/vi" target="_blank" class="quiz-card" id="quiz1">
+                        <i class="fas fa-user-graduate"></i>
+                        <h4>Trắc Nghiệm Tính Cách</h4>
+                        <p>Khám phá tính cách và nghề nghiệp phù hợp</p>
+                    </a>
+                    <a href="https://www.truity.com/test/holland-code-career-test" target="_blank" class="quiz-card" id="quiz2">
+                        <i class="fas fa-brain"></i>
+                        <h4>Trắc Nghiệm Năng Lực</h4>
+                        <p>Đánh giá điểm mạnh và năng lực bản thân</p>
+                    </a>
+                    <a href="https://www.123test.com/career-test/" target="_blank" class="quiz-card" id="quiz3">
+                        <i class="fas fa-heart"></i>
+                        <h4>Trắc Nghiệm Sở Thích</h4>
+                        <p>Tìm hiểu sở thích nghề nghiệp phù hợp</p>
+                    </a>
+                    <a href="https://www.careerexplorer.com/career-test/" target="_blank" class="quiz-card" id="quiz4">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Trắc Nghiệm Xu Hướng</h4>
+                        <p>Định hướng theo xu hướng thị trường</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="lien-he">
+            <h2 class="section-title">Liên Hệ Tư Vấn</h2>
+            <div class="quiz-section">
+                <p>Nếu bạn cần tư vấn thêm về định hướng nghề nghiệp, hãy liên hệ với chúng tôi:</p>
+                <p><i class="fas fa-envelope"></i> Email: thptthanhbinh2@dongthap.edu.vn</p>
+                <p><i class="fas fa-phone"></i> Hotline: 02773535038</p>
+                <p><i class="fas fa-map-marker-alt"></i> Địa chỉ: Trường THPT Thanh Bình 2, xã Tân Long, tỉnh Đồng Tháp</p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>© 2025 Hệ Thống Định Hướng Nghề Nghiệp. Tất cả các quyền được bảo lưu.</p>
+    </footer>
+
+    <script>
+        // Dữ liệu ngành học chi tiết - ĐÃ BỔ SUNG THÊM NGÀNH MỚI
+        const nganhHocData = [
+            {
+                id: 1,
+                ten: "Công Nghệ Thông Tin",
+                mota: "Ngành học về phần mềm, hệ thống máy tính, trí tuệ nhân tạo và ứng dụng công nghệ.",
+                khothi: ["A00", "A01", "D01", "D07", "D90", "D96"],
+                nhomNganh: "cong-nghe",
+                link: "https://vi.wikipedia.org/wiki/C%C3%B4ng_ngh%E1%BB%87_th%C3%B4ng_tin"
+            },
+            {
+                id: 2,
+                ten: "Quản Trị Kinh Doanh",
+                mota: "Đào tạo kiến thức quản lý, điều hành doanh nghiệp, khởi nghiệp và phát triển chiến lược kinh doanh.",
+                khothi: ["A00", "A01", "D01", "A09", "D96"],
+                nhomNganh: "kinh-te",
+                link: "https://vi.wikipedia.org/wiki/Qu%E1%BA%A3n_tr%E1%BB%8B_kinh_doanh"
+            },
+            {
+                id: 3,
+                ten: "Ngôn Ngữ Anh",
+                mota: "Chuyên sâu về tiếng Anh, biên phiên dịch, giảng dạy và văn hóa các nước nói tiếng Anh.",
+                khothi: ["D01", "D14", "D15", "D66", "D78"],
+                nhomNganh: "ngon-ngu",
+                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_Anh"
+            },
+            {
+                id: 4,
+                ten: "Y - Dược",
+                mota: "Đào tạo bác sĩ, dược sĩ, điều dưỡng với kiến thức chuyên sâu về chăm sóc sức khỏe con người.",
+                khothi: ["B00", "B08", "D08", "D90"],
+                nhomNganh: "y-duoc",
+                link: "https://vi.wikipedia.org/wiki/Y_h%E1%BB%8Dc"
+            },
+            {
+                id: 5,
+                ten: "Báo Chí & Truyền Thông",
+                mota: "Đào tạo kỹ năng viết, biên tập, sản xuất nội dung truyền thông đa phương tiện.",
+                khothi: ["C00", "D14", "D15", "D78", "D84"],
+                nhomNganh: "ngon-ngu",
+                link: "https://vi.wikipedia.org/wiki/B%C3%A1o_ch%C3%AD"
+            },
+            {
+                id: 6,
+                ten: "Kỹ Thuật Điện - Điện Tử",
+                mota: "Chuyên ngành về thiết kế, vận hành và bảo trì hệ thống điện, điện tử và tự động hóa.",
+                khothi: ["A00", "A01", "D01", "D07", "D90"],
+                nhomNganh: "cong-nghe",
+                link: "https://vi.wikipedia.org/wiki/K%E1%BB%B9_thu%E1%BA%ADt_%C4%91i%E1%BB%87n"
+            },
+            {
+                id: 7,
+                ten: "Kế Toán - Kiểm Toán",
+                mota: "Đào tạo chuyên sâu về kế toán, kiểm toán, tài chính và quản trị doanh nghiệp.",
+                khothi: ["A00", "A01", "D01", "D07", "D96"],
+                nhomNganh: "kinh-te",
+                link: "https://vi.wikipedia.org/wiki/K%E1%BA%BF_to%C3%A1n"
+            },
+            {
+                id: 8,
+                ten: "Sư Phạm Toán Học",
+                mota: "Đào tạo giáo viên dạy Toán với kiến thức chuyên môn và kỹ năng sư phạm.",
+                khothi: ["A00", "A01", "D01", "D07", "D90"],
+                nhomNganh: "su-pham",
+                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_To%C3%A1n_h%E1%BB%8Dc"
+            },
+            {
+                id: 9,
+                ten: "Công Nghệ Sinh Học",
+                mota: "Ứng dụng sinh học vào sản xuất và phát triển sản phẩm trong y dược, nông nghiệp.",
+                khothi: ["B00", "A02", "D08", "D07", "D90"],
+                nhomNganh: "cong-nghe",
+                link: "https://vi.wikipedia.org/wiki/C%C3%B4ng_ngh%E1%BB%87_sinh_h%E1%BB%8Dc"
+            },
+            {
+                id: 10,
+                ten: "Luật Kinh Tế",
+                mota: "Đào tạo luật sư chuyên về lĩnh vực kinh tế, doanh nghiệp và thương mại.",
+                khothi: ["A00", "C00", "D01", "D14", "D66"],
+                nhomNganh: "phap-luat",
+                link: "https://vi.wikipedia.org/wiki/Lu%E1%BA%ADt_kinh_t%E1%BA%BF"
+            },
+            // Thêm các ngành mới cho các khối còn thiếu
+            {
+                id: 101,
+                ten: "Địa Chất Học",
+                mota: "Nghiên cứu về cấu trúc, thành phần và lịch sử của Trái Đất.",
+                khothi: ["A04", "B00", "B02", "D07"],
+                nhomNganh: "cong-nghe",
+                link: "https://vi.wikipedia.org/wiki/%C4%90%E1%BB%8Ba_ch%E1%BA%A5t_h%E1%BB%8Dc"
+            },
+            {
+                id: 102,
+                ten: "Lịch Sử Tự Nhiên",
+                mota: "Nghiên cứu về lịch sử phát triển của tự nhiên và các loài sinh vật.",
+                khothi: ["B01", "B00", "C00"],
+                nhomNganh: "xahoi",
+                link: "https://vi.wikipedia.org/wiki/L%E1%BB%8Bch_s%E1%BB%AD_t%E1%BB%B1_nhi%C3%AAn"
+            },
+            {
+                id: 103,
+                ten: "Địa Vật Lý",
+                mota: "Nghiên cứu về các hiện tượng vật lý của Trái Đất và ứng dụng trong thăm dò.",
+                khothi: ["A04", "A00", "A01"],
+                nhomNganh: "cong-nghe",
+                link: "https://vi.wikipedia.org/wiki/%C4%90%E1%BB%8Ba_v%E1%BA%ADt_l%C3%BD"
+            },
+            {
+                id: 104,
+                ten: "Báo Chí Khoa Học",
+                mota: "Chuyên về truyền thông và phổ biến kiến thức khoa học đến công chúng.",
+                khothi: ["B03", "C00", "D01"],
+                nhomNganh: "ngon-ngu",
+                link: "https://vi.wikipedia.org/wiki/B%C3%A1o_ch%C3%AD_khoa_h%E1%BB%8Dc"
+            },
+            {
+                id: 105,
+                ten: "Công Tác Xã Hội",
+                mota: "Hỗ trợ và giải quyết các vấn đề xã hội, cải thiện chất lượng cuộc sống.",
+                khothi: ["B04", "C00", "D01", "D14"],
+                nhomNganh: "xahoi",
+                link: "https://vi.wikipedia.org/wiki/C%C3%B4ng_t%C3%A1c_x%C3%A3_h%E1%BB%99i"
+            },
+            // Thêm ngành cho các khối C
+            {
+                id: 106,
+                ten: "Sư Phạm Vật Lý",
+                mota: "Đào tạo giáo viên dạy Vật lý với kiến thức chuyên môn và kỹ năng sư phạm.",
+                khothi: ["C01", "A00", "A01"],
+                nhomNganh: "su-pham",
+                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_V%E1%BA%ADt_l%C3%BD"
+            },
+            {
+                id: 107,
+                ten: "Sư Phạm Hóa Học",
+                mota: "Đào tạo giáo viên dạy Hóa học với kiến thức chuyên môn và kỹ năng sư phạm.",
+                khothi: ["C02", "A00", "B00"],
+                nhomNganh: "su-pham",
+                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_H%C3%B3a_h%E1%BB%8Dc"
+            },
+            {
+                id: 108,
+                ten: "Sư Phạm Lịch Sử",
+                mota: "Đào tạo giáo viên dạy Lịch sử với kiến thức chuyên môn và kỹ năng sư phạm.",
+                khothi: ["C03", "C00", "D14"],
+                nhomNganh: "su-pham",
+                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_L%E1%BB%8Bch_s%E1%BB%AD"
+            },
+            {
+                id: 109,
+                ten: "Sư Phạm Địa Lý",
+                mota: "Đào tạo giáo viên dạy Địa lý với kiến thức chuyên môn và kỹ năng sư phạm.",
+                khothi: ["C04", "C00", "D15"],
+                nhomNganh: "su-pham",
+                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_%C4%90%E1%BB%8Ba_l%C3%BD"
+            },
+            {
+                id: 110,
+                ten: "Vật Lý Ứng Dụng",
+                mota: "Ứng dụng các nguyên lý vật lý vào giải quyết các vấn đề thực tiễn.",
+                khothi: ["C05", "A00", "A01"],
+                nhomNganh: "cong-nghe",
+                link: "https://vi.wikipedia.org/wiki/V%E1%BA%ADt_l%C3%BD_%E1%BB%A9ng_d%E1%BB%A5ng"
+            },
+            {
+                id: 111,
+                ten: "Hóa Sinh",
+                mota: "Nghiên cứu về các quá trình hóa học trong cơ thể sinh vật.",
+                khothi: ["C06", "B00", "A00"],
+                nhomNganh: "cong-nghe",
+                link: "https://vi.wikipedia.org/wiki/H%C3%B3a_sinh"
+            },
+            {
+                id: 112,
+                ten: "Sinh Lý Học",
+                mota: "Nghiên cứu về chức năng và cơ chế hoạt động của các hệ thống trong cơ thể.",
+                khothi: ["C07", "B00", "A02"],
+                nhomNganh: "y-duoc",
+                link: "https://vi.wikipedia.org/wiki/Sinh_l%C3%BD_h%E1%BB%8Dc"
+            },
+            {
+                id: 113,
+                ten: "Hóa Dược",
+                mota: "Nghiên cứu về thiết kế, tổng hợp và phát triển thuốc chữa bệnh.",
+                khothi: ["C08", "B00", "A00"],
+                nhomNganh: "y-duoc",
+                link: "https://vi.wikipedia.org/wiki/H%C3%B3a_d%C6%B0%E1%BB%A3c"
+            },
+            {
+                id: 114,
+                ten: "Địa Lý Môi Trường",
+                mota: "Nghiên cứu về tương tác giữa con người và môi trường tự nhiên.",
+                khothi: ["C09", "C00", "B00"],
+                nhomNganh: "nong-lam",
+                link: "https://vi.wikipedia.org/wiki/%C4%90%E1%BB%8Ba_l%C3%BD_m%C3%B4i_tr%C6%B0%E1%BB%9Dng"
+            },
+            {
+                id: 115,
+                ten: "Hóa Môi Trường",
+                mota: "Nghiên cứu về các quá trình hóa học trong môi trường và ô nhiễm.",
+                khothi: ["C10", "B00", "A00"],
+                nhomNganh: "nong-lam",
+                link: "https://vi.wikipedia.org/wiki/H%C3%B3a_m%C3%B4i_tr%C6%B0%E1%BB%9Dng"
+            },
+            // Thêm ngành cho các khối D
+            {
+                id: 116,
+                ten: "Quan Hệ Quốc Tế",
+                mota: "Nghiên cứu về quan hệ giữa các quốc gia, tổ chức quốc tế và ngoại giao.",
+                khothi: ["D01", "D14", "D15", "D78"],
+                nhomNganh: "xahoi",
+                link: "https://vi.wikipedia.org/wiki/Quan_h%E1%BB%87_qu%E1%BB%91c_t%E1%BA%BF"
+            },
+            {
+                id: 117,
+                ten: "Ngôn Ngữ Pháp",
+                mota: "Chuyên sâu về tiếng Pháp, biên phiên dịch, giảng dạy và văn hóa Pháp.",
+                khothi: ["D03", "D83", "D84"],
+                nhomNganh: "ngon-ngu",
+                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_Ph%C3%A1p"
+            },
+            {
+                id: 118,
+                ten: "Ngôn Ngữ Trung",
+                mota: "Chuyên sâu về tiếng Trung, biên phiên dịch, giảng dạy và văn hóa Trung Quốc.",
+                khothi: ["D04", "D85", "D89"],
+                nhomNganh: "ngon-ngu",
+                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_Trung"
+            },
+            {
+                id: 119,
+                ten: "Ngôn Ngữ Nhật",
+                mota: "Chuyên sâu về tiếng Nhật, biên phiên dịch, giảng dạy và văn hóa Nhật Bản.",
+                khothi: ["D06", "D69", "D74"],
+                nhomNganh: "ngon-ngu",
+                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_Nh%E1%BA%ADt"
+            },
+            {
+                id: 120,
+                ten: "Ngôn Ngữ Hàn",
+                mota: "Chuyên sâu về tiếng Hàn, biên phiên dịch, giảng dạy và văn hóa Hàn Quốc.",
+                khothi: ["D26", "D72", "D77"],
+                nhomNganh: "ngon-ngu",
+                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_H%C3%A0n"
+            },
+            // Thêm ngành cho khối năng khiếu
+            {
+                id: 121,
+                ten: "Thanh Nhạc",
+                mota: "Đào tạo kỹ năng hát, biểu diễn và lý thuyết âm nhạc chuyên nghiệp.",
+                khothi: ["N00", "N01", "N02"],
+                nhomNganh: "vanhoa-nghethuat",
+                link: "https://vi.wikipedia.org/wiki/Thanh_nh%E1%BA%A1c"
+            },
+            {
+                id: 122,
+                ten: "Diễn Viên Kịch",
+                mota: "Đào tạo kỹ năng diễn xuất, biểu cảm và sáng tạo nghệ thuật sân khấu.",
+                khothi: ["S00", "S01", "R00"],
+                nhomNganh: "vanhoa-nghethuat",
+                link: "https://vi.wikipedia.org/wiki/Di%E1%BB%85n_vi%C3%AAn_k%E1%BB%8Bch"
+            },
+            {
+                id: 123,
+                ten: "Đạo Diễn",
+                mota: "Đào tạo kỹ năng chỉ đạo nghệ thuật, sáng tạo và quản lý sản xuất phim.",
+                khothi: ["S00", "R00", "R01"],
+                nhomNganh: "vanhoa-nghethuat",
+                link: "https://vi.wikipedia.org/wiki/%C4%90%E1%BA%A1o_di%E1%BB%85n"
+            },
+            {
+                id: 124,
+                ten: "Hội Họa",
+                mota: "Đào tạo kỹ năng sáng tác, vẽ và thể hiện ý tưởng thông qua hội họa.",
+                khothi: ["H00", "H01", "H02"],
+                nhomNganh: "vanhoa-nghethuat",
+                link: "https://vi.wikipedia.org/wiki/H%E1%BB%99i_h%E1%BB%8Da"
+            },
+            {
+                id: 125,
+                ten: "Điêu Khắc",
+                mota: "Đào tạo kỹ năng tạo hình không gian, điêu khắc và sáng tác tác phẩm nghệ thuật.",
+                khothi: ["H00", "H01", "H07"],
+                nhomNganh: "vanhoa-nghethuat",
+                link: "https://vi.wikipedia.org/wiki/%C4%90i%C3%AAu_kh%E1%BA%AFc"
+            },
+            {
+                id: 126,
+                ten: "Giáo Dục Thể Chất",
+                mota: "Đào tạo giáo viên dạy thể dục, huấn luyện viên và chuyên gia thể thao.",
+                khothi: ["T00", "T01", "T02", "T03", "T04", "T05"],
+                nhomNganh: "su-pham",
+                link: "https://vi.wikipedia.org/wiki/Gi%C3%A1o_d%E1%BB%A5c_th%E1%BB%83_ch%E1%BA%A5t"
+            },
+            // Thêm các ngành nổi bật khác
+            {
+                id: 127,
+                ten: "Trí Tuệ Nhân Tạo",
+                mota: "Nghiên cứu và phát triển hệ thống máy móc có khả năng thông minh như con người.",
+                khothi: ["A00", "A01", "D01", "D07"],
+                nhomNganh: "cong-nghe",
+                link: "https://vi.wikipedia.org/wiki/Tr%C3%AD_tu%E1%BB%87_nh%C3%A2n_t%E1%BA%A1o"
+            },
+            {
+                id: 128,
+                ten: "Khoa Học Dữ Liệu",
+                mota: "Phân tích và khai thác dữ liệu lớn để đưa ra quyết định và dự báo.",
+                khothi: ["A00", "A01", "D01", "D07"],
+                nhomNganh: "cong-nghe",
+                link: "https://vi.wikipedia.org/wiki/Khoa_h%E1%BB%8Dc_d%E1%BB%AF_li%E1%BB%87u"
+            },
+            {
+                id: 129,
+                ten: "An Toàn Thông Tin",
+                mota: "Bảo vệ hệ thống thông tin, dữ liệu và mạng máy tính khỏi các mối đe dọa.",
+                khothi: ["A00", "A01", "D01", "D07"],
+                nhomNganh: "cong-nghe",
+                link: "https://vi.wikipedia.org/wiki/An_to%C3%A0n_th%C3%B4ng_tin"
+            },
+            {
+                id: 130,
+                ten: "Công Nghệ Tài Chính (Fintech)",
+                mota: "Ứng dụng công nghệ vào lĩnh vực tài chính, ngân hàng và thanh toán.",
+                khothi: ["A00", "A01", "D01", "D96"],
+                nhomNganh: "kinh-te",
+                link: "https://vi.wikipedia.org/wiki/C%C3%B4ng_ngh%E1%BB%87_t%C3%A0i_ch%C3%ADnh"
+            }
+            // ... (giữ nguyên các ngành còn lại từ bản gốc)
+        ];
+
+        // Dữ liệu trường đại học mở rộng - ĐÃ BỔ SUNG THÊM TRƯỜNG MỚI
+        const truongHocData = [
+            { ten: "Đại học Bách Khoa Hà Nội", diaDiem: "Hà Nội", website: "https://www.hust.edu.vn" },
+            { ten: "Đại học Quốc gia Hà Nội", diaDiem: "Hà Nội", website: "https://www.vnu.edu.vn" },
+            { ten: "Đại học Kinh tế Quốc dân", diaDiem: "Hà Nội", website: "https://www.neu.edu.vn" },
+            { ten: "Đại học Y Hà Nội", diaDiem: "Hà Nội", website: "https://www.hmu.edu.vn" },
+            { ten: "Đại học Sư phạm Hà Nội", diaDiem: "Hà Nội", website: "https://www.hnue.edu.vn" },
+            { ten: "Đại học Bách Khoa TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.hcmut.edu.vn" },
+            { ten: "Đại học Quốc gia TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.vnuhcm.edu.vn" },
+            { ten: "Đại học Khoa học Tự nhiên - ĐHQG-HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.hcmus.edu.vn" },
+            { ten: "Đại học Kinh tế - Luật - ĐHQG-HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.uel.edu.vn" },
+            { ten: "Đại học Cần Thơ", diaDiem: "Cần Thơ", website: "https://www.ctu.edu.vn" },
+            { ten: "Đại học Đà Nẵng", diaDiem: "Đà Nẵng", website: "https://www.udn.vn" },
+            { ten: "Đại học Huế", diaDiem: "Thừa Thiên Huế", website: "https://www.hueuni.edu.vn" },
+            { ten: "Đại học Thương mại", diaDiem: "Hà Nội", website: "https://tmu.edu.vn" },
+            { ten: "Đại học Ngoại thương", diaDiem: "Hà Nội", website: "https://ftu.edu.vn" },
+            { ten: "Đại học Tôn Đức Thắng", diaDiem: "TP. Hồ Chí Minh", website: "https://www.tdtu.edu.vn" },
+            { ten: "Đại học Hoa Sen", diaDiem: "TP. Hồ Chí Minh", website: "https://www.hoasen.edu.vn" },
+            { ten: "Đại học FPT", diaDiem: "Hà Nội", website: "https://daihoc.fpt.edu.vn" },
+            { ten: "Đại học RMIT Việt Nam", diaDiem: "TP. Hồ Chí Minh", website: "https://www.rmit.edu.vn" },
+            { ten: "Đại học Mở TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://ou.edu.vn" },
+            { ten: "Đại học Văn Lang", diaDiem: "TP. Hồ Chí Minh", website: "https://vanlanguni.edu.vn" },
+            { ten: "Đại học Công nghiệp Hà Nội", diaDiem: "Hà Nội", website: "https://www.haui.edu.vn" },
+            { ten: "Đại học Giao thông Vận tải", diaDiem: "Hà Nội", website: "https://www.utc.edu.vn" },
+            { ten: "Đại học Xây dựng", diaDiem: "Hà Nội", website: "https://www.nuce.edu.vn" },
+            { ten: "Đại học Kiến trúc Hà Nội", diaDiem: "Hà Nội", website: "https://www.hau.edu.vn" },
+            { ten: "Đại học Nông Lâm TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.hcmuaf.edu.vn" },
+            { ten: "Học viện Nông nghiệp Việt Nam", diaDiem: "Hà Nội", website: "https://www.vnua.edu.vn" },
+            { ten: "Đại học Y Dược TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.yds.edu.vn" },
+            { ten: "Đại học Y Dược Cần Thơ", diaDiem: "Cần Thơ", website: "https://www.ctump.edu.vn" },
+            { ten: "Đại học Y Dược Huế", diaDiem: "Thừa Thiên Huế", website: "https://www.huemed-univ.edu.vn" },
+            { ten: "Đại học Sư phạm Kỹ thuật TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.hcmute.edu.vn" },
+            { ten: "Đại học Sài Gòn", diaDiem: "TP. Hồ Chí Minh", website: "https://www.sgu.edu.vn" },
+            { ten: "Đại học An ninh Nhân dân", diaDiem: "TP. Hồ Chí Minh", website: "https://www.annd.edu.vn" },
+            { ten: "Học viện Hành chính Quốc gia", diaDiem: "Hà Nội", website: "https://www.napa.vn" },
+            { ten: "Đại học Luật Hà Nội", diaDiem: "Hà Nội", website: "https://www.hlu.edu.vn" },
+            { ten: "Đại học Văn hóa Hà Nội", diaDiem: "Hà Nội", website: "https://www.huc.edu.vn" },
+            { ten: "Đại học Mỹ thuật Việt Nam", diaDiem: "Hà Nội", website: "https://www.vietnamfineart.edu.vn" },
+            { ten: "Học viện Âm nhạc Quốc gia Việt Nam", diaDiem: "Hà Nội", website: "https://www.vnam.edu.vn" },
+            { ten: "Đại học Thể dục Thể thao TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.ush.edu.vn" },
+            { ten: "Đại học Tài nguyên và Môi trường TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.hcmunre.edu.vn" },
+            { ten: "Đại học Công nghệ Thông tin - ĐHQG-HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.uit.edu.vn" },
+            { ten: "Đại học Công nghiệp TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.iuh.edu.vn" },
+            { ten: "Đại học Ngân hàng TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.buh.edu.vn" },
+            { ten: "Đại học Tài chính - Marketing", diaDiem: "TP. Hồ Chí Minh", website: "https://www.ufm.edu.vn" },
+            { ten: "Đại học Sư phạm Kỹ thuật Vĩnh Long", diaDiem: "Vĩnh Long", website: "https://www.vlute.edu.vn" },
+            { ten: "Đại học Trà Vinh", diaDiem: "Trà Vinh", website: "https://www.tvu.edu.vn" },
+            { ten: "Đại học Quy Nhơn", diaDiem: "Bình Định", website: "https://www.qnu.edu.vn" },
+            { ten: "Đại học Hồng Đức", diaDiem: "Thanh Hóa", website: "https://www.dhdh.edu.vn" },
+            { ten: "Đại học Hải Phòng", diaDiem: "Hải Phòng", website: "https://www.dhhp.edu.vn" },
+            { ten: "Đại học Thái Nguyên", diaDiem: "Thái Nguyên", website: "https://www.tnu.edu.vn" },
+            { ten: "Đại học Hùng Vương", diaDiem: "Phú Thọ", website: "https://www.hvu.edu.vn" },
+            // Thêm 10 trường đại học mới
+            { ten: "Đại học Duy Tân", diaDiem: "Đà Nẵng", website: "https://duytan.edu.vn" },
+            { ten: "Đại học Công nghệ Đồng Nai", diaDiem: "Đồng Nai", website: "https://dntu.edu.vn" },
+            { ten: "Đại học Kinh tế - Tài chính TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.uef.edu.vn" },
+            { ten: "Đại học Công nghệ TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.hutech.edu.vn" },
+            { ten: "Đại học Quốc tế Hồng Bàng", diaDiem: "TP. Hồ Chí Minh", website: "https://hiu.vn" },
+            { ten: "Đại học Nguyễn Tất Thành", diaDiem: "TP. Hồ Chí Minh", website: "https://ntt.edu.vn" },
+            { ten: "Đại học Thủ Dầu Một", diaDiem: "Bình Dương", website: "https://tdmu.edu.vn" },
+            { ten: "Đại học Đồng Tháp", diaDiem: "Đồng Tháp", website: "https://www.dthu.edu.vn" },
+            { ten: "Đại học An Giang", diaDiem: "An Giang", website: "https://www.agu.edu.vn" },
+            { ten: "Đại học Sư phạm Thể dục Thể thao TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.upes.edu.vn" }
+        ];
+
+        // Hàm hiển thị ngành học
+        function hienThiNganhHoc(danhSach) {
+            const container = document.getElementById('nganhHocContainer');
+            container.innerHTML = '';
+            
+            if (danhSach.length === 0) {
+                container.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; padding: 2rem;">Không tìm thấy ngành học nào phù hợp với tiêu chí đã chọn.</p>';
+                return;
+            }
+            
+            danhSach.forEach(nganh => {
+                const card = document.createElement('div');
+                card.className = 'nganh-card';
+                card.innerHTML = `
+                    <h3>${nganh.ten}</h3>
+                    <p>${nganh.mota}</p>
+                    <div class="khoi-thi-list">
+                        ${nganh.khothi.map(khoi => `<span class="khoi-thi" data-khoi="${khoi}">${khoi}</span>`).join('')}
+                    </div>
+                    <a href="${nganh.link}" target="_blank" class="nganh-link">
+                        <i class="fas fa-external-link-alt"></i> Tìm hiểu thêm về ngành ${nganh.ten}
+                    </a>
+                `;
+                container.appendChild(card);
+            });
+            
+            // Thêm sự kiện click cho các khối thi
+            document.querySelectorAll('.khoi-thi').forEach(khoi => {
+                khoi.addEventListener('click', function() {
+                    const khoiValue = this.getAttribute('data-khoi');
+                    document.getElementById('khoiFilter').value = khoiValue;
+                    locNganhHoc();
+                });
+            });
+        }
+
+        // Hàm hiển thị trường học
+        function hienThiTruongHoc() {
+            const tbody = document.querySelector('#truongHocTable tbody');
+            tbody.innerHTML = '';
+            
+            truongHocData.forEach(truong => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${truong.ten}</td>
+                    <td>${truong.diaDiem}</td>
+                    <td><a href="${truong.website}" class="truong-link" target="_blank"><i class="fas fa-external-link-alt"></i> Truy cập website</a></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Hàm lọc ngành học
+        function locNganhHoc() {
+            const khoiDuocChon = document.getElementById('khoiFilter').value;
+            const nhomNganhDuocChon = document.getElementById('nhomNganhFilter').value;
+            const tuKhoa = document.getElementById('searchInput').value.toLowerCase();
+            
+            const ketQuaLoc = nganhHocData.filter(nganh => {
+                const khopKhoiThi = khoiDuocChon === 'all' || nganh.khothi.includes(khoiDuocChon);
+                const khopNhomNganh = nhomNganhDuocChon === 'all' || nganh.nhomNganh === nhomNganhDuocChon;
+                const khopTuKhoa = tuKhoa === '' || 
+                    nganh.ten.toLowerCase().includes(tuKhoa) || 
+                    nganh.mota.toLowerCase().includes(tuKhoa);
+                
+                return khopKhoiThi && khopNhomNganh && khopTuKhoa;
+            });
+            
+            hienThiNganhHoc(ketQuaLoc);
+        }
+
+        // Khởi tạo khi trang được tải
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hiển thị dữ liệu ban đầu
+            hienThiNganhHoc(nganhHocData);
+            hienThiTruongHoc();
+            
+            // Thêm sự kiện cho bộ lọc
+            document.getElementById('khoiFilter').addEventListener('change', locNganhHoc);
+            document.getElementById('nhomNganhFilter').addEventListener('change', locNganhHoc);
+            document.getElementById('searchInput').addEventListener('input', locNganhHoc);
+            document.getElementById('searchBtn').addEventListener('click', locNganhHoc);
+            
+            // Thêm sự kiện cho menu mobile
+            document.querySelector('.mobile-menu').addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.toggle('active');
+            });
+            
+            // Thêm sự kiện cho điều hướng
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Cập nhật trạng thái active
+                    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ 
+                            behavior: 'smooth' 
+                        });
+                    }
+                    
+                    // Đóng menu mobile nếu đang mở
+                    document.querySelector('.nav-links').classList.remove('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

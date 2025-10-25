@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyWithMe - Nền tảng học tập thông minh</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Dancing+Script:wght@400;700&family=Oswald:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Biến màu sắc */
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4bb543;
+            --warning: #ffcc00;
+            --text: #333333;
+            --gradient-1: #4361ee;
+            --gradient-2: #3a0ca3;
+            --gradient-3: #7209b7;
+            --gradient-4: #f72585;
+        }
+
+        /* Reset và cài đặt cơ bản */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2), var(--gradient-3));
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Hiệu ứng sao băng */
+        .shooting-stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: shootingStar linear infinite;
+        }
+
+        @keyframes shootingStar {
+            0% {
+                transform: translateX(0) translateY(0) rotate(45deg);
+                opacity: 1;
+                width: 0;
+            }
+            10% {
+                width: 100px;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(100vw) translateY(100vh) rotate(45deg);
+                opacity: 0;
+                width: 2px;
+            }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header h3 {
+            margin: 0;
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu li a:hover {
+            background: #f5f5f5;
+            color: var(--primary);
+        }
+
+        .sidebar-menu li a i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Header */
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-left: 10px;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 5px 10px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            transition: width 0.3s;
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 0;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
+            font-family: 'Bungee', cursive;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 15px 35px;
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 60px 40px;
+            margin-bottom: 60px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            color: #666;
+            max-width: 700px;
+            margin: 20px auto 0;
+            font-size: 1.1rem;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .card-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);
+        }
+
+        .card-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-content h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+            font-size: 1.4rem;
+        }
+
+        .card-content p {
+            color: #666;
+            margin-bottom: 20px;
+            flex-grow: 1;
+            line-height: 1.7;
+        }
+
+        .card-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            border-radius: 20px;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80') center/cover;
+            opacity: 0.1;
+        }
+
+        .cta-section h2 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .cta-section p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            position: relative;
+            z-index: 2;
+            opacity: 0.9;
+            font-family: 'Oswald', sans-serif;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--accent);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        /* User Dropdown */
+        .user-dropdown {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .user-dropdown.active {
+            display: block;
+        }
+
+        .user-dropdown a {
+            display: block;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--dark);
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+
+        .user-dropdown a:last-child {
+            border-bottom: none;
+        }
+
+        .user-dropdown a:hover {
+            background: #f5f5f5;
+        }
+
+        /* Subject Grid */
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .subject-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .subject-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .subject-card h4 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        /* Quiz Card */
+        .quiz-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            border-left: 5px solid var(--success);
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero h2 {
+                font-size: 2.8rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+
+            nav ul {
+                margin: 15px 0;
+                flex-wrap: wrap;
+                justify-content: center;
+                order: 3;
+                width: 100%;
+            }
+
+            nav ul li {
+                margin: 5px 10px;
+            }
+
+            .auth-buttons {
+                margin-top: 0;
+            }
+
+            .hero {
+                padding: 80px 0;
+            }
+
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .main-content {
+                padding: 40px 20px;
+            }
+
+            .section-title h2 {
+                font-size: 2rem;
+            }
+
+            .cta-section h2 {
+                font-size: 2.2rem;
+            }
+
+            .cta-section p {
+                font-size: 1.1rem;
+            }
+
+            .subject-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hiệu ứng sao băng -->
+    <div class="shooting-stars" id="shootingStars"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>StudyWithMe</h3>
+            <button class="close-sidebar" id="closeSidebar">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#"><i class="fas fa-home"></i> Trang Chủ</a></li>
+            <li><a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/ng%C6%B0%E1%BB%9Di-th%E1%BA%AFp-%C4%91%C3%A8n?authuser=0"><i class="fas fa-user-graduate"></i> Người Thắp Đèn</a></li>
+            <li><a href="dinh_huong.html"><i class="fas fa-compass"></i> Định Hướng Nghề Nghiệp</a></li>
+            <li><a href="phuong_phap.html"><i class="fas fa-book-open"></i> Phương Pháp Học Tập</a></li>
+            <li><a href="#" id="class12Link"><i class="fas fa-chalkboard-teacher"></i> Khóa Học Lớp 12</a></li>
+            <li><a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/k%C3%AAnh-h%E1%BB%8Dc-t%E1%BA%ADp?authuser=0"><i class="fas fa-play-circle"></i> Kênh Học Tập</a></li>
+            <li><a href="thoi_bieu.html"><i class="fas fa-calendar-alt"></i> Thời Khóa Biểu</a></li>
+            <li><a href="tai_lieu.html"><i class="fas fa-file-alt"></i> Tài Liệu</a></li>
+            <li><a href="https://discord.gg/3RuSzqBA"><i class="fab fa-discord"></i> Cộng Đồng Discord</a></li>
+            <li><a href="https://studywithme.forumvi.com/"><i class="fas fa-users"></i> Diễn Đàn Học Tập</a></li>
+            <li><a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/quiz-ng%E1%BA%AFn?authuser=0/"><i class="fa-regular fa-circle-question"></i>Quiz Ngắn</a></li>
+        </ul>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="logo-icon"><i class="fas fa-graduation-cap"></i></span>
+                    <h1>StudyWithMe</h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-home"></i> Trang Chủ</a></li>
+                        <li><a href="gioi_thieu.html"><i class="fas fa-info-circle"></i> Giới Thiệu</a></li>
+                    
+                        <li><a href="lien_he.html"><i class="fas fa-envelope"></i> Liên Hệ</a></li>
+                    </ul>
+                </nav>
+                <div class="auth-buttons" id="authButtons">
+                    <button class="btn btn-outline" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</button>
+                    <button class="btn btn-primary" id="signupBtn"><i class="fas fa-user-plus"></i> Đăng Ký</button>
+                </div>
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <span class="user-name" id="userName">Tài khoản</span>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="#"><i class="fas fa-user-circle"></i> Thông tin tài khoản</a>
+                    <a href="#"><i class="fas fa-cog"></i> Cài đặt</a>
+                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Học Tập Thông Minh, Tương Lai Rộng Mở</h2>
+                <p>Khám phá phương pháp học tập hiệu quả, kết nối với cộng đồng học tập sôi động và định hướng tương lai của bạn</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn btn-primary btn-large"><i class="fas fa-play-circle"></i> Bắt Đầu Học Ngay</a>
+                    <a href="#" class="btn btn-outline btn-large" style="color: white; border-color: white;"><i class="fas fa-info-circle"></i> Tìm Hiểu Thêm</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <!-- Features Grid -->
+            <div class="section-title">
+                <h2 style="font-family:Bungee">Khám Phá Hệ Thống Học Tập</h2>
+                <p style="font-family:Dancing Script">Trải nghiệm phương pháp học tập đa dạng với các công cụ và tài nguyên phong phú</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Người Thắp Đèn -->
+                <div class="feature-card">
+                    <div class="card-image" style="background-image: url('https://plus.unsplash.com/premium_photo-1686593922853-0b6ba460f2c6?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dGglRTElQkElQUZwJTIwcyVDMyVBMW5nJTIwJUM2JUIwJUUxJUJCJTlCYyUyMG0lQzYlQTF8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=600');">
+                    </div>
+                    <div class="card-content">
+                        <h3>Người Thắp Đèn</h3>
+                        <p>Kết nối với những người thầy, người hướng dẫn tâm huyết, truyền cảm hứng và định hướng học tập cho bạn trên hành trình chinh phục tri thức.</p>
+                        <a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/ng%C6%B0%E1%BB%9Di-th%E1%BA%AFp-%C4%91%C3%A8n?authuser=0" class="btn btn-outline">Khám Phá Ngay</a>
+                        <div class="card-stats">
+                            <span><i class="fas fa-users"></i> Nhiều Người Truyền Cảm Hứng</span>
+                            <span><i class="fas fa-star"></i> 4.7/5 Rating</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Định Hướng Nghề Nghiệp -->
+                <div class="feature-card">
+                    <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470');">
+                    </div>
+                    <div class="card-content">
+                        <h3>Định Hướng Nghề Nghiệp</h3>
+                        <p>Tìm hiểu các ngành nghề, xu hướng thị trường lao động và lựa chọn con đường phù hợp với năng lực, sở thích và mục tiêu của bản thân.</p>
+                        <a href="dinh_huong.html" class="btn btn-outline">Khám Phá Ngay</a>
+                        <div class="card-stats">
+                            <span><i class="fas fa-briefcase"></i> Nhiều Ngành Nghề Với Từng Khối Thi</span>
+                            <span><i class="fas fa-chart-line"></i> Xu Hướng Mới</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phương Pháp Học Tập -->
+                <div class="feature-card">
+                    <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80');">
+                    </div>
+                    <div class="card-content">
+                        <h3>Phương Pháp Học Tập</h3>
+                        <p>Khám phá các phương pháp học tập hiệu quả, kỹ năng quản lý thời gian và chiến lược ôn thi thông minh để tối ưu hóa kết quả học tập.</p>
+                        <a href="phuong_phap.html" class="btn btn-outline">Khám Phá Ngay</a>
+                        <div class="card-stats">
+                            <span><i class="fas fa-lightbulb"></i> Rất Nhiều Phương Pháp</span>
+                            <span><i class="fas fa-clock"></i> Tiết Kiệm Thời Gian</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Ngắn -->
+                <div class="quiz-card">
+                    <div class="card-image" style="background-image: url('https://plus.unsplash.com/premium_photo-1678216286021-e81f66761751?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1223');">
+                    </div>
+                    <div class="card-content">
+                        <h3>Quiz Ngắn</h3>
+                        <p>Kiểm tra kiến thức nhanh với các bài quiz ngắn về nhiều chủ đề khác nhau. Hoàn hảo cho việc ôn tập và củng cố kiến thức.</p>
+                        <a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/quiz-ng%E1%BA%AFn?authuser=0" class="btn btn-outline">Thử Ngay</a>
+                        <div class="card-stats">
+                            <span><i class="fas fa-question-circle"></i> Nhiều Chủ Đề</span>
+                            <span><i class="fas fa-clock"></i> 5-10 Phút</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="cta-section">
+                <h2>Sẵn Sàng Bắt Đầu Hành Trình Học Tập?</h2>
+                <p>Tham gia cộng đồng học tập của chúng tôi ngay hôm nay để khám phá tiềm năng của bạn và đạt được mục tiêu học tập</p>
+                <a href="#" class="btn btn-primary btn-large" style="background: white; color: var(--primary);"><i class="fas fa-rocket"></i> Cùng Học Tập Nào!</a>
+            </div>
+
+            <!-- Khóa Học Lớp 12 Section -->
+            <div class="section-title">
+                <h2 style="font-family:Bungee">Khóa Học Lớp 12</h2>
+                <p style="font-family:Dancing Script">Chuẩn bị tốt nhất cho kỳ thi THPT Quốc gia với hệ thống khóa học toàn diện</p>
+            </div>
+
+            <div class="subject-grid">
+                <div class="subject-card">
+                    <div class="subject-icon"><i class="fas fa-square-root-alt"></i></div>
+                    <h4> Toán Học</h4>
+                    <p>Đại số & Giải tích</p>
+                    <a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/c%C3%A1c-kho%C3%A1-h%E1%BB%8Dc-l%E1%BB%9Bp-12/m%C3%B4n-to%C3%A1n?authuser=0" class="btn btn-outline">Thử Ngay</a>
+                </div>
+                <div class="subject-card">
+                    <div class="subject-icon"><i class="fas fa-atom"></i></div>
+                    <h4>Vật Lý</h4>
+                    <p>Cơ học & Điện từ</p>
+                    <a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/c%C3%A1c-kho%C3%A1-h%E1%BB%8Dc-l%E1%BB%9Bp-12/m%C3%B4n-v%E1%BA%ADt-l%C3%AD?authuser=0" class="btn btn-outline">Thử Ngay</a>
+                </div>
+                <div class="subject-card">
+                    <div class="subject-icon"><i class="fas fa-flask"></i></div>
+                    <h4>Hoá Học</h4>
+                    <p>Hóa hữu cơ & vô cơ</p>
+                    <a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/c%C3%A1c-kho%C3%A1-h%E1%BB%8Dc-l%E1%BB%9Bp-12/m%C3%B4n-ho%C3%A1?authuser=0" class="btn btn-outline">Thử Ngay</a>
+                </div>
+                <div class="subject-card">
+                    <div class="subject-icon"><i class="fas fa-dna"></i></div>
+                    <h4>Sinh Học</h4>
+                    <p>Di truyền & Tiến hóa</p>
+                    <a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/c%C3%A1c-kho%C3%A1-h%E1%BB%8Dc-l%E1%BB%9Bp-12/m%C3%B4n-sinh-h%E1%BB%8Dc?authuser=0" class="btn btn-outline">Thử Ngay</a>
+                </div>
+                <div class="subject-card">
+                    <div class="subject-icon"><i class="fas fa-globe-asia"></i></div>
+                    <h4>Địa Lý</h4>
+                    <p>Địa lý tự nhiên & KT-XH</p>
+                    <a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/c%C3%A1c-kho%C3%A1-h%E1%BB%8Dc-l%E1%BB%9Bp-12/m%C3%B4n-%C4%91%E1%BB%8Ba-l%C3%AD?authuser=0" class="btn btn-outline">Thử Ngay</a>
+                </div>
+                <div class="subject-card">
+                    <div class="subject-icon"><i class="fas fa-landmark"></i></div>
+                    <h4>Lịch Sử</h4>
+                    <p>Việt Nam & Thế giới</p>
+                    <a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/c%C3%A1c-kho%C3%A1-h%E1%BB%8Dc-l%E1%BB%9Bp-12/m%C3%B4n-l%E1%BB%8Bch-s%E1%BB%AD?authuser=0" class="btn btn-outline">Thử Ngay</a>
+                </div>
+                <div class="subject-card">
+                    <div class="subject-icon"><i class="fas fa-book"></i></div>
+                    <h4>Ngữ Văn</h4>
+                    <p>Văn học & Tiếng Việt</p>
+                    <a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/c%C3%A1c-kho%C3%A1-h%E1%BB%8Dc-l%E1%BB%9Bp-12/m%C3%B4n-ng%E1%BB%AF-v%C4%83n?authuser=0" class="btn btn-outline">Thử Ngay</a>
+                </div>
+                <div class="subject-card">
+                    <div class="subject-icon"><i class="fas fa-language"></i></div>
+                    <h4>Tiếng Anh</h4>
+                    <p>Ngữ pháp & Kỹ năng</p>
+                    <a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/c%C3%A1c-kho%C3%A1-h%E1%BB%8Dc-l%E1%BB%9Bp-12/m%C3%B4n-ti%E1%BA%BFng-anh?authuser=0" class="btn btn-outline">Thử Ngay</a>
+                </div>
+            </div>
+
+            <!-- Additional Features -->
+            <div class="section-title">
+                <h2 style="font-family:Bungee">Cộng Đồng Học Tập</h2>
+                <p style="font-family:Dancing Script">Kết nối, chia sẻ và học hỏi cùng hàng ngàn học sinh trên khắp cả nước</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Tài Liệu -->
+                <div class="feature-card">
+                    <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80');">
+                    </div>
+                    <div class="card-content">
+                        <h3>Thư Viện Tài Liệu</h3>
+                        <p>Thư viện tài liệu phong phú với đề thi, bài giảng, sách tham khảo và tài liệu học tập chất lượng được cập nhật thường xuyên.</p>
+                        <a href="tai_lieu.html" class="btn btn-outline">Khám Phá Ngay</a>
+                        <div class="card-stats">
+                            <span><i class="fas fa-file-alt"></i> Nhiều Trang Tài Liệu</span>
+                            <span><i class="fas fa-download"></i> Miễn Phí</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cộng Đồng Discord -->
+                <div class="feature-card">
+                    <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1683029096295-7680306aa37d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1332');">
+                    </div>
+                    <div class="card-content">
+                        <h3>Cộng Đồng Discord</h3>
+                        <p>Tham gia cộng đồng học tập sôi động trên Discord để trao đổi, thảo luận và học hỏi cùng nhau trong môi trường tương tác đa chiều.</p>
+                        <a href="https://discord.com/invite/k9K7qRHn" class="btn btn-outline">Tham Gia Ngay</a>
+                        <div class="card-stats">
+                            <span><i class="fab fa-discord"></i> Nhiều Thành Viên</span>
+                            <span><i class="fas fa-comments"></i> Trò Chuyện Trực Tuyến</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diễn Đàn Học Tập -->
+                <div class="feature-card">
+                    <div class="card-image" style="background-image: url('https://plus.unsplash.com/premium_photo-1720744786829-554a9c2e2dbd?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1411');">
+                    </div>
+                    <div class="card-content">
+                        <h3>Diễn Đàn Học Tập</h3>
+                        <p>Diễn đàn học tập với hàng ngàn thành viên, nơi bạn có thể đặt câu hỏi, chia sẻ kiến thức và nhận hỗ trợ từ cộng đồng.</p>
+                        <a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/di%E1%BB%85n-%C4%91%C3%A0n-h%E1%BB%8Dc-t%E1%BA%ADp?authuser=0" class="btn btn-outline">Tham Gia Ngay</a>
+                        <div class="card-stats">
+                            <span><i class="fas fa-users"></i> Nhiều Thành Viên</span>
+                            <span><i class="fas fa-question-circle"></i> Hỏi Đáp 24/7</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Về StudyWithMe</h3>
+                    <ul>
+                        <li><a href="gioi_thieu.html"><i class="fas fa-info-circle"></i> Giới thiệu</a></li>
+                        <li><a href="gioi_thieu.html"><i class="fas fa-users"></i> Đội ngũ</a></li>
+                        <li><a href="gioi_thieu.html"><i class="fas fa-bullseye"></i> Sứ mệnh</a></li>
+                        <li><a href="lien_he.html"><i class="fas fa-phone-alt"></i> Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Hỗ Trợ</h3>
+                    <ul>
+                        <li><a href="ho_tro.html"><i class="fas fa-question-circle"></i> Câu hỏi thường gặp</a></li>
+                    
+                        <li><a href="ho_tro.html"><i class="fas fa-shield-alt"></i> Chính sách bảo mật</a></li>
+                        <li><a href="ho_tro.html"><i class="fas fa-file-contract"></i> Điều khoản dịch vụ</a></li>
+                    </ul>
+                </div>
+                
+                    
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Kết Nối</h3>
+                    <p>Theo dõi chúng tôi trên mạng xã hội để cập nhật thông tin mới nhất</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://discord.com/invite/k9K7qRHn"><i class="fab fa-discord"></i></a>
+                    </div>
+                    <form id="newsletterForm" style="margin-top: 20px;">
+                        <div class="form-group">
+                            <input type="email" id="newsletterEmail" placeholder="Email của bạn" required style="padding: 12px; width: 100%; margin-bottom: 10px; border-radius: 4px; border: none; background: rgba(255,255,255,0.1); color: white;">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; background: var(--primary);">Đăng Ký Nhận Tin</button>
+                    </form>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 StudyWithMe. Tất cả các quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Đăng Nhập -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeLoginModal">&times;</button>
+            <h2>Đăng Nhập</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Đăng Nhập</button>
+            </form>
+            <p style="text-align: center; margin-top: 15px;">
+                Chưa có tài khoản? <a href="#" id="switchToSignup" style="color: var(--primary);">Đăng ký ngay</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Modal Đăng Ký -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeSignupModal">&times;</button>
+            <h2>Đăng Ký</h2>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="signupName">Họ và tên</label>
+                    <input type="text" id="signupName" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Mật khẩu</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Đăng Ký</button>
+            </form>
+            <p style="text-align: center; margin-top: 15px;">
+                Đã có tài khoản? <a href="#" id="switchToLogin" style="color: var(--primary);">Đăng nhập ngay</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Tạo hiệu ứng sao băng
+        function createShootingStars() {
+            const container = document.getElementById('shootingStars');
+            const starCount = 15;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Vị trí ngẫu nhiên
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                // Kích thước ngẫu nhiên
+                const size = Math.random() * 3 + 1;
+                
+                // Thời gian animation ngẫu nhiên
+                const duration = Math.random() * 10 + 5;
+                const delay = Math.random() * 20;
+                
+                star.style.left = `${posX}%`;
+                star.style.top = `${posY}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.animationDuration = `${duration}s`;
+                star.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(star);
+            }
+        }
+        
+        // Sidebar functionality
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const closeSidebar = document.getElementById('closeSidebar');
+        
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.add('active');
+        });
+        
+        closeSidebar.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+        });
+        
+        // Modal functionality
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeSignupModal = document.getElementById('closeSignupModal');
+        const switchToSignup = document.getElementById('switchToSignup');
+        const switchToLogin = document.getElementById('switchToLogin');
+        
+        loginBtn.addEventListener('click', () => {
+            loginModal.style.display = 'flex';
+        });
+        
+        signupBtn.addEventListener('click', () => {
+            signupModal.style.display = 'flex';
+        });
+        
+        closeLoginModal.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+        });
+        
+        closeSignupModal.addEventListener('click', () => {
+            signupModal.style.display = 'none';
+        });
+        
+        switchToSignup.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.style.display = 'none';
+            signupModal.style.display = 'flex';
+        });
+        
+        switchToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            signupModal.style.display = 'none';
+            loginModal.style.display = 'flex';
+        });
+        
+        // Đóng modal khi click bên ngoài
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.style.display = 'none';
+            }
+            if (e.target === signupModal) {
+                signupModal.style.display = 'none';
+            }
+        });
+        
+        // Xử lý form đăng ký nhận tin
+        const newsletterForm = document.getElementById('newsletterForm');
+        newsletterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('newsletterEmail').value;
+            
+            // Gửi email đến kyuu8084@gmail.com
+            // Trong thực tế, bạn cần một backend để xử lý việc gửi email
+            // Ở đây tôi sẽ mô phỏng việc gửi email
+            alert(`Cảm ơn bạn đã đăng ký nhận tin! Thông tin đã được gửi đến máy chủ `);
+            newsletterForm.reset();
+        });
+        
+        // Xử lý form đăng ký
+        const signupForm = document.getElementById('signupForm');
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                alert('Mật khẩu xác nhận không khớp!');
+                return;
+            }
+            
+            // Lưu thông tin đăng ký vào localStorage
+            const userData = {
+                name: name,
+                email: email,
+                password: password
+            };
+            
+            localStorage.setItem('userData', JSON.stringify(userData));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            // Cập nhật giao diện
+            updateUserInterface(name);
+            
+            alert(`Đăng ký thành công! Chào mừng ${name} đến với StudyWithMe!`);
+            signupModal.style.display = 'none';
+            signupForm.reset();
+        });
+        
+        // Xử lý form đăng nhập
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Kiểm tra thông tin đăng nhập
+            const storedUserData = localStorage.getItem('userData');
+            
+            if (storedUserData) {
+                const userData = JSON.parse(storedUserData);
+                
+                if (userData.email === email && userData.password === password) {
+                    // Đăng nhập thành công
+                    localStorage.setItem('isLoggedIn', 'true');
+                    updateUserInterface(userData.name);
+                    
+                    alert(`Đăng nhập thành công! Chào mừng ${userData.name} quay trở lại!`);
+                    loginModal.style.display = 'none';
+                    loginForm.reset();
+                } else {
+                    alert('Email hoặc mật khẩu không đúng!');
+                }
+            } else {
+                alert('Tài khoản không tồn tại. Vui lòng đăng ký!');
+            }
+        });
+        
+        // Cập nhật giao diện khi đã đăng nhập
+        function updateUserInterface(userName) {
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'flex';
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+        }
+        
+        // Kiểm tra trạng thái đăng nhập khi tải trang
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const userData = localStorage.getItem('userData');
+            
+            if (isLoggedIn === 'true' && userData) {
+                const user = JSON.parse(userData);
+                updateUserInterface(user.name);
+            }
+        }
+        
+        // Xử lý đăng xuất
+        const logoutBtn = document.getElementById('logoutBtn');
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('isLoggedIn');
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('userInfo').style.display = 'none';
+            document.getElementById('userDropdown').classList.remove('active');
+            alert('Đã đăng xuất!');
+        });
+        
+        // Xử lý click vào user info
+        const userInfo = document.getElementById('userInfo');
+        const userDropdown = document.getElementById('userDropdown');
+        
+        userInfo.addEventListener('click', () => {
+            userDropdown.classList.toggle('active');
+        });
+        
+        // Đóng dropdown khi click ra ngoài
+        document.addEventListener('click', (e) => {
+            if (!userInfo.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.remove('active');
+            }
+        });
+        
+        // Xử lý click vào Khóa học lớp 12
+        const class12Link = document.getElementById('class12Link');
+        class12Link.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Cuộn đến phần Khóa học lớp 12
+            document.querySelector('.subject-grid').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+        
+        // Thêm hiệu ứng cho các card khi cuộn trang
+        document.addEventListener('DOMContentLoaded', function() {
+            createShootingStars();
+            checkLoginStatus();
+            
+            const featureCards = document.querySelectorAll('.feature-card, .quiz-card, .subject-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            featureCards.forEach(card => {
+                card.style.opacity = 0;
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

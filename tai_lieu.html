@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kho Tàng Học Liệu - Cổng thông tin tài liệu học tập</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4A6CF7;
+            --primary-light: #6B7AE6;
+            --secondary: #4ECDC4;
+            --accent: #FF6B8B;
+            --dark: #1A1D3A;
+            --light: #F7F9FC;
+            --text: #2D3748;
+            --text-light: #718096;
+            --white: #FFFFFF;
+            --gradient-start: #4A6CF7;
+            --gradient-end: #3B5BDB;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --header-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(74, 108, 247, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 107, 139, 0.08) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .header {
+            background: var(--header-bg);
+            color: var(--dark);
+            padding: 3.5rem 0;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.85;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .subject-filters {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 2.2rem;
+            background: var(--header-bg);
+            backdrop-filter: blur(15px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .filter-btn {
+            padding: 14px 26px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.7);
+            color: var(--dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-size: 1.05rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            transition: left 0.7s;
+        }
+
+        .filter-btn:hover::before {
+            left: 100%;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(74, 108, 247, 0.35);
+            border-color: var(--primary);
+        }
+
+        .library-container {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 0 30px;
+        }
+
+        .subject-section {
+            margin-bottom: 3rem;
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .subject-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            z-index: 1;
+        }
+
+        .subject-section:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .subject-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 2.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .subject-header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .subject-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.7rem;
+            position: relative;
+            z-index: 1;
+            font-weight: 700;
+        }
+
+        .subject-header p {
+            opacity: 0.95;
+            font-size: 1.2rem;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+            font-weight: 400;
+        }
+
+        .toggle-icon {
+            font-size: 2.2rem;
+            transition: transform 0.5s ease;
+            position: relative;
+            z-index: 1;
+            color: white;
+        }
+
+        .subject-content {
+            display: none;
+            padding: 0;
+        }
+
+        .subject-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2.5rem;
+            padding: 3rem;
+        }
+
+        .resource-card {
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 18px;
+            padding: 2.5rem;
+            transition: all 0.4s ease;
+            background: var(--card-bg);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            backdrop-filter: blur(10px);
+        }
+
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .resource-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 15px 35px rgba(74, 108, 247, 0.15);
+            transform: translateY(-8px);
+        }
+
+        .resource-card h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+            position: relative;
+            font-weight: 600;
+        }
+
+        .resource-card p {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        .detail-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(74, 108, 247, 0.3);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .detail-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.7s;
+        }
+
+        .detail-link:hover::before {
+            left: 100%;
+        }
+
+        .detail-link:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(74, 108, 247, 0.4);
+        }
+
+        .footer {
+            background: var(--header-bg);
+            color: var(--dark);
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 6rem;
+            position: relative;
+            overflow: hidden;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+
+        .footer p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            font-weight: 400;
+        }
+
+        /* Floating elements for visual interest */
+        .floating-elements {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 10%;
+            left: 10%;
+            animation-duration: 25s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 70%;
+            left: 80%;
+            animation-duration: 30s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            top: 50%;
+            left: 5%;
+            animation-duration: 20s;
+        }
+
+        .floating-element:nth-child(4) {
+            width: 120px;
+            height: 120px;
+            top: 20%;
+            left: 85%;
+            animation-duration: 35s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(20px, 50px) rotate(90deg);
+            }
+            50% {
+                transform: translate(40px, 0) rotate(180deg);
+            }
+            75% {
+                transform: translate(10px, -50px) rotate(270deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .resources-grid {
+                grid-template-columns: 1fr;
+                padding: 2rem;
+                gap: 2rem;
+            }
+            
+            .subject-filters {
+                padding: 1.5rem;
+                gap: 10px;
+            }
+            
+            .filter-btn {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
+            
+            .subject-header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 2rem;
+            }
+            
+            .toggle-icon {
+                align-self: flex-end;
+                margin-top: 1rem;
+            }
+            
+            .resource-card {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+    
+    <header class="header">
+        <h1>Kho Tàng Học Liệu</h1>
+        <p>Khám phá bộ sưu tập website học tập chất lượng - Nơi kết nối bạn với tri thức toàn cầu!</p>
+    </header>
+
+    <div class="subject-filters">
+        <button class="filter-btn active" onclick="filterSubjects('all')">Tất cả môn</button>
+        <button class="filter-btn" onclick="filterSubjects('math')">Toán Học</button>
+        <button class="filter-btn" onclick="filterSubjects('physics')">Vật Lí</button>
+        <button class="filter-btn" onclick="filterSubjects('chemistry')">Hóa Học</button>
+        <button class="filter-btn" onclick="filterSubjects('english')">Tiếng Anh</button>
+        <button class="filter-btn" onclick="filterSubjects('literature')">Văn Học</button>
+        <button class="filter-btn" onclick="filterSubjects('history')">Lịch Sử</button>
+        <button class="filter-btn" onclick="filterSubjects('geography')">Địa Lý</button>
+    </div>
+
+    <div class="library-container">
+        <!-- TOÁN HỌC -->
+        <section class="subject-section" id="math">
+            <div class="subject-header" onclick="toggleSubject('math')">
+                <div>
+                    <h2>🔢 Thư Viện Toán Học</h2>
+                    <p>Tài liệu toán học từ cơ bản đến nâng cao, bài tập, đề thi và phương pháp giải cho học sinh phổ thông</p>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="subject-content" id="math-content">
+                <div class="resources-grid">
+                    <div class="resource-card">
+                        <h3>Toán Math</h3>
+                        <p>Trang web cung cấp kiến thức toán học từ lớp 1 đến 12, với bài giảng chi tiết, bài tập và đề thi thử các cấp.</p>
+                        <a href="https://toanmath.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Vietjack Toán</h3>
+                        <p>Hệ thống bài giải SGK Toán, bài tập nâng cao và đề thi thử THPT Quốc gia môn Toán có lời giải chi tiết.</p>
+                        <a href="https://vietjack.com/giai-toan-lop-12/index.jsp" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>MathVN</h3>
+                        <p>Cộng đồng toán học Việt Nam với tài liệu, đề thi, bài giảng và diễn đàn trao đổi kiến thức toán học.</p>
+                        <a href="https://www.mathvn.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Khan Academy</h3>
+                        <p>Nền tảng học toán quốc tế với video bài giảng và bài tập thực hành cho mọi cấp độ, hoàn toàn miễn phí.</p>
+                        <a href="https://www.khanacademy.org/math" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Wolfram MathWorld</h3>
+                        <p>Bách khoa toàn thư toán học trực tuyến với nguồn tài liệu phong phú từ cơ bản đến chuyên sâu.</p>
+                        <a href="https://mathworld.wolfram.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>TailieuMontoan</h3>
+                        <p>Kho tài liệu toán học phong phú từ cấp tiểu học đến THPT, bao gồm giáo án, đề thi và chuyên đề.</p>
+                        <a href="https://tailieumontoan.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Montoan</h3>
+                        <p>Trang web chuyên về toán học với các tài liệu chọn lọc, đề thi và phương pháp giải toán hiệu quả.</p>
+                        <a href="https://montoan.com.vn/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VẬT LÍ -->
+        <section class="subject-section" id="physics">
+            <div class="subject-header" onclick="toggleSubject('physics')">
+                <div>
+                    <h2>🔬 Thư Viện Vật Lí</h2>
+                    <p>Các website chuyên sâu về Vật Lí với tài liệu từ cơ bản đến nâng cao, thí nghiệm ảo và kiến thức ứng dụng</p>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="subject-content" id="physics-content">
+                <div class="resources-grid">
+                    <div class="resource-card">
+                        <h3>Thư Viện Vật Lý</h3>
+                        <p>Kho tài liệu vật lý phong phú từ cơ bản đến nâng cao dành cho học sinh, sinh viên và giáo viên.</p>
+                        <a href="https://thuvienvatly.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Vật Lý 247</h3>
+                        <p>Website học vật lý trực tuyến với hệ thống bài giảng, đề thi, tài liệu ôn tập từ lớp 6 đến lớp 12.</p>
+                        <a href="https://vatly247.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Vật Lý Phổ Thông</h3>
+                        <p>Trang web cung cấp kiến thức vật lý từ cơ bản đến nâng cao, bài tập và phương pháp giải chi tiết.</p>
+                        <a href="https://vatlypt.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Physics Classroom</h3>
+                        <p>Trang web học vật lý bằng tiếng Anh với các bài học tương tác và hướng dẫn chi tiết về các khái niệm vật lý.</p>
+                        <a href="https://www.physicsclassroom.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>PhET Simulations</h3>
+                        <p>Thí nghiệm vật lý ảo tương tác giúp hiểu sâu các hiện tượng vật lý từ Đại học Colorado Boulder.</p>
+                        <a href="https://phet.colorado.edu/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>HyperPhysics</h3>
+                        <p>Hệ thống kiến thức vật lý được tổ chức dạng sơ đồ tư duy, giúp dễ dàng nắm bắt các khái niệm.</p>
+                        <a href="http://hyperphysics.phy-astr.gsu.edu/hbase/hph.html" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>TailieuOnthi Vật Lý</h3>
+                        <p>Tổng hợp tài liệu vật lý từ lớp 10 đến 12, đề thi giữa kỳ, cuối kỳ và ôn thi THPT Quốc gia.</p>
+                        <a href="https://tailieuonthi.org/category/tai-lieu-thpt/tai-lieu-vat-ly/vat-ly-12/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>HocMai Vật Lý</h3>
+                        <p>Kho tài liệu vật lý đa dạng từ HocMai, bao gồm bài giảng, đề thi và tài liệu ôn tập các cấp.</p>
+                        <a href="https://hocmai.vn/kho-tai-lieu/list.php?category=238" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>ThayDoCongThanh</h3>
+                        <p>Trang web của thầy Đỗ Công Thành với hệ thống tài liệu Vật lý chọn lọc, phương pháp giải nhanh.</p>
+                        <a href="https://thaydocongthanh.vn/tai-lieu" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HÓA HỌC -->
+        <section class="subject-section" id="chemistry">
+            <div class="subject-header" onclick="toggleSubject('chemistry')">
+                <div>
+                    <h2>🧪 Thư Viện Hóa Học</h2>
+                    <p>Tài liệu hóa học phong phú, phương pháp giải bài tập và thí nghiệm ảo cho học sinh phổ thông</p>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="subject-content" id="chemistry-content">
+                <div class="resources-grid">
+                    <div class="resource-card">
+                        <h3>Hóa Học & Ứng Dụng</h3>
+                        <p>Trang web cung cấp kiến thức hóa học từ cơ bản đến nâng cao, bài tập và thí nghiệm hóa học thú vị.</p>
+                        <a href="https://hoahoc.org/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Hóa Học Phổ Thông</h3>
+                        <p>Trang web học hóa học với các bài giảng, bài tập và đề thi từ cơ bản đến nâng cao cho học sinh.</p>
+                        <a href="https://hoahocphothong.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Vietjack Hóa Học</h3>
+                        <p>Hệ thống bài giải SGK Hóa học, bài tập nâng cao và đề thi thử THPT Quốc gia có lời giải chi tiết.</p>
+                        <a href="https://vietjack.com/giai-hoa-lop-12/index.jsp" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>American Chemical Society</h3>
+                        <p>Trang web chính thức của Hiệp hội Hóa học Hoa Kỳ với nhiều tài nguyên giáo dục hóa học chất lượng.</p>
+                        <a href="https://www.acs.org/education.html" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Royal Society of Chemistry</h3>
+                        <p>Hiệp hội Hóa học Hoàng gia Anh cung cấp tài liệu học tập và nghiên cứu hóa học đa dạng.</p>
+                        <a href="https://www.rsc.org/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Chemguide</h3>
+                        <p>Hướng dẫn học hóa học bằng tiếng Anh với giải thích chi tiết các khái niệm và phản ứng hóa học.</p>
+                        <a href="https://www.chemguide.co.uk/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>VNTeach Hóa Học</h3>
+                        <p>Tài liệu môn Hóa học đa dạng từ cơ bản đến nâng cao, phục vụ cho học sinh và giáo viên.</p>
+                        <a href="https://www.vnteach.com/tai-lieu-mon-hoa-hoc" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>TailieuGiaoVien Hóa Học</h3>
+                        <p>Tài liệu Hóa học chuyên sâu dành cho giáo viên, bao gồm giáo án, đề thi và phương pháp giảng dạy.</p>
+                        <a href="https://www.tailieugiaovien.com/p/tai-lieu-hoa-hoc.html" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>ThuVienTailieu Hóa Học</h3>
+                        <p>Thư viện tài liệu Hóa học phong phú, đa dạng cấp độ từ THCS đến THPT và ôn thi đại học.</p>
+                        <a href="https://thuvientailieu.org/tai-lieu/hoa-hoc/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TIẾNG ANH -->
+        <section class="subject-section" id="english">
+            <div class="subject-header" onclick="toggleSubject('english')">
+                <div>
+                    <h2>🌐 Thư Viện Tiếng Anh</h2>
+                    <p>Nâng cao kỹ năng tiếng Anh với các nền tảng học tập tương tác và tài liệu chuẩn quốc tế</p>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="subject-content" id="english-content">
+                <div class="resources-grid">
+                    <div class="resource-card">
+                        <h3>Tiếng Anh Mỗi Ngày</h3>
+                        <p>Trang web học tiếng Anh với phương pháp học mỗi ngày, bài học đa dạng và lộ trình học rõ ràng.</p>
+                        <a href="https://tienganhmoingay.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Tiếng Anh 123</h3>
+                        <p>Trang web học tiếng Anh trực tuyến với các bài học đa dạng, bài tập thực hành và kiểm tra trình độ.</p>
+                        <a href="https://www.tienganh123.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>BBC Learning English</h3>
+                        <p>Chương trình học tiếng Anh từ BBC với các bài học đa dạng, tin tức và tài liệu học tập phong phú.</p>
+                        <a href="https://www.bbc.co.uk/learningenglish/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>British Council</h3>
+                        <p>Hội đồng Anh cung cấp nhiều tài nguyên học tiếng Anh miễn phí cho mọi trình độ và lứa tuổi.</p>
+                        <a href="https://learnenglish.britishcouncil.org/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Duolingo</h3>
+                        <p>Ứng dụng học ngôn ngữ phổ biến với phương pháp học thú vị, tương tác và hoàn toàn miễn phí.</p>
+                        <a href="https://www.duolingo.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>ELLLO</h3>
+                        <p>Trang web luyện nghe tiếng Anh với hàng ngàn bài nghe từ người bản xứ trên khắp thế giới.</p>
+                        <a href="https://www.elllo.org/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VĂN HỌC -->
+        <section class="subject-section" id="literature">
+            <div class="subject-header" onclick="toggleSubject('literature')">
+                <div>
+                    <h2>📚 Thư Viện Văn Học</h2>
+                    <p>Khám phá thế giới văn chương với các tác phẩm kinh điển, phân tích tác phẩm và hướng dẫn viết văn</p>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="subject-content" id="literature-content">
+                <div class="resources-grid">
+                    <div class="resource-card">
+                        <h3>VnDoc Ngữ Văn</h3>
+                        <p>Kho tài liệu Ngữ văn phong phú với các bài văn mẫu, phân tích tác phẩm và đề thi các cấp.</p>
+                        <a href="https://vndoc.com/ngu-van" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Vietjack Ngữ Văn</h3>
+                        <p>Hệ thống bài giải SGK Ngữ văn, bài tập nâng cao và đề thi thử THPT Quốc gia có lời giải chi tiết.</p>
+                        <a href="https://vietjack.com/soan-van-12/index.jsp" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Văn Mẫu TV</h3>
+                        <p>Tuyển tập hàng ngàn bài văn mẫu từ lớp 1 đến 12, phân tích tác phẩm và hướng dẫn viết văn.</p>
+                        <a href="https://vanmau.tv/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Project Gutenberg</h3>
+                        <p>Thư viện sách điện tử miễn phí với hơn 60,000 tác phẩm văn học kinh điển từ khắp nơi trên thế giới.</p>
+                        <a href="https://www.gutenberg.org/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Poetry Foundation</h3>
+                        <p>Tổ chức phi lợi nhuận dành cho thơ ca với kho tàng thơ đồ sộ và các bài phân tích chuyên sâu.</p>
+                        <a href="https://www.poetryfoundation.org/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>LitCharts</h3>
+                        <p>Tài liệu hướng dẫn đọc hiểu văn học với sơ đồ tư duy, phân tích chi tiết các tác phẩm kinh điển.</p>
+                        <a href="https://www.litcharts.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LỊCH SỬ -->
+        <section class="subject-section" id="history">
+            <div class="subject-header" onclick="toggleSubject('history')">
+                <div>
+                    <h2>⏳ Thư Viện Lịch Sử</h2>
+                    <p>Tìm hiểu lịch sử Việt Nam và thế giới qua các tài liệu, hình ảnh và video tư liệu quý giá</p>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="subject-content" id="history-content">
+                <div class="resources-grid">
+                    <div class="resource-card">
+                        <h3>Nghiên Cứu Lịch Sử</h3>
+                        <p>Trang web chuyên về nghiên cứu lịch sử Việt Nam với nhiều tài liệu quý và bài viết chuyên sâu.</p>
+                        <a href="https://nghiencuulichsu.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Vietjack Lịch Sử</h3>
+                        <p>Hệ thống bài giải SGK Lịch sử, bài tập nâng cao và đề thi thử THPT Quốc gia có lời giải chi tiết.</p>
+                        <a href="https://vietjack.com/giai-bai-tap-lich-su-12/index.jsp" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>History.com</h3>
+                        <p>Kênh lịch sử nổi tiếng với các bài viết, video tài liệu và sự kiện lịch sử hấp dẫn.</p>
+                        <a href="https://www.history.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>BBC History</h3>
+                        <p>Chuyên mục lịch sử của BBC với các bài viết chuyên sâu, tài liệu và chương trình về lịch sử thế giới.</p>
+                        <a href="https://www.bbc.co.uk/history" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Ancient History Encyclopedia</h3>
+                        <p>Bách khoa toàn thư về lịch sử cổ đại với hàng ngàn bài viết về các nền văn minh cổ.</p>
+                        <a href="https://www.ancient.eu/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>ThuVienHocLieu Lịch Sử</h3>
+                        <p>Tài liệu Lịch sử đa dạng với các chuyên đề, bài tập trắc nghiệm, đề kiểm tra và đề thi học kỳ.</p>
+                        <a href="https://thuvienhoclieu.com/tai-lieu-lich-su/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>TailieuOnthi Lịch Sử</h3>
+                        <p>Tổng hợp tài liệu Lịch sử từ lớp 10 đến 12, đề thi giữa kỳ, cuối kỳ và ôn thi THPT Quốc gia.</p>
+                        <a href="https://tailieuonthi.org/category/tai-lieu-thpt/lich-su/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ĐỊA LÝ -->
+        <section class="subject-section" id="geography">
+            <div class="subject-header" onclick="toggleSubject('geography')">
+                <div>
+                    <h2>🌍 Thư Viện Địa Lý</h2>
+                    <p>Khám phá thế giới qua bản đồ, kiến thức địa lý tự nhiên và xã hội, các hiện tượng thiên nhiên</p>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="subject-content" id="geography-content">
+                <div class="resources-grid">
+                    <div class="resource-card">
+                        <h3>Vietjack Địa Lý</h3>
+                        <p>Hệ thống bài giải SGK Địa lý, bài tập nâng cao và đề thi thử THPT Quốc gia có lời giải chi tiết.</p>
+                        <a href="https://vietjack.com/giai-bai-tap-dia-li-12/index.jsp" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>National Geographic</h3>
+                        <p>Tổ chức địa lý hàng đầu thế giới với các bài báo, hình ảnh và video về thiên nhiên, văn hóa toàn cầu.</p>
+                        <a href="https://www.nationalgeographic.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>World Atlas</h3>
+                        <p>Bộ sưu tập bản đồ toàn diện với thông tin chi tiết về các quốc gia, thành phố và đặc điểm địa lý.</p>
+                        <a href="https://www.worldatlas.com/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>Google Earth</h3>
+                        <p>Công cụ khám phá địa lý trực quan với hình ảnh vệ tinh và bản đồ 3D của toàn bộ Trái Đất.</p>
+                        <a href="https://earth.google.com/web/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>ThuVienHocLieu Địa Lý</h3>
+                        <p>Tài liệu Địa lý download miễn phí gồm các chuyên đề, bài tập trắc nghiệm, đề kiểm tra có đáp án.</p>
+                        <a href="https://thuvienhoclieu.com/tai-lieu-dia-li/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                    <div class="resource-card">
+                        <h3>TailieuOnthi Địa Lý</h3>
+                        <p>Tổng hợp tài liệu môn Địa Lý từ lớp 10 tới lớp 12: chuyên đề, đề thi giữa kỳ, cuối kỳ và ôn thi THPT.</p>
+                        <a href="https://tailieuonthi.org/category/tai-lieu-thpt/dia-ly/" class="detail-link" target="_blank">Truy cập ngay</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>© 2025 Kho Tàng Học Liệu - Kết nối tri thức, chắp cánh tương lai</p>
+    </footer>
+
+    <script>
+        function filterSubjects(subject) {
+            // Ẩn tất cả các section
+            const allSections = document.querySelectorAll('.subject-section');
+            allSections.forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Hiển thị section được chọn hoặc tất cả
+            if (subject === 'all') {
+                allSections.forEach(section => {
+                    section.style.display = 'block';
+                });
+            } else {
+                const targetSection = document.getElementById(subject);
+                if (targetSection) {
+                    targetSection.style.display = 'block';
+                }
+            }
+            
+            // Cập nhật trạng thái active cho nút
+            const allButtons = document.querySelectorAll('.filter-btn');
+            allButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+        
+        function toggleSubject(subjectId) {
+            const content = document.getElementById(`${subjectId}-content`);
+            const icon = document.querySelector(`#${subjectId} .toggle-icon`);
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('active');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+        
+        // Mặc định hiển thị tất cả khi trang được tải
+        document.addEventListener('DOMContentLoaded', function() {
+            filterSubjects('all');
+        });
+    </script>
+</body>
+</html>
