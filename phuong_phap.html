@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phương Pháp Học Tập - StudyWithMe</title>
+    <title>Phương Pháp Học Tập Nâng Cao - StudyWithMe</title>
     <!-- Import elegant fonts from Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +30,6 @@
         body {
             font-family: 'Inter', sans-serif;
             color: var(--text-dark);
-            /* Updated to sky blue gradient background */
             background: linear-gradient(135deg, #e0f2ff 0%, #87ceeb 50%, #b6e0fe 100%);
             background-attachment: fixed;
             line-height: 1.6;
@@ -155,6 +154,7 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+            cursor: pointer;
         }
 
         .method-card h3 {
@@ -194,6 +194,93 @@
             background: var(--primary-light);
             color: var(--text-dark);
             transform: translateY(-2px);
+        }
+
+        /* Method Details Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2rem auto;
+            padding: 2.5rem;
+            border-radius: 12px;
+            max-width: 800px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--primary-dark);
+        }
+
+        .method-details h2 {
+            margin-top: 0;
+            border-left: none;
+            padding-left: 0;
+        }
+
+        .method-info-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(237, 221, 83, 0.1);
+            border-radius: 8px;
+        }
+
+        .method-info-section h3 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .method-info-section h3:before {
+            content: "•";
+            margin-right: 0.5rem;
+            color: var(--accent);
+            font-size: 1.5rem;
+        }
+
+        .steps-list {
+            padding-left: 1.5rem;
+        }
+
+        .steps-list li {
+            margin-bottom: 0.8rem;
+        }
+
+        .subjects-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .subject-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
 
         /* Quiz Section */
@@ -253,6 +340,11 @@
             border-color: var(--primary-light);
         }
 
+        .quiz-option.selected {
+            background: #E2F0CB;
+            border-color: var(--primary-light);
+        }
+
         .submit-quiz {
             padding: 1rem 2.5rem;
             background: var(--primary-dark);
@@ -293,6 +385,12 @@
             background: rgba(255, 255, 255, 0.7);
             border-radius: 8px;
             border-left: 4px solid var(--accent);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .recommended-method:hover {
+            transform: translateY(-3px);
         }
 
         /* Footer */
@@ -317,25 +415,33 @@
         .method-card[data-subjects*="hoa-hoc"] .subject-tag { background: #FFC8DD; }
         .method-card[data-subjects*="sinh-hoc"] .subject-tag { background: #BDE0FE; }
         .method-card[data-subjects*="ky-nang"] .subject-tag { background: #C7CEEA; }
+
+        .subject-badge.toan { background: #FF9AA2; }
+        .subject-badge.van { background: #FFB7B2; }
+        .subject-badge.anh { background: #FFDAC1; }
+        .subject-badge.khoa-hoc { background: #E2F0CB; }
+        .subject-badge.lich-su { background: #B5EAD7; }
+        .subject-badge.dia-ly { background: #A2D2FF; }
+        .subject-badge.vat-ly { background: #CDB4DB; }
+        .subject-badge.hoa-hoc { background: #FFC8DD; }
+        .subject-badge.sinh-hoc { background: #BDE0FE; }
+        .subject-badge.ky-nang { background: #C7CEEA; }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <h1>Phương Pháp Học Tập - StudyWithMe</h1>
+            <h1>Phương Pháp Học Tập Nâng Cao - StudyWithMe</h1>
             <p class="tagline">Khám phá các phương pháp học hiệu quả - Tìm ra phong cách phù hợp nhất với bạn</p>
         </div>
     </header>
-
-    
-
 
     <div class="container">
         <!-- Introduction -->
         <section class="card">
             <h2>Khám Phá Cách Học Tập Hiệu Quả</h2>
             <p>Trang web này cung cấp cho bạn bộ sưu tập đầy đủ các phương pháp học tập đã được chứng minh hiệu quả, phân loại theo môn học và phong cách học tập. Dù bạn đang học Toán, Văn, Ngoại ngữ hay bất kỳ môn học nào, chúng tôi đều có phương pháp phù hợp.</p>
-            <p>Hãy bắt đầu bằng cách khám phá các phương pháp bên dưới hoặc làm bài trắc nghiệm ngắn 8 câu để tìm ra phương pháp phù hợp nhất với bạn.</p>
+            <p>Hãy bắt đầu bằng cách khám phá các phương pháp bên dưới hoặc làm bài trắc nghiệm ngắn để tìm ra phương pháp phù hợp nhất với bạn.</p>
         </section>
 
         <!-- Filter System -->
@@ -359,245 +465,15 @@
         <!-- Methods List -->
         <section>
             <h2>Các Phương Pháp Học Tập</h2>
-            <div class="methods-grid">
-                <!-- Method 1 -->
-                <div class="card method-card" data-subjects="anh van">
-                    <h3>Phương Pháp SQ3R <span class="subject-tag">Tiếng Anh • Văn</span></h3>
-                    <p>SQ3R là phương pháp đọc hiểu hiệu quả, đặc biệt phù hợp với các môn đòi hỏi đọc tài liệu phức tạp. Phương pháp này gồm 5 bước: Survey, Question, Read, Recite, Review.</p>
-                    <a href="https://zim.vn/phuong-phap-hoc-sq3r" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 2 -->
-                <div class="card method-card" data-subjects="toan khoa-hoc vat-ly">
-                    <h3>Sơ Đồ Tư Duy (Mindmap) <span class="subject-tag">Toán • Khoa Học</span></h3>
-                    <p>Sử dụng sơ đồ tư duy giúp bạn tổ chức thông tin một cách trực quan, kết nối các khái niệm và ghi nhớ tốt hơn. Phương pháp này đặc biệt hiệu quả cho các môn có nhiều khái niệm liên quan.</p>
-                    <a href="https://dainam.edu.vn/vi/tin-tuc/ban-do-tu-duy-phuong-phap-day-va-hoc-hieu-qua" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 3 -->
-                <div class="card method-card" data-subjects="ky-nang">
-                    <h3>Kỹ Thuật Pomodoro <span class="subject-tag">Kỹ Năng</span></h3>
-                    <p>Pomodoro giúp bạn quản lý thời gian học tập hiệu quả bằng cách chia nhỏ thời gian thành các phiên tập trung 25 phút, ngắt quãng bởi các khoảng nghỉ ngắn. Phương pháp này phù hợp với mọi môn học.</p>
-                    <a href="https://www.fahasa.com/blog/cai-thien-tap-trung-khi-doc-sach-voi-phuong-phap-qua-ca-chua-pomodoro/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 4 -->
-                <div class="card method-card" data-subjects="toan vat-ly">
-                    <h3>Giải Bài Toán Ngược <span class="subject-tag">Toán • Vật Lý</span></h3>
-                    <p>Bắt đầu từ kết quả và tìm cách chứng minh ngược lại giúp phát triển tư duy logic và hiểu sâu bản chất vấn đề. Phương pháp này đặc biệt hiệu quả với môn Toán và Vật lý.</p>
-                    <a href="https://vi.wikipedia.org/wiki/B%C3%A0i_to%C3%A1n_ng%C6%B0%E1%BB%A3c" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 5 -->
-                <div class="card method-card" data-subjects="lich-su van dia-ly">
-                    <h3>Học Qua Sự Kiện <span class="subject-tag">Lịch Sử • Văn • Địa Lý</span></h3>
-                    <p>Tạo dòng thời gian và kết nối các sự kiện giúp bạn hiểu mối quan hệ nhân quả và ghi nhớ thông tin lâu hơn. Phù hợp với các môn xã hội như Lịch sử, Địa lý, Văn học.</p>
-                </div>
-
-                <!-- Method 6 -->
-                <div class="card method-card" data-subjects="anh van">
-                    <h3>Học Qua Tình Huống <span class="subject-tag">Tiếng Anh • Văn</span></h3>
-                    <p>Áp dụng ngôn ngữ hoặc kiến thức vào các tình huống thực tế giúp tăng khả năng ghi nhớ và ứng dụng. Đặc biệt hiệu quả với việc học ngoại ngữ và văn học.</p>
-                    <a href="https://nld.com.vn/giao-duc-khoa-hoc/phuong-phap-hoc-bang-tinh-huong-48533.htm" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 7 -->
-                <div class="card method-card" data-subjects="toan vat-ly hoa-hoc">
-                    <h3>Học Theo Vấn Đề <span class="subject-tag">Toán • Lý • Hóa</span></h3>
-                    <p>Tập trung vào giải quyết các vấn đề cụ thể thay vì học lý thuyết suông. Phương pháp này giúp phát triển kỹ năng giải quyết vấn đề và tư duy phân tích.</p>
-                    <a href="http://tieuhocauco.pgdrachgia.edu.vn/ppdh-va-ktdh/phuong-phap-va-ky-thuat-day-hoc/cac-phuong-phap-nghien-cuu/phuong-phap-nghien-cuu-hoc-tap-dua-tren-van-de" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 8 -->
-                <div class="card method-card" data-subjects="sinh-hoc hoa-hoc">
-                    <h3>Học Bằng Hình Ảnh <span class="subject-tag">Sinh Học • Hóa Học</span></h3>
-                    <p>Sử dụng hình ảnh, sơ đồ và biểu đồ để hiểu và ghi nhớ các quá trình phức tạp. Đặc biệt hiệu quả với các môn khoa học như Sinh học và Hóa học.</p>
-                    <a href="https://www.verywellmind.com/visual-learning-style-2795162" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 9 -->
-                <div class="card method-card" data-subjects="ky-nang">
-                    <h3>Phương Pháp Feynman <span class="subject-tag">Kỹ Năng</span></h3>
-                    <p>Giải thích một khái niệm phức tạp bằng ngôn ngữ đơn giản như thể bạn đang dạy cho một người mới. Phương pháp này giúp bạn xác định các lỗ hổng trong hiểu biết của mình.</p>
-                    <a href="https://blog.slimcrm.vn/quan-tri/feynman-technique-la-gi" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 10 -->
-                <div class="card method-card" data-subjects="anh">
-                    <h3>Phương Pháp Shadowing <span class="subject-tag">Tiếng Anh</span></h3>
-                    <p>Lặp lại ngay lập tức những gì bạn nghe được trong khi học ngoại ngữ. Phương pháp này giúp cải thiện phát âm, ngữ điệu và phản xạ giao tiếp.</p>
-                    <a href="https://ielts.idp.com/vietnam/prepare/article-what-is-shadowing" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 11 -->
-                <div class="card method-card" data-subjects="toan">
-                    <h3>Học Qua Trò Chơi <span class="subject-tag">Toán Học</span></h3>
-                    <p>Áp dụng các nguyên tắc toán học vào trò chơi và câu đố để làm cho việc học trở nên thú vị và tương tác hơn. Phù hợp cho việc học các khái niệm toán học trừu tượng.</p>
-                    <a href="https://thedeweyschools.edu.vn/hoc-thong-qua-choi/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 12 -->
-                <div class="card method-card" data-subjects="van">
-                    <h3>Phương Pháp Viết Tự Do <span class="subject-tag">Ngữ Văn</span></h3>
-                    <p>Viết liên tục trong một khoảng thời gian nhất định mà không dừng lại để chỉnh sửa. Phương pháp này giúp phát triển kỹ năng viết và khả năng diễn đạt ý tưởng.</p>
-                    <a href="https://www.vietchualanh.vn/post/c%C3%A1c-ph%C6%B0%C6%A1ng-ph%C3%A1p-vi%E1%BA%BFt-vi%E1%BA%BFt-t%E1%BB%B1-do-free-writing" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 13 -->
-                <div class="card method-card" data-subjects="lich-su dia-ly">
-                    <h3>Học Theo Dự Án <span class="subject-tag">Lịch Sử • Địa Lý</span></h3>
-                    <p>Tìm hiểu kiến thức thông qua việc thực hiện một dự án cụ thể. Phương pháp này giúp kết nối lý thuyết với thực tế và phát triển kỹ năng nghiên cứu.</p>
-                    <a href="https://thedeweyschools.edu.vn/hoc-tap-qua-du-an/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 14 -->
-                <div class="card method-card" data-subjects="vat-ly hoa-hoc">
-                    <h3>Học Qua Thí Nghiệm <span class="subject-tag">Vật Lý • Hóa Học</span></h3>
-                    <p>Thực hiện các thí nghiệm để quan sát và hiểu các hiện tượng khoa học. Phương pháp này giúp củng cố lý thuyết và phát triển kỹ năng quan sát, phân tích.</p>
-                </div>
-
-                <!-- Method 15 -->
-                <div class="card method-card" data-subjects="ky-nang">
-                    <h3>Kỹ Thuật Ghi Chú Cornell <span class="subject-tag">Kỹ Năng</span></h3>
-                    <p>Phương pháp ghi chú hệ thống giúp tổ chức thông tin hiệu quả, dễ dàng ôn tập và ghi nhớ. Phù hợp với mọi môn học và các buổi ghi chú bài giảng.</p>
-                    <a href="https://agilebreakfast.vn/cornell-notes-phuong-phap-ghi-chep-hieu-qua/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 16 -->
-                <div class="card method-card" data-subjects="sinh-hoc">
-                    <h3>Học Bằng Sơ Đồ Phân Cấp <span class="subject-tag">Sinh Học</span></h3>
-                    <p>Tổ chức thông tin theo cấu trúc phân cấp từ tổng quát đến chi tiết. Đặc biệt hiệu quả cho các môn có nhiều phân loại và hệ thống phức tạp như Sinh học.</p>
-                </div>
-
-                <!-- Method 17 -->
-                <div class="card method-card" data-subjects="van">
-                    <h3>Phương Pháp Đọc Chủ Động <span class="subject-tag">Ngữ Văn</span></h3>
-                    <p>Tương tác với văn bản bằng cách đặt câu hỏi, ghi chú và tóm tắt trong khi đọc. Phương pháp này giúp hiểu sâu và ghi nhớ nội dung văn bản tốt hơn.</p>
-                    <a href="https://basmo.app/what-is-active-reading/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 18 -->
-                <div class="card method-card" data-subjects="toan">
-                    <h3>Học Qua Giải Bài Tập <span class="subject-tag">Toán Học</span></h3>
-                    <p>Học các khái niệm toán học thông qua việc giải nhiều dạng bài tập khác nhau. Phương pháp này giúp củng cố kiến thức và phát triển kỹ năng giải quyết vấn đề.</p>
-                    <a href="https://www.khanacademy.org/math" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 19 -->
-                <div class="card method-card" data-subjects="anh">
-                    <h3>Phương Pháp Học Từ Vựng <span class="subject-tag">Tiếng Anh</span></h3>
-                    <p>Sử dụng flashcards, ứng dụng và kỹ thuật lặp lại ngắt quãng để ghi nhớ từ vựng hiệu quả. Phương pháp này giúp mở rộng vốn từ vựng nhanh chóng.</p>
-                </div>
-
-                <!-- Method 20 -->
-                <div class="card method-card" data-subjects="lich-su">
-                    <h3>Học Theo Chủ Đề <span class="subject-tag">Lịch Sử</span></h3>
-                    <p>Tập trung vào các chủ đề cụ thể thay vì học theo trình tự thời gian. Phương pháp này giúp hiểu sâu các sự kiện và xu hướng lịch sử theo chủ đề.</p>
-                </div>
-
-                <!-- Method 21 -->
-                <div class="card method-card" data-subjects="dia-ly">
-                    <h3>Học Bằng Bản Đồ <span class="subject-tag">Địa Lý</span></h3>
-                    <p>Sử dụng bản đồ, atlas và công cụ trực quan để học về địa lý tự nhiên và nhân văn. Phương pháp này giúp phát triển kỹ năng không gian và hiểu biết về thế giới.</p>
-                </div>
-
-                <!-- Method 22 -->
-                <div class="card method-card" data-subjects="hoa-hoc">
-                    <h3>Học Bằng Mô Hình <span class="subject-tag">Hóa Học</span></h3>
-                    <p>Sử dụng mô hình phân tử và công cụ trực quan để hiểu cấu trúc và phản ứng hóa học. Phương pháp này giúp hình dung các khái niệm trừu tượng trong hóa học.</p>
-                </div>
-
-                <!-- Method 23 -->
-                <div class="card method-card" data-subjects="vat-ly">
-                    <h3>Học Qua Ứng Dụng <span class="subject-tag">Vật Lý</span></h3>
-                    <p>Áp dụng các nguyên lý vật lý vào các tình huống thực tế và công nghệ hàng ngày. Phương pháp này giúp thấy được sự liên quan của vật lý trong cuộc sống.</p>
-                </div>
-
-                <!-- Method 24 -->
-                <div class="card method-card" data-subjects="ky-nang">
-                    <h3>Phương Pháp Học Nhóm <span class="subject-tag">Kỹ Năng</span></h3>
-                    <p>Học tập cùng với những người khác để thảo luận, chia sẻ ý tưởng và giải quyết vấn đề cùng nhau. Phương pháp này giúp phát triển kỹ năng giao tiếp và hợp tác.</p>
-                    <a href="https://qnextech.com/vi/blog/what-is-group-learning/#h-the-way-of-group-work" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 25 -->
-                <div class="card method-card" data-subjects="sinh-hoc">
-                    <h3>Học Qua Quan Sát <span class="subject-tag">Sinh Học</span></h3>
-                    <p>Quan sát các sinh vật và hiện tượng tự nhiên để hiểu các nguyên lý sinh học. Phương pháp này giúp phát triển kỹ năng quan sát và tư duy khoa học.</p>
-                </div>
-
-                <!-- Method 26 -->
-                <div class="card method-card" data-subjects="van">
-                    <h3>Phương Pháp Phân Tích Văn Bản <span class="subject-tag">Ngữ Văn</span></h3>
-                    <p>Phân tích cấu trúc, ngôn ngữ và ý nghĩa của văn bản văn học. Phương pháp này giúp phát triển kỹ năng phân tích và diễn giải văn học.</p>
-                    <a href="https://owl.purdue.edu/owl/subject_specific_writing/writing_in_literature/literary_terms/index.html" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 27 -->
-                <div class="card method-card" data-subjects="toan">
-                    <h3>Học Qua Câu Đố Logic <span class="subject-tag">Toán Học</span></h3>
-                    <p>Giải các câu đố logic và toán học để phát triển tư duy phản biện và kỹ năng giải quyết vấn đề. Phương pháp này làm cho việc học toán trở nên thú vị và thử thách.</p>
-                </div>
-
-                <!-- Method 28 -->
-                <div class="card method-card" data-subjects="anh">
-                    <h3>Phương Pháp Học Toàn Diện <span class="subject-tag">Tiếng Anh</span></h3>
-                    <p>Kết hợp nhiều kỹ năng nghe, nói, đọc, viết trong một buổi học. Phương pháp này giúp phát triển toàn diện khả năng ngôn ngữ.</p>
-                </div>
-
-                <!-- Method 29 -->
-                <div class="card method-card" data-subjects="ky-nang">
-                    <h3>Kỹ Thuật Tự Hỏi Đáp <span class="subject-tag">Kỹ Năng</span></h3>
-                    <p>Tự đặt câu hỏi và trả lời về nội dung đang học. Phương pháp này giúp kiểm tra sự hiểu biết và củng cố kiến thức.</p>
-                </div>
-
-                <!-- Method 30 -->
-                <div class="card method-card" data-subjects="khoa-hoc">
-                    <h3>Học Qua Thực Hành <span class="subject-tag">Khoa Học</span></h3>
-                    <p>Áp dụng kiến thức khoa học vào các hoạt động thực hành và dự án thực tế. Phương pháp này giúp hiểu sâu các nguyên lý khoa học và phát triển kỹ năng thực hành.</p>
-                </div>
-
-                <!-- Method 31 -->
-                <div class="card method-card" data-subjects="ky-nang">
-                    <h3>Phương Pháp Simon <span class="subject-tag">Kỹ Năng</span></h3>
-                    <p>Một phương pháp ghi nhớ dựa trên việc lặp lại thông tin theo các khoảng thời gian tăng dần. Phương pháp này giúp củng cố trí nhớ dài hạn.</p>
-                    <a href="https://max-edu.org/blog/coaching-cung-thay-max-3/phuong-phap-hoc-simon-hoc-thuoc-nhanh-va-nho-lau-khong-con-qua-kho-151" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 32 -->
-                <div class="card method-card" data-subjects="ky-nang">
-                    <h3>Phương Pháp Blurting <span class="subject-tag">Kỹ Năng</span></h3>
-                    <p>Viết ra tất cả những gì bạn nhớ về một chủ đề mà không nhìn vào tài liệu, sau đó kiểm tra và bổ sung những phần còn thiếu. Phương pháp này giúp đánh giá kiến thức hiện có.</p>
-                    <a href="https://vmptraining.com/phuong-phap-blurting-ghi-nho-thong-tin-trong-hoc-tap-vmp-academy/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 33 -->
-                <div class="card method-card" data-subjects="ky-nang">
-                    <h3>Spaced Repetition <span class="subject-tag">Kỹ Năng</span></h3>
-                    <p>Kỹ thuật học tập dựa trên việc ôn tập thông tin ở các khoảng thời gian tăng dần. Phương pháp này tối ưu hóa quá trình ghi nhớ lâu dài.</p>
-                    <a href="https://zim.vn/spaced-repetition-phuong-phap-lap-lai-ngat-quang" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 34 -->
-                <div class="card method-card" data-subjects="ky-nang">
-                    <h3>Active Recall <span class="subject-tag">Kỹ Năng</span></h3>
-                    <p>Chủ động cố gắng nhớ lại thông tin thay vì chỉ đọc lại. Phương pháp này giúp tăng cường kết nối thần kinh và cải thiện khả năng ghi nhớ.</p>
-                    <a href="https://weset.edu.vn/blog/blog-hoc-tieng-anh/active-recall/" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
-
-                <!-- Method 35 -->
-                <div class="card method-card" data-subjects="van lich-su">
-                    <h3>Storytelling <span class="subject-tag">Văn • Lịch Sử</span></h3>
-                    <p>Biến thông tin thành những câu chuyện hấp dẫn để dễ dàng ghi nhớ và hiểu sâu hơn. Phương pháp này đặc biệt hiệu quả với các môn xã hội.</p>
-                    <a href="https://www.pace.edu.vn/tin-kho-tri-thuc/storytelling-la-gi" class="learn-more" target="_blank">Tìm hiểu chi tiết</a>
-                </div>
+            <div class="methods-grid" id="methodsGrid">
+                <!-- Methods will be populated by JavaScript -->
             </div>
         </section>
 
         <!-- Quiz Section -->
         <section class="card quiz-section">
             <h2>Tìm Phương Pháp Phù Hợp Với Bạn</h2>
-            <p>Làm bài trắc nghiệm ngắn 8 câu để khám phá phương pháp học tập phù hợp nhất với phong cách và sở thích của bạn.</p>
+            <p>Làm bài trắc nghiệm ngắn để khám phá phương pháp học tập phù hợp nhất với phong cách và sở thích của bạn.</p>
             <button class="start-quiz-btn" id="startQuiz">Bắt Đầu Làm Bài Trắc Nghiệm</button>
 
             <div class="quiz-container" id="quizContainer">
@@ -610,15 +486,699 @@
         </section>
     </div>
 
+    <!-- Method Details Modal -->
+    <div class="modal" id="methodModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <div class="method-details" id="methodDetails">
+                <!-- Method details will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="container">
-            <p>© 2025 Phương Pháp Học Tập - StudyWithMe. Tất cả các phương pháp đều được tổng hợp từ các nguồn uy tín.</p>
+            <p>© 2025 Phương Pháp Học Tập Nâng Cao - StudyWithMe. Tất cả các phương pháp đều được tổng hợp từ các nguồn uy tín.</p>
         </div>
     </footer>
 
     <script>
-        // Filter System
+        // Method Data - 35 methods from the original file
+        const methodsData = [
+            {
+                id: 1,
+                name: "Phương Pháp SQ3R",
+                subjects: ["anh", "van"],
+                description: "SQ3R là phương pháp đọc hiểu hiệu quả, đặc biệt phù hợp với các môn đòi hỏi đọc tài liệu phức tạp.",
+                steps: [
+                    "Survey (Khảo sát): Xem lướt qua toàn bộ tài liệu để nắm cấu trúc và ý chính",
+                    "Question (Đặt câu hỏi): Tự đặt câu hỏi về nội dung sẽ đọc",
+                    "Read (Đọc): Đọc kỹ tài liệu và tìm câu trả lời cho các câu hỏi đã đặt",
+                    "Recite (Thuật lại): Tóm tắt và diễn đạt lại nội dung bằng lời của bạn",
+                    "Review (Ôn tập): Ôn lại nội dung đã học sau một khoảng thời gian"
+                ],
+                suitableFor: "Môn học yêu cầu đọc hiểu tài liệu phức tạp như Văn học, Tiếng Anh, Lịch sử",
+                benefits: "Cải thiện khả năng đọc hiểu, tăng cường ghi nhớ, phát triển tư duy phản biện"
+            },
+            {
+                id: 2,
+                name: "Sơ Đồ Tư Duy (Mindmap)",
+                subjects: ["toan", "khoa-hoc", "vat-ly"],
+                description: "Sử dụng sơ đồ tư duy giúp bạn tổ chức thông tin một cách trực quan, kết nối các khái niệm và ghi nhớ tốt hơn.",
+                steps: [
+                    "Bắt đầu với chủ đề chính ở trung tâm",
+                    "Thêm các nhánh chính cho các ý lớn",
+                    "Phát triển các nhánh phụ từ nhánh chính",
+                    "Sử dụng hình ảnh, màu sắc và từ khóa",
+                    "Kết nối các ý tưởng có liên quan"
+                ],
+                suitableFor: "Môn học có nhiều khái niệm liên quan như Toán, Khoa học, Vật lý, Sinh học",
+                benefits: "Tăng cường trí nhớ, phát triển tư duy hệ thống, dễ dàng ôn tập"
+            },
+            {
+                id: 3,
+                name: "Kỹ Thuật Pomodoro",
+                subjects: ["ky-nang"],
+                description: "Pomodoro giúp bạn quản lý thời gian học tập hiệu quả bằng cách chia nhỏ thời gian thành các phiên tập trung.",
+                steps: [
+                    "Chọn một nhiệm vụ cần hoàn thành",
+                    "Đặt hẹn giờ 25 phút",
+                    "Làm việc tập trung cho đến khi hết giờ",
+                    "Nghỉ ngắn 5 phút",
+                    "Sau 4 phiên Pomodoro, nghỉ dài 15-30 phút"
+                ],
+                suitableFor: "Mọi môn học và công việc cần sự tập trung",
+                benefits: "Tăng năng suất, giảm căng thẳng, cải thiện khả năng tập trung"
+            },
+            {
+                id: 4,
+                name: "Giải Bài Toán Ngược",
+                subjects: ["toan", "vat-ly"],
+                description: "Bắt đầu từ kết quả và tìm cách chứng minh ngược lại giúp phát triển tư duy logic và hiểu sâu bản chất vấn đề.",
+                steps: [
+                    "Xác định kết quả cần đạt được",
+                    "Tìm các bước hoặc điều kiện dẫn đến kết quả đó",
+                    "Làm ngược lại từ kết quả về điều kiện ban đầu",
+                    "Kiểm tra tính logic của quá trình",
+                    "Áp dụng vào giải các bài toán tương tự"
+                ],
+                suitableFor: "Toán học, Vật lý và các môn yêu cầu tư duy logic",
+                benefits: "Phát triển tư duy logic, hiểu sâu bản chất vấn đề, tăng khả năng giải quyết vấn đề"
+            },
+            {
+                id: 5,
+                name: "Học Qua Sự Kiện",
+                subjects: ["lich-su", "van", "dia-ly"],
+                description: "Tạo dòng thời gian và kết nối các sự kiện giúp bạn hiểu mối quan hệ nhân quả và ghi nhớ thông tin lâu hơn.",
+                steps: [
+                    "Xác định các sự kiện chính cần ghi nhớ",
+                    "Sắp xếp sự kiện theo trình tự thời gian",
+                    "Tìm mối liên hệ giữa các sự kiện",
+                    "Tạo dòng thời gian trực quan",
+                    "Ôn tập bằng cách kể lại câu chuyện theo dòng thời gian"
+                ],
+                suitableFor: "Lịch sử, Địa lý, Văn học và các môn xã hội",
+                benefits: "Ghi nhớ lâu hơn, hiểu mối quan hệ nhân quả, phát triển tư duy lịch sử"
+            },
+            {
+                id: 6,
+                name: "Học Qua Tình Huống",
+                subjects: ["anh", "van"],
+                description: "Áp dụng ngôn ngữ hoặc kiến thức vào các tình huống thực tế giúp tăng khả năng ghi nhớ và ứng dụng.",
+                steps: [
+                    "Xác định tình huống thực tế liên quan đến kiến thức",
+                    "Phân tích các yếu tố trong tình huống",
+                    "Áp dụng kiến thức đã học để giải quyết tình huống",
+                    "Thảo luận và đánh giá kết quả",
+                    "Rút ra bài học từ tình huống"
+                ],
+                suitableFor: "Tiếng Anh, Văn học và các môn yêu cầu ứng dụng thực tế",
+                benefits: "Tăng khả năng ứng dụng, phát triển kỹ năng giải quyết vấn đề, ghi nhớ lâu hơn"
+            },
+            {
+                id: 7,
+                name: "Học Theo Vấn Đề",
+                subjects: ["toan", "vat-ly", "hoa-hoc"],
+                description: "Tập trung vào giải quyết các vấn đề cụ thể thay vì học lý thuyết suông.",
+                steps: [
+                    "Xác định vấn đề cần giải quyết",
+                    "Phân tích các yếu tố liên quan đến vấn đề",
+                    "Tìm kiếm kiến thức cần thiết để giải quyết vấn đề",
+                    "Áp dụng kiến thức vào giải quyết vấn đề",
+                    "Đánh giá và rút kinh nghiệm"
+                ],
+                suitableFor: "Toán, Vật lý, Hóa học và các môn khoa học tự nhiên",
+                benefits: "Phát triển tư duy phân tích, tăng khả năng giải quyết vấn đề, học tập chủ động"
+            },
+            {
+                id: 8,
+                name: "Học Bằng Hình Ảnh",
+                subjects: ["sinh-hoc", "hoa-hoc"],
+                description: "Sử dụng hình ảnh, sơ đồ và biểu đồ để hiểu và ghi nhớ các quá trình phức tạp.",
+                steps: [
+                    "Xác định các khái niệm hoặc quá trình cần học",
+                    "Tìm hoặc tạo hình ảnh minh họa",
+                    "Gắn kết hình ảnh với kiến thức",
+                    "Sử dụng màu sắc và ký hiệu để làm nổi bật thông tin",
+                    "Ôn tập bằng cách nhớ lại hình ảnh"
+                ],
+                suitableFor: "Sinh học, Hóa học, Địa lý và các môn có nhiều quá trình phức tạp",
+                benefits: "Ghi nhớ tốt hơn, hiểu sâu các quá trình phức tạp, phát triển tư duy trực quan"
+            },
+            {
+                id: 9,
+                name: "Phương Pháp Feynman",
+                subjects: ["ky-nang"],
+                description: "Giải thích một khái niệm phức tạp bằng ngôn ngữ đơn giản như thể bạn đang dạy cho một người mới.",
+                steps: [
+                    "Chọn một khái niệm cần học",
+                    "Giải thích khái niệm đó bằng ngôn ngữ đơn giản",
+                    "Xác định các điểm chưa rõ ràng hoặc khó giải thích",
+                    "Quay lại tài liệu để làm rõ các điểm khó",
+                    "Đơn giản hóa và sử dụng phép loại suy để giải thích"
+                ],
+                suitableFor: "Mọi môn học, đặc biệt là các khái niệm phức tạp",
+                benefits: "Hiểu sâu bản chất, xác định lỗ hổng kiến thức, phát triển kỹ năng giải thích"
+            },
+            {
+                id: 10,
+                name: "Phương Pháp Shadowing",
+                subjects: ["anh"],
+                description: "Lặp lại ngay lập tức những gì bạn nghe được trong khi học ngoại ngữ.",
+                steps: [
+                    "Nghe một đoạn hội thoại hoặc câu nói ngắn",
+                    "Lặp lại ngay lập tức những gì đã nghe",
+                    "Tập trung vào phát âm và ngữ điệu",
+                    "Tăng dần độ dài và tốc độ",
+                    "Thực hành với các tình huống khác nhau"
+                ],
+                suitableFor: "Học ngoại ngữ, đặc biệt là kỹ năng nghe và nói",
+                benefits: "Cải thiện phát âm, tăng phản xạ giao tiếp, phát triển kỹ năng nghe"
+            },
+            {
+                id: 11,
+                name: "Học Qua Trò Chơi",
+                subjects: ["toan"],
+                description: "Áp dụng các nguyên tắc toán học vào trò chơi và câu đố để làm cho việc học trở nên thú vị và tương tác hơn.",
+                steps: [
+                    "Xác định khái niệm toán học cần học",
+                    "Tìm hoặc tạo trò chơi liên quan đến khái niệm đó",
+                    "Tham gia trò chơi và áp dụng kiến thức",
+                    "Phân tích kết quả và rút ra bài học",
+                    "Thử thách bản thân với các mức độ khó khác nhau"
+                ],
+                suitableFor: "Toán học và các môn có tính logic cao",
+                benefits: "Tăng hứng thú học tập, phát triển tư duy logic, học tập tương tác"
+            },
+            {
+                id: 12,
+                name: "Phương Pháp Viết Tự Do",
+                subjects: ["van"],
+                description: "Viết liên tục trong một khoảng thời gian nhất định mà không dừng lại để chỉnh sửa.",
+                steps: [
+                    "Chọn chủ đề hoặc câu hỏi cần viết",
+                    "Đặt hẹn giờ (thường 10-15 phút)",
+                    "Viết liên tục không dừng lại chỉnh sửa",
+                    "Không quan tâm đến ngữ pháp hay chính tả",
+                    "Đọc lại và rút ra ý tưởng chính sau khi viết"
+                ],
+                suitableFor: "Văn học, Sáng tác và các môn cần phát triển ý tưởng",
+                benefits: "Phát triển kỹ năng viết, khơi nguồn sáng tạo, vượt qua sự trì hoãn"
+            },
+            {
+                id: 13,
+                name: "Học Theo Dự Án",
+                subjects: ["lich-su", "dia-ly"],
+                description: "Tìm hiểu kiến thức thông qua việc thực hiện một dự án cụ thể.",
+                steps: [
+                    "Xác định chủ đề và mục tiêu dự án",
+                    "Lập kế hoạch và phân công nhiệm vụ",
+                    "Thu thập thông tin và tài liệu liên quan",
+                    "Thực hiện dự án theo kế hoạch",
+                    "Trình bày kết quả và đánh giá"
+                ],
+                suitableFor: "Lịch sử, Địa lý, Khoa học xã hội và các môn thực tiễn",
+                benefits: "Phát triển kỹ năng nghiên cứu, kết nối lý thuyết với thực tế, làm việc nhóm"
+            },
+            {
+                id: 14,
+                name: "Học Qua Thí Nghiệm",
+                subjects: ["vat-ly", "hoa-hoc"],
+                description: "Thực hiện các thí nghiệm để quan sát và hiểu các hiện tượng khoa học.",
+                steps: [
+                    "Xác định hiện tượng hoặc vấn đề cần nghiên cứu",
+                    "Đặt giả thuyết và dự đoán kết quả",
+                    "Thiết kế và chuẩn bị thí nghiệm",
+                    "Thực hiện thí nghiệm và ghi chép kết quả",
+                    "Phân tích kết quả và rút ra kết luận"
+                ],
+                suitableFor: "Vật lý, Hóa học, Sinh học và các môn khoa học thực nghiệm",
+                benefits: "Hiểu sâu nguyên lý khoa học, phát triển kỹ năng quan sát, tư duy thực nghiệm"
+            },
+            {
+                id: 15,
+                name: "Kỹ Thuật Ghi Chú Cornell",
+                subjects: ["ky-nang"],
+                description: "Phương pháp ghi chú hệ thống giúp tổ chức thông tin hiệu quả, dễ dàng ôn tập và ghi nhớ.",
+                steps: [
+                    "Chia trang giấy thành 3 phần: ghi chú, từ khóa, tóm tắt",
+                    "Ghi chép thông tin chính ở phần ghi chú",
+                    "Viết từ khóa và câu hỏi ở phần bên trái",
+                    "Tóm tắt nội dung chính ở phần cuối",
+                    "Sử dụng để ôn tập bằng cách che phần ghi chú"
+                ],
+                suitableFor: "Mọi môn học cần ghi chép bài giảng và tài liệu",
+                benefits: "Tổ chức thông tin hiệu quả, dễ dàng ôn tập, tăng cường ghi nhớ"
+            },
+            {
+                id: 16,
+                name: "Học Bằng Sơ Đồ Phân Cấp",
+                subjects: ["sinh-hoc"],
+                description: "Tổ chức thông tin theo cấu trúc phân cấp từ tổng quát đến chi tiết.",
+                steps: [
+                    "Xác định chủ đề chính cần học",
+                    "Phân loại thông tin thành các nhóm lớn",
+                    "Tiếp tục chia nhỏ thành các nhóm con",
+                    "Sắp xếp theo thứ tự logic",
+                    "Sử dụng hình ảnh và màu sắc để phân biệt"
+                ],
+                suitableFor: "Sinh học, Phân loại học và các môn có hệ thống phân cấp",
+                benefits: "Hiểu cấu trúc hệ thống, dễ dàng ghi nhớ mối quan hệ, tổ chức thông tin logic"
+            },
+            {
+                id: 17,
+                name: "Phương Pháp Đọc Chủ Động",
+                subjects: ["van"],
+                description: "Tương tác với văn bản bằng cách đặt câu hỏi, ghi chú và tóm tắt trong khi đọc.",
+                steps: [
+                    "Đọc tiêu đề và dự đoán nội dung",
+                    "Đặt câu hỏi trước khi đọc chi tiết",
+                    "Ghi chú các ý quan trọng khi đọc",
+                    "Tóm tắt từng phần sau khi đọc",
+                    "Liên hệ với kiến thức đã có"
+                ],
+                suitableFor: "Văn học, Tài liệu học thuật và các môn đọc hiểu",
+                benefits: "Hiểu sâu nội dung, tăng tương tác với văn bản, phát triển tư duy phản biện"
+            },
+            {
+                id: 18,
+                name: "Học Qua Giải Bài Tập",
+                subjects: ["toan"],
+                description: "Học các khái niệm toán học thông qua việc giải nhiều dạng bài tập khác nhau.",
+                steps: [
+                    "Nắm vững lý thuyết cơ bản",
+                    "Bắt đầu với bài tập đơn giản",
+                    "Tăng dần độ khó của bài tập",
+                    "Phân tích lỗi sai và tìm nguyên nhân",
+                    "Tổng hợp phương pháp giải cho từng dạng bài"
+                ],
+                suitableFor: "Toán học và các môn tính toán",
+                benefits: "Củng cố kiến thức, phát triển kỹ năng giải quyết vấn đề, áp dụng linh hoạt"
+            },
+            {
+                id: 19,
+                name: "Phương Pháp Học Từ Vựng",
+                subjects: ["anh"],
+                description: "Sử dụng flashcards, ứng dụng và kỹ thuật lặp lại ngắt quãng để ghi nhớ từ vựng hiệu quả.",
+                steps: [
+                    "Chọn từ vựng cần học theo chủ đề",
+                    "Tạo flashcards với từ và nghĩa",
+                    "Sử dụng hình ảnh và câu ví dụ",
+                    "Ôn tập theo phương pháp lặp lại ngắt quãng",
+                    "Áp dụng vào thực tế qua viết và nói"
+                ],
+                suitableFor: "Học ngoại ngữ, đặc biệt là từ vựng",
+                benefits: "Mở rộng vốn từ nhanh chóng, ghi nhớ lâu hơn, ứng dụng thực tế"
+            },
+            {
+                id: 20,
+                name: "Học Theo Chủ Đề",
+                subjects: ["lich-su"],
+                description: "Tập trung vào các chủ đề cụ thể thay vì học theo trình tự thời gian.",
+                steps: [
+                    "Xác định chủ đề cần nghiên cứu",
+                    "Thu thập tài liệu liên quan đến chủ đề",
+                    "Phân tích và so sánh các sự kiện trong chủ đề",
+                    "Tìm mối liên hệ giữa các sự kiện",
+                    "Tổng hợp kiến thức theo chủ đề"
+                ],
+                suitableFor: "Lịch sử, Văn học và các môn xã hội",
+                benefits: "Hiểu sâu các xu hướng, dễ dàng so sánh và đối chiếu, phát triển tư duy chủ đề"
+            },
+            {
+                id: 21,
+                name: "Học Bằng Bản Đồ",
+                subjects: ["dia-ly"],
+                description: "Sử dụng bản đồ, atlas và công cụ trực quan để học về địa lý tự nhiên và nhân văn.",
+                steps: [
+                    "Làm quen với các ký hiệu bản đồ cơ bản",
+                    "Xác định vị trí và đặc điểm địa lý",
+                    "Phân tích mối quan hệ giữa các yếu tố địa lý",
+                    "So sánh các khu vực khác nhau",
+                    "Liên hệ với thực tế và thời sự"
+                ],
+                suitableFor: "Địa lý, Lịch sử và các môn không gian",
+                benefits: "Phát triển kỹ năng không gian, hiểu biết về thế giới, kết nối lý thuyết với thực tế"
+            },
+            {
+                id: 22,
+                name: "Học Bằng Mô Hình",
+                subjects: ["hoa-hoc"],
+                description: "Sử dụng mô hình phân tử và công cụ trực quan để hiểu cấu trúc và phản ứng hóa học.",
+                steps: [
+                    "Xác định cấu trúc hoặc phản ứng cần học",
+                    "Tạo hoặc sử dụng mô hình trực quan",
+                    "Quan sát và phân tích cấu trúc từ nhiều góc độ",
+                    "Liên hệ với tính chất hóa học",
+                    "Dự đoán phản ứng dựa trên cấu trúc"
+                ],
+                suitableFor: "Hóa học, Sinh học và các môn có cấu trúc phân tử",
+                benefits: "Hình dung cấu trúc không gian, hiểu sâu bản chất phản ứng, dễ dàng ghi nhớ"
+            },
+            {
+                id: 23,
+                name: "Học Qua Ứng Dụng",
+                subjects: ["vat-ly"],
+                description: "Áp dụng các nguyên lý vật lý vào các tình huống thực tế và công nghệ hàng ngày.",
+                steps: [
+                    "Xác định nguyên lý vật lý cần học",
+                    "Tìm ứng dụng thực tế của nguyên lý đó",
+                    "Phân tích cách nguyên lý vận hành trong ứng dụng",
+                    "Liên hệ với các hiện tượng tương tự",
+                    "Dự đoán ứng dụng trong tương lai"
+                ],
+                suitableFor: "Vật lý, Công nghệ và các môn ứng dụng",
+                benefits: "Thấy được sự liên quan thực tế, tăng hứng thú học tập, phát triển tư duy ứng dụng"
+            },
+            {
+                id: 24,
+                name: "Phương Pháp Học Nhóm",
+                subjects: ["ky-nang"],
+                description: "Học tập cùng với những người khác để thảo luận, chia sẻ ý tưởng và giải quyết vấn đề cùng nhau.",
+                steps: [
+                    "Xác định mục tiêu học tập chung",
+                    "Phân công nhiệm vụ cho từng thành viên",
+                    "Thảo luận và chia sẻ ý kiến",
+                    "Giải quyết vấn đề cùng nhau",
+                    "Tổng kết và đánh giá kết quả"
+                ],
+                suitableFor: "Mọi môn học, đặc biệt là các môn cần thảo luận",
+                benefits: "Phát triển kỹ năng giao tiếp, học hỏi từ người khác, giải quyết vấn đề hiệu quả hơn"
+            },
+            {
+                id: 25,
+                name: "Học Qua Quan Sát",
+                subjects: ["sinh-hoc"],
+                description: "Quan sát các sinh vật và hiện tượng tự nhiên để hiểu các nguyên lý sinh học.",
+                steps: [
+                    "Xác định đối tượng hoặc hiện tượng cần quan sát",
+                    "Chuẩn bị công cụ quan sát phù hợp",
+                    "Ghi chép chi tiết các đặc điểm quan sát được",
+                    "Phân tích và so sánh với lý thuyết",
+                    "Rút ra kết luận từ quan sát"
+                ],
+                suitableFor: "Sinh học, Địa lý và các môn quan sát tự nhiên",
+                benefits: "Phát triển kỹ năng quan sát, hiểu sâu hiện tượng tự nhiên, kết nối lý thuyết với thực tế"
+            },
+            {
+                id: 26,
+                name: "Phương Pháp Phân Tích Văn Bản",
+                subjects: ["van"],
+                description: "Phân tích cấu trúc, ngôn ngữ và ý nghĩa của văn bản văn học.",
+                steps: [
+                    "Đọc toàn bộ văn bản để nắm nội dung chính",
+                    "Phân tích cấu trúc và bố cục",
+                    "Tìm hiểu ngôn ngữ và biện pháp tu từ",
+                    "Phân tích nhân vật và tình huống",
+                    "Rút ra ý nghĩa và thông điệp tác giả"
+                ],
+                suitableFor: "Văn học, Ngôn ngữ và các môn phân tích văn bản",
+                benefits: "Phát triển kỹ năng phân tích, hiểu sâu tác phẩm, nâng cao khả năng diễn đạt"
+            },
+            {
+                id: 27,
+                name: "Học Qua Câu Đố Logic",
+                subjects: ["toan"],
+                description: "Giải các câu đố logic và toán học để phát triển tư duy phản biện và kỹ năng giải quyết vấn đề.",
+                steps: [
+                    "Chọn câu đố phù hợp với trình độ",
+                    "Phân tích các yếu tố và điều kiện của câu đố",
+                    "Thử các phương pháp giải khác nhau",
+                    "Kiểm tra tính logic của đáp án",
+                    "Rút ra nguyên tắc giải cho dạng câu đố tương tự"
+                ],
+                suitableFor: "Toán học, Logic và các môn tư duy",
+                benefits: "Phát triển tư duy phản biện, rèn luyện kỹ năng giải quyết vấn đề, tăng tính sáng tạo"
+            },
+            {
+                id: 28,
+                name: "Phương Pháp Học Toàn Diện",
+                subjects: ["anh"],
+                description: "Kết hợp nhiều kỹ năng nghe, nói, đọc, viết trong một buổi học.",
+                steps: [
+                    "Xác định chủ đề học tập",
+                    "Kết hợp các hoạt động nghe, nói, đọc, viết",
+                    "Sử dụng đa dạng tài liệu và phương tiện",
+                    "Thực hành ứng dụng trong tình huống thực tế",
+                    "Đánh giá và điều chỉnh phương pháp"
+                ],
+                suitableFor: "Học ngoại ngữ và các môn cần phát triển toàn diện kỹ năng",
+                benefits: "Phát triển toàn diện kỹ năng, tăng khả năng ứng dụng, học tập cân bằng"
+            },
+            {
+                id: 29,
+                name: "Kỹ Thuật Tự Hỏi Đáp",
+                subjects: ["ky-nang"],
+                description: "Tự đặt câu hỏi và trả lời về nội dung đang học.",
+                steps: [
+                    "Xác định nội dung cần học",
+                    "Tự đặt các câu hỏi về nội dung đó",
+                    "Cố gắng trả lời câu hỏi bằng kiến thức đã có",
+                    "Kiểm tra và bổ sung câu trả lời từ tài liệu",
+                    "Tổng hợp kiến thức từ các câu hỏi và trả lời"
+                ],
+                suitableFor: "Mọi môn học, đặc biệt là các môn cần ghi nhớ chi tiết",
+                benefits: "Kiểm tra sự hiểu biết, củng cố kiến thức, phát triển tư duy phản biện"
+            },
+            {
+                id: 30,
+                name: "Học Qua Thực Hành",
+                subjects: ["khoa-hoc"],
+                description: "Áp dụng kiến thức khoa học vào các hoạt động thực hành và dự án thực tế.",
+                steps: [
+                    "Xác định nguyên lý khoa học cần học",
+                    "Thiết kế hoạt động thực hành liên quan",
+                    "Chuẩn bị dụng cụ và vật liệu cần thiết",
+                    "Thực hiện hoạt động và quan sát kết quả",
+                    "Phân tích và rút ra bài học từ thực hành"
+                ],
+                suitableFor: "Khoa học, Công nghệ và các môn thực nghiệm",
+                benefits: "Hiểu sâu nguyên lý khoa học, phát triển kỹ năng thực hành, tăng hứng thú học tập"
+            },
+            {
+                id: 31,
+                name: "Phương Pháp Simon",
+                subjects: ["ky-nang"],
+                description: "Một phương pháp ghi nhớ dựa trên việc lặp lại thông tin theo các khoảng thời gian tăng dần.",
+                steps: [
+                    "Xác định thông tin cần ghi nhớ",
+                    "Học và ghi nhớ thông tin lần đầu",
+                    "Ôn tập sau 1 ngày",
+                    "Ôn tập lại sau 1 tuần",
+                    "Ôn tập lần cuối sau 1 tháng"
+                ],
+                suitableFor: "Mọi môn học cần ghi nhớ thông tin",
+                benefits: "Củng cố trí nhớ dài hạn, tối ưu hóa thời gian ôn tập, ghi nhớ hiệu quả"
+            },
+            {
+                id: 32,
+                name: "Phương Pháp Blurting",
+                subjects: ["ky-nang"],
+                description: "Viết ra tất cả những gì bạn nhớ về một chủ đề mà không nhìn vào tài liệu, sau đó kiểm tra và bổ sung những phần còn thiếu.",
+                steps: [
+                    "Chọn chủ đề cần ôn tập",
+                    "Viết ra tất cả những gì nhớ được về chủ đề",
+                    "So sánh với tài liệu gốc",
+                    "Đánh dấu những phần thiếu hoặc sai",
+                    "Học lại và bổ sung những phần còn thiếu"
+                ],
+                suitableFor: "Mọi môn học cần ôn tập và kiểm tra kiến thức",
+                benefits: "Đánh giá kiến thức hiện có, xác định lỗ hổng kiến thức, củng cố trí nhớ"
+            },
+            {
+                id: 33,
+                name: "Spaced Repetition",
+                subjects: ["ky-nang"],
+                description: "Kỹ thuật học tập dựa trên việc ôn tập thông tin ở các khoảng thời gian tăng dần.",
+                steps: [
+                    "Xác định thông tin cần ghi nhớ",
+                    "Học thông tin lần đầu",
+                    "Ôn tập sau khoảng thời gian ngắn (vài giờ)",
+                    "Ôn tập lại sau khoảng thời gian dài hơn (vài ngày)",
+                    "Tiếp tục ôn tập với khoảng cách tăng dần"
+                ],
+                suitableFor: "Mọi môn học cần ghi nhớ lâu dài",
+                benefits: "Tối ưu hóa quá trình ghi nhớ, giảm thời gian học tập, ghi nhớ lâu hơn"
+            },
+            {
+                id: 34,
+                name: "Active Recall",
+                subjects: ["ky-nang"],
+                description: "Chủ động cố gắng nhớ lại thông tin thay vì chỉ đọc lại.",
+                steps: [
+                    "Học thông tin cần ghi nhớ",
+                    "Đóng sách/tài liệu lại",
+                    "Cố gắng nhớ lại thông tin đã học",
+                    "Kiểm tra độ chính xác của thông tin nhớ được",
+                    "Lặp lại quá trình với các phần khác"
+                ],
+                suitableFor: "Mọi môn học cần ghi nhớ và ôn tập",
+                benefits: "Tăng cường kết nối thần kinh, cải thiện khả năng ghi nhớ, học tập hiệu quả hơn"
+            },
+            {
+                id: 35,
+                name: "Storytelling",
+                subjects: ["van", "lich-su"],
+                description: "Biến thông tin thành những câu chuyện hấp dẫn để dễ dàng ghi nhớ và hiểu sâu hơn.",
+                steps: [
+                    "Xác định thông tin cần chuyển thành câu chuyện",
+                    "Tạo nhân vật, bối cảnh và tình huống",
+                    "Xây dựng cốt truyện logic và hấp dẫn",
+                    "Kết nối thông tin với các yếu tố trong câu chuyện",
+                    "Kể lại câu chuyện để ghi nhớ thông tin"
+                ],
+                suitableFor: "Văn học, Lịch sử và các môn xã hội",
+                benefits: "Dễ dàng ghi nhớ, hiểu sâu bản chất, tăng hứng thú học tập"
+            }
+        ];
+
+        // Quiz Questions
+        const quizQuestions = [
+            {
+                question: "Bạn thích học như thế nào nhất?",
+                options: [
+                    "Đọc sách và tài liệu",
+                    "Xem video hoặc hình ảnh minh họa",
+                    "Thảo luận với người khác",
+                    "Thực hành trực tiếp"
+                ]
+            },
+            {
+                question: "Khi gặp một vấn đề khó, bạn thường:",
+                options: [
+                    "Tìm kiếm thêm tài liệu để đọc",
+                    "Vẽ sơ đồ hoặc hình ảnh để phân tích",
+                    "Hỏi ý kiến người khác",
+                    "Thử nhiều cách giải quyết khác nhau"
+                ]
+            },
+            {
+                question: "Bạn nhớ bài tốt nhất khi:",
+                options: [
+                    "Viết ra nhiều lần",
+                    "Xem các biểu đồ hoặc hình ảnh",
+                    "Giảng bài cho người khác nghe",
+                    "Áp dụng vào thực tế"
+                ]
+            },
+            {
+                question: "Thời gian học tập hiệu quả nhất của bạn là:",
+                options: [
+                    "Buổi sáng",
+                    "Buổi chiều", 
+                    "Buổi tối",
+                    "Không có thời gian cố định"
+                ]
+            },
+            {
+                question: "Khi học một chủ đề mới, bạn thường:",
+                options: [
+                    "Bắt đầu bằng việc đọc lý thuyết",
+                    "Tìm kiếm hình ảnh hoặc video minh họa",
+                    "Thảo luận với bạn bè về chủ đề đó",
+                    "Tìm cách áp dụng ngay vào thực tế"
+                ]
+            },
+            {
+                question: "Môi trường học tập lý tưởng của bạn là:",
+                options: [
+                    "Thư viện yên tĩnh",
+                    "Nơi có không gian trực quan sinh động",
+                    "Nhóm học tập",
+                    "Nơi bạn có thể thực hành ngay"
+                ]
+            },
+            {
+                question: "Khi cần ghi chép, bạn thường:",
+                options: [
+                    "Ghi chép chi tiết theo dạng văn bản",
+                    "Vẽ sơ đồ, biểu đồ hoặc sử dụng màu sắc",
+                    "Ghi chú ngắn và thảo luận thêm",
+                    "Ghi chú các bước thực hành"
+                ]
+            },
+            {
+                question: "Đối với các môn học, bạn thường:",
+                options: [
+                    "Thích các môn lý thuyết, ngôn ngữ",
+                    "Thích các môn nghệ thuật, thiết kế",
+                    "Thích các môn xã hội, làm việc nhóm",
+                    "Thích các môn thực hành, khoa học ứng dụng"
+                ]
+            },
+            {
+                question: "Khi ôn tập cho kỳ thi, bạn thường:",
+                options: [
+                    "Đọc lại toàn bộ tài liệu",
+                    "Xem lại các ghi chú hình ảnh và sơ đồ",
+                    "Thảo luận và giải thích cho người khác",
+                    "Làm nhiều bài tập thực hành"
+                ]
+            },
+            {
+                question: "Bạn cảm thấy hứng thú nhất khi học:",
+                options: [
+                    "Các môn có nhiều tài liệu đọc",
+                    "Các môn có nhiều hình ảnh, video minh họa",
+                    "Các môn có nhiều hoạt động nhóm",
+                    "Các môn có nhiều thí nghiệm, thực hành"
+                ]
+            },
+            {
+                question: "Khi cần ghi nhớ thông tin, bạn thường:",
+                options: [
+                    "Viết ra nhiều lần",
+                    "Tạo hình ảnh hoặc sơ đồ tư duy",
+                    "Giải thích cho người khác nghe",
+                    "Áp dụng vào thực tế ngay lập tức"
+                ]
+            },
+            {
+                question: "Bạn đánh giá cao nhất điều gì ở một phương pháp học?",
+                options: [
+                    "Tính hệ thống và logic",
+                    "Tính trực quan và sinh động",
+                    "Khả năng tương tác và thảo luận",
+                    "Tính thực tiễn và ứng dụng"
+                ]
+            }
+        ];
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Populate methods grid
+            const methodsGrid = document.getElementById('methodsGrid');
+            methodsData.forEach(method => {
+                const methodCard = document.createElement('div');
+                methodCard.className = 'card method-card';
+                methodCard.setAttribute('data-subjects', method.subjects.join(' '));
+                methodCard.setAttribute('data-id', method.id);
+                
+                const subjectsDisplay = method.subjects.map(subject => {
+                    const subjectNames = {
+                        'toan': 'Toán',
+                        'van': 'Văn',
+                        'anh': 'Anh',
+                        'khoa-hoc': 'Khoa học',
+                        'lich-su': 'Lịch sử',
+                        'dia-ly': 'Địa lý',
+                        'vat-ly': 'Vật lý',
+                        'hoa-hoc': 'Hóa học',
+                        'sinh-hoc': 'Sinh học',
+                        'ky-nang': 'Kỹ năng'
+                    };
+                    return subjectNames[subject] || subject;
+                }).join(' • ');
+                
+                methodCard.innerHTML = `
+                    <h3>${method.name} <span class="subject-tag">${subjectsDisplay}</span></h3>
+                    <p>${method.description}</p>
+                    <a href="#" class="learn-more view-details" data-id="${method.id}">Xem Chi Tiết</a>
+                `;
+                
+                methodsGrid.appendChild(methodCard);
+            });
+
+            // Filter System
             const filterButtons = document.querySelectorAll('.filter-btn');
             const methodCards = document.querySelectorAll('.method-card');
             
@@ -641,85 +1201,79 @@
                 });
             });
             
+            // Method Details Modal
+            const modal = document.getElementById('methodModal');
+            const closeModal = document.getElementById('closeModal');
+            const methodDetails = document.getElementById('methodDetails');
+            const viewDetailsButtons = document.querySelectorAll('.view-details');
+            
+            viewDetailsButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const methodId = parseInt(this.getAttribute('data-id'));
+                    const method = methodsData.find(m => m.id === methodId);
+                    
+                    if (method) {
+                        const subjectsDisplay = method.subjects.map(subject => {
+                            const subjectNames = {
+                                'toan': 'Toán',
+                                'van': 'Văn',
+                                'anh': 'Anh',
+                                'khoa-hoc': 'Khoa học',
+                                'lich-su': 'Lịch sử',
+                                'dia-ly': 'Địa lý',
+                                'vat-ly': 'Vật lý',
+                                'hoa-hoc': 'Hóa học',
+                                'sinh-hoc': 'Sinh học',
+                                'ky-nang': 'Kỹ năng'
+                            };
+                            return `<span class="subject-badge ${subject}">${subjectNames[subject] || subject}</span>`;
+                        }).join('');
+                        
+                        methodDetails.innerHTML = `
+                            <h2>${method.name}</h2>
+                            <p>${method.description}</p>
+                            
+                            <div class="method-info-section">
+                                <h3>Cách Thực Hiện</h3>
+                                <ol class="steps-list">
+                                    ${method.steps.map(step => `<li>${step}</li>`).join('')}
+                                </ol>
+                            </div>
+                            
+                            <div class="method-info-section">
+                                <h3>Môn Học Phù Hợp</h3>
+                                <p>${method.suitableFor}</p>
+                                <div class="subjects-list">
+                                    ${subjectsDisplay}
+                                </div>
+                            </div>
+                            
+                            <div class="method-info-section">
+                                <h3>Lợi Ích</h3>
+                                <p>${method.benefits}</p>
+                            </div>
+                        `;
+                        
+                        modal.style.display = 'block';
+                    }
+                });
+            });
+            
+            closeModal.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
             // Quiz System
             const startQuizBtn = document.getElementById('startQuiz');
             const quizContainer = document.getElementById('quizContainer');
             const resultsContainer = document.getElementById('results');
-            
-            const quizQuestions = [
-                {
-                    question: "Bạn thích học như thế nào nhất?",
-                    options: [
-                        "Đọc sách và tài liệu",
-                        "Xem video hoặc hình ảnh minh họa",
-                        "Thảo luận với người khác",
-                        "Thực hành trực tiếp"
-                    ]
-                },
-                {
-                    question: "Khi gặp một vấn đề khó, bạn thường:",
-                    options: [
-                        "Tìm kiếm thêm tài liệu để đọc",
-                        "Vẽ sơ đồ hoặc hình ảnh để phân tích",
-                        "Hỏi ý kiến người khác",
-                        "Thử nhiều cách giải quyết khác nhau"
-                    ]
-                },
-                {
-                    question: "Bạn nhớ bài tốt nhất khi:",
-                    options: [
-                        "Viết ra nhiều lần",
-                        "Xem các biểu đồ hoặc hình ảnh",
-                        "Giảng bài cho người khác nghe",
-                        "Áp dụng vào thực tế"
-                    ]
-                },
-                {
-                    question: "Thời gian học tập hiệu quả nhất của bạn là:",
-                    options: [
-                        "Buổi sáng",
-                        "Buổi chiều", 
-                        "Buổi tối",
-                        "Không có thời gian cố định"
-                    ]
-                },
-                {
-                    question: "Khi học một chủ đề mới, bạn thường:",
-                    options: [
-                        "Bắt đầu bằng việc đọc lý thuyết",
-                        "Tìm kiếm hình ảnh hoặc video minh họa",
-                        "Thảo luận với bạn bè về chủ đề đó",
-                        "Tìm cách áp dụng ngay vào thực tế"
-                    ]
-                },
-                {
-                    question: "Môi trường học tập lý tưởng của bạn là:",
-                    options: [
-                        "Thư viện yên tĩnh",
-                        "Nơi có không gian trực quan sinh động",
-                        "Nhóm học tập",
-                        "Nơi bạn có thể thực hành ngay"
-                    ]
-                },
-                {
-                    question: "Khi cần ghi chép, bạn thường:",
-                    options: [
-                        "Ghi chép chi tiết theo dạng văn bản",
-                        "Vẽ sơ đồ, biểu đồ hoặc sử dụng màu sắc",
-                        "Ghi chú ngắn và thảo luận thêm",
-                        "Ghi chú các bước thực hành"
-                    ]
-                },
-                {
-                    question: "Đối với các môn học, bạn thường:",
-                    options: [
-                        "Thích các môn lý thuyết, ngôn ngữ",
-                        "Thích các môn nghệ thuật, thiết kế",
-                        "Thích các môn xã hội, làm việc nhóm",
-                        "Thích các môn thực hành, khoa học ứng dụng"
-                    ]
-                }
-            ];
             
             startQuizBtn.addEventListener('click', function() {
                 startQuizBtn.style.display = 'none';
@@ -757,13 +1311,16 @@
                 options.forEach(option => {
                     option.addEventListener('click', function() {
                         const questionIndex = this.getAttribute('data-question');
-                        const optionIndex = this.getAttribute('data-option');
                         
                         // Remove previous selection for this question
                         const questionOptions = document.querySelectorAll(`.quiz-option[data-question="${questionIndex}"]`);
-                        questionOptions.forEach(opt => opt.style.background = '');
+                        questionOptions.forEach(opt => {
+                            opt.classList.remove('selected');
+                            opt.style.background = '';
+                        });
                         
                         // Mark current selection
+                        this.classList.add('selected');
                         this.style.background = '#E2F0CB';
                     });
                 });
@@ -775,8 +1332,8 @@
                 const options = document.querySelectorAll('.quiz-option');
                 
                 quizQuestions.forEach((q, index) => {
-                    const selectedOption = document.querySelector(`.quiz-option[data-question="${index}"]`);
-                    if (selectedOption && selectedOption.style.background) {
+                    const selectedOption = document.querySelector(`.quiz-option[data-question="${index}"].selected`);
+                    if (selectedOption) {
                         selectedOptions.push(parseInt(selectedOption.getAttribute('data-option')));
                     } else {
                         selectedOptions.push(0); // Default to first option if not selected
@@ -785,10 +1342,22 @@
                 
                 // Define learning styles and their characteristics
                 const learningStyles = [
-                    { name: "Học qua Đọc/Viết", description: "Bạn học tốt nhất thông qua đọc và viết. Bạn thích sách, tài liệu và ghi chép." },
-                    { name: "Học qua Hình ảnh", description: "Bạn học tốt nhất thông qua hình ảnh, biểu đồ và các công cụ trực quan." },
-                    { name: "Học qua Thính giác", description: "Bạn học tốt nhất thông qua nghe và thảo luận. Bạn thích học nhóm và giảng giải." },
-                    { name: "Học qua Vận động", description: "Bạn học tốt nhất thông qua thực hành và trải nghiệm thực tế." }
+                    { 
+                        name: "Học qua Đọc/Viết", 
+                        description: "Bạn học tốt nhất thông qua đọc và viết. Bạn thích sách, tài liệu và ghi chép. Phương pháp học phù hợp với bạn thường liên quan đến việc đọc tài liệu, viết ghi chú và tóm tắt." 
+                    },
+                    { 
+                        name: "Học qua Hình ảnh", 
+                        description: "Bạn học tốt nhất thông qua hình ảnh, biểu đồ và các công cụ trực quan. Bạn có khả năng ghi nhớ tốt thông qua hình ảnh và màu sắc. Phương pháp học phù hợp với bạn thường sử dụng sơ đồ, biểu đồ và hình ảnh minh họa." 
+                    },
+                    { 
+                        name: "Học qua Thính giác/Xã hội", 
+                        description: "Bạn học tốt nhất thông qua nghe và thảo luận. Bạn thích học nhóm và giảng giải. Phương pháp học phù hợp với bạn thường liên quan đến thảo luận, giảng giải và làm việc nhóm." 
+                    },
+                    { 
+                        name: "Học qua Vận động/Thực hành", 
+                        description: "Bạn học tốt nhất thông qua thực hành và trải nghiệm thực tế. Bạn thích học bằng cách làm và trải nghiệm. Phương pháp học phù hợp với bạn thường liên quan đến thí nghiệm, thực hành và ứng dụng thực tế." 
+                    }
                 ];
                 
                 // Calculate scores for each learning style
@@ -808,44 +1377,25 @@
                 
                 // Define method recommendations for each style
                 const methodRecommendations = {
-                    0: [
-                        "Phương Pháp SQ3R",
-                        "Phương Pháp Đọc Chủ Động",
-                        "Phương Pháp Viết Tự Do",
-                        "Phương Pháp Phân Tích Văn Bản",
-                        "Kỹ Thuật Ghi Chú Cornell"
-                    ],
-                    1: [
-                        "Sơ Đồ Tư Duy (Mindmap)",
-                        "Học Bằng Hình Ảnh",
-                        "Học Bằng Mô Hình",
-                        "Học Bằng Sơ Đồ Phân Cấp",
-                        "Học Bằng Bản Đồ"
-                    ],
-                    2: [
-                        "Phương Pháp Shadowing",
-                        "Học Qua Tình Huống",
-                        "Phương Pháp Học Nhóm",
-                        "Storytelling",
-                        "Kỹ Thuật Tự Hỏi Đáp"
-                    ],
-                    3: [
-                        "Học Qua Thực Hành",
-                        "Học Qua Dự Án",
-                        "Học Qua Thí Nghiệm",
-                        "Học Qua Ứng Dụng",
-                        "Học Qua Trò Chơi"
-                    ]
+                    0: [1, 12, 17, 26, 29, 32], // Reading/Writing style
+                    1: [2, 8, 16, 21, 22, 27], // Visual style
+                    2: [6, 10, 24, 28, 34, 35], // Auditory/Social style
+                    3: [4, 7, 11, 14, 18, 23, 25, 30]  // Kinesthetic style
                 };
                 
                 // Collect all recommended methods
                 const allRecommendedMethods = [];
                 topStyles.forEach(styleIndex => {
-                    allRecommendedMethods.push(...methodRecommendations[styleIndex]);
+                    methodRecommendations[styleIndex].forEach(methodId => {
+                        const method = methodsData.find(m => m.id === methodId);
+                        if (method) {
+                            allRecommendedMethods.push(method);
+                        }
+                    });
                 });
                 
                 // Remove duplicates
-                const uniqueRecommendedMethods = [...new Set(allRecommendedMethods)];
+                const uniqueRecommendedMethods = [...new Map(allRecommendedMethods.map(item => [item.id, item])).values()];
                 
                 // Display results
                 let resultsHTML = `
@@ -869,10 +1419,27 @@
                 `;
                 
                 uniqueRecommendedMethods.forEach(method => {
+                    const subjectsDisplay = method.subjects.map(subject => {
+                        const subjectNames = {
+                            'toan': 'Toán',
+                            'van': 'Văn',
+                            'anh': 'Anh',
+                            'khoa-hoc': 'Khoa học',
+                            'lich-su': 'Lịch sử',
+                            'dia-ly': 'Địa lý',
+                            'vat-ly': 'Vật lý',
+                            'hoa-hoc': 'Hóa học',
+                            'sinh-hoc': 'Sinh học',
+                            'ky-nang': 'Kỹ năng'
+                        };
+                        return subjectNames[subject] || subject;
+                    }).join(' • ');
+                    
                     resultsHTML += `
-                        <div class="recommended-method">
-                            <h4>${method}</h4>
-                            <p>Hãy tìm hiểu chi tiết về phương pháp này trong danh sách ở trên.</p>
+                        <div class="recommended-method" data-id="${method.id}">
+                            <h4>${method.name}</h4>
+                            <p><strong>Môn học:</strong> ${subjectsDisplay}</p>
+                            <p>${method.description}</p>
                         </div>
                     `;
                 });
@@ -884,6 +1451,60 @@
                 
                 resultsContainer.innerHTML = resultsHTML;
                 resultsContainer.style.display = 'block';
+                
+                // Add click events to recommended methods
+                const recommendedMethodElements = document.querySelectorAll('.recommended-method[data-id]');
+                recommendedMethodElements.forEach(element => {
+                    element.addEventListener('click', function() {
+                        const methodId = parseInt(this.getAttribute('data-id'));
+                        const method = methodsData.find(m => m.id === methodId);
+                        
+                        if (method) {
+                            const subjectsDisplay = method.subjects.map(subject => {
+                                const subjectNames = {
+                                    'toan': 'Toán',
+                                    'van': 'Văn',
+                                    'anh': 'Anh',
+                                    'khoa-hoc': 'Khoa học',
+                                    'lich-su': 'Lịch sử',
+                                    'dia-ly': 'Địa lý',
+                                    'vat-ly': 'Vật lý',
+                                    'hoa-hoc': 'Hóa học',
+                                    'sinh-hoc': 'Sinh học',
+                                    'ky-nang': 'Kỹ năng'
+                                };
+                                return `<span class="subject-badge ${subject}">${subjectNames[subject] || subject}</span>`;
+                            }).join('');
+                            
+                            methodDetails.innerHTML = `
+                                <h2>${method.name}</h2>
+                                <p>${method.description}</p>
+                                
+                                <div class="method-info-section">
+                                    <h3>Cách Thực Hiện</h3>
+                                    <ol class="steps-list">
+                                        ${method.steps.map(step => `<li>${step}</li>`).join('')}
+                                    </ol>
+                                </div>
+                                
+                                <div class="method-info-section">
+                                    <h3>Môn Học Phù Hợp</h3>
+                                    <p>${method.suitableFor}</p>
+                                    <div class="subjects-list">
+                                        ${subjectsDisplay}
+                                    </div>
+                                </div>
+                                
+                                <div class="method-info-section">
+                                    <h3>Lợi Ích</h3>
+                                    <p>${method.benefits}</p>
+                                </div>
+                            `;
+                            
+                            modal.style.display = 'block';
+                        }
+                    });
+                });
                 
                 // Scroll to results
                 resultsContainer.scrollIntoView({ behavior: 'smooth' });

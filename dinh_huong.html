@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Định Hướng Nghề Nghiệp</title>
+    <title>StudyWithMe - Định Hướng Nghề Nghiệp</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -177,6 +177,9 @@
             box-shadow: var(--shadow);
             transition: var(--transition);
             border-left: 5px solid var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .nganh-card:hover {
@@ -193,6 +196,7 @@
             color: #666;
             margin-bottom: 1rem;
             font-size: 0.95rem;
+            flex-grow: 1;
         }
 
         .khoi-thi-list {
@@ -228,17 +232,262 @@
             font-size: 0.9rem;
             font-weight: 500;
             transition: var(--transition);
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
         .nganh-link:hover {
             background: var(--secondary-color);
         }
 
-        .truong-section {
+        .detail-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .detail-btn:hover {
+            background: var(--accent-color);
+        }
+
+        /* Modal chi tiết ngành học */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-header h2 {
+            color: var(--secondary-color);
+        }
+
+        .modal-body {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .info-section {
+            background: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .info-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-section h3 i {
+            margin-right: 0.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .info-item h4 {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Phần câu hỏi thu gọn */
+        .quiz-toggle {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: block;
+            margin: 0 auto 2rem;
+            text-align: center;
+        }
+
+        .quiz-toggle:hover {
+            background: var(--secondary-color);
+        }
+
+        .quiz-toggle i {
+            margin-right: 0.5rem;
+        }
+
+        .question-container {
             background: white;
             border-radius: 10px;
+            padding: 2rem;
             box-shadow: var(--shadow);
-            overflow: hidden;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .question-container.show {
+            display: block;
+        }
+
+        .question {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .question h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .option:hover {
+            background-color: #f5f5f5;
+        }
+
+        .option.selected {
+            background-color: var(--light-color);
+            border-color: var(--primary-color);
+        }
+
+        .option input {
+            margin-right: 0.8rem;
+        }
+
+        .submit-btn {
+            display: block;
+            margin: 1rem auto 0;
+            padding: 0.8rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .submit-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .result-container {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 3rem;
+            display: none;
+        }
+
+        .result-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--secondary-color);
+        }
+
+        .career-card {
+            background: var(--light-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .career-card h3 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .career-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .detail-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .detail-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Các phần khác */
+        .truong-section, .quiz-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
             margin-bottom: 3rem;
         }
 
@@ -267,14 +516,6 @@
 
         .truong-link:hover {
             text-decoration: underline;
-        }
-
-        .quiz-section {
-            background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: var(--shadow);
-            margin-bottom: 3rem;
         }
 
         .quiz-grid {
@@ -327,6 +568,27 @@
             margin-top: 3rem;
         }
 
+        .show-more-btn {
+            display: block;
+            margin: 1rem auto;
+            padding: 0.8rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .show-more-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .hidden-rows {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .nav-links {
                 flex-direction: column;
@@ -349,23 +611,34 @@
             .quiz-grid {
                 grid-template-columns: 1fr;
             }
+            .career-details {
+                grid-template-columns: 1fr;
+            }
+            .modal-content {
+                padding: 1.5rem;
+                width: 95%;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1><i class="fas fa-graduation-cap"></i> Hệ Thống Định Hướng Nghề Nghiệp</h1>
+        <h1><i class="fas fa-graduation-cap"></i> StudyWithMe - Định Hướng Nghề Nghiệp</h1>
         <p>Khám phá ngành học, khối thi và tìm trường đại học phù hợp với bạn</p>
     </header>
 
     <nav>
         <div class="nav-container">
             <div class="logo">
-                <i class="fas fa-compass"></i> CareerGuide
+                <i class="fas fa-compass"></i> StudyWithMe
             </div>
             <ul class="nav-links">
                 <li><a href="#nganh-hoc" class="active">Khối Thi & Ngành Học</a></li>
                 <li><a href="#truong-hoc">Trường Đại Học</a></li>
+                <li><a href="#dinh-huong">Định Hướng Nghề Nghiệp</a></li>
                 <li><a href="#trac-nghiem">Trắc Nghiệm</a></li>
                 <li><a href="#lien-he">Liên Hệ</a></li>
             </ul>
@@ -639,6 +912,26 @@
                         <!-- Dữ liệu trường học sẽ được thêm bằng JavaScript -->
                     </tbody>
                 </table>
+                <button class="show-more-btn" id="showMoreBtn">Xem thêm trường đại học</button>
+            </div>
+        </section>
+
+        <section id="dinh-huong">
+            <h2 class="section-title">Định Hướng Nghề Nghiệp</h2>
+            
+            <button class="quiz-toggle" id="quizToggle">
+                <i class="fas fa-chevron-down"></i> Bắt Đầu Trắc Nghiệm Định Hướng
+            </button>
+            
+            <div class="question-container" id="questionContainer">
+                <!-- Các câu hỏi sẽ được thêm bằng JavaScript -->
+            </div>
+
+            <div class="result-container" id="resultContainer">
+                <h2 class="result-title">Nghề Nghiệp Phù Hợp Với Bạn</h2>
+                <div id="careerResults">
+                    <!-- Kết quả sẽ được hiển thị ở đây -->
+                </div>
             </div>
         </section>
 
@@ -682,12 +975,25 @@
         </section>
     </div>
 
+    <!-- Modal chi tiết ngành học -->
+    <div class="modal" id="nganhModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalTitle">Chi Tiết Ngành Học</h2>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Nội dung chi tiết sẽ được thêm bằng JavaScript -->
+            </div>
+        </div>
+    </div>
+
     <footer>
         <p>© 2025 Hệ Thống Định Hướng Nghề Nghiệp. Tất cả các quyền được bảo lưu.</p>
     </footer>
 
     <script>
-        // Dữ liệu ngành học chi tiết - ĐÃ BỔ SUNG THÊM NGÀNH MỚI
+        // Dữ liệu ngành học chi tiết - ĐẦY ĐỦ như file gốc
         const nganhHocData = [
             {
                 id: 1,
@@ -695,7 +1001,17 @@
                 mota: "Ngành học về phần mềm, hệ thống máy tính, trí tuệ nhân tạo và ứng dụng công nghệ.",
                 khothi: ["A00", "A01", "D01", "D07", "D90", "D96"],
                 nhomNganh: "cong-nghe",
-                link: "https://vi.wikipedia.org/wiki/C%C3%B4ng_ngh%E1%BB%87_th%C3%B4ng_tin"
+                link: "https://vi.wikipedia.org/wiki/C%C3%B4ng_ngh%E1%BB%87_th%C3%B4ng_tin",
+                yeucau: "Tư duy logic, khả năng giải quyết vấn đề, kiên trì, cập nhật công nghệ mới",
+                mucluong: "15-50 triệu/tháng tùy kinh nghiệm và vị trí",
+                trienvong: "Nhu cầu nhân lực cao, cơ hội làm việc toàn cầu, phát triển không ngừng",
+                diemSan: 21,
+                diem2025: " 22-25 điểm",
+                hocPhi: "15-25 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Rất cao với nhiều vị trí: lập trình viên, quản trị hệ thống, phân tích dữ liệu, phát triển AI",
+                kyNangCanThiet: "Lập trình, tư duy logic, giải quyết vấn đề, làm việc nhóm, tiếng Anh chuyên ngành",
+                topTruong: "ĐH Bách Khoa Hà Nội, ĐH Công nghệ - ĐHQG Hà Nội, ĐH Bách Khoa TP.HCM, ĐH Công nghệ Thông tin - ĐHQG TP.HCM"
             },
             {
                 id: 2,
@@ -703,7 +1019,17 @@
                 mota: "Đào tạo kiến thức quản lý, điều hành doanh nghiệp, khởi nghiệp và phát triển chiến lược kinh doanh.",
                 khothi: ["A00", "A01", "D01", "A09", "D96"],
                 nhomNganh: "kinh-te",
-                link: "https://vi.wikipedia.org/wiki/Qu%E1%BA%A3n_tr%E1%BB%8B_kinh_doanh"
+                link: "https://vi.wikipedia.org/wiki/Qu%E1%BA%A3n_tr%E1%BB%8B_kinh_doanh",
+                yeucau: "Kỹ năng giao tiếp, tư duy chiến lược, khả năng lãnh đạo, quyết đoán",
+                mucluong: "12-40 triệu/tháng tùy vị trí và quy mô công ty",
+                trienvong: "Cơ hội thăng tiến cao, có thể làm việc trong nhiều lĩnh vực khác nhau",
+                diemSan: 20,
+                diem2025: "21-24 điểm",
+                hocPhi: "12-20 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Rất đa dạng: quản lý, marketing, nhân sự, tài chính, khởi nghiệp",
+                kyNangCanThiet: "Giao tiếp, lãnh đạo, phân tích, ra quyết định, quản lý thời gian",
+                topTruong: "ĐH Kinh tế Quốc dân, ĐH Ngoại thương, ĐH Kinh tế TP.HCM, ĐH Tài chính - Marketing"
             },
             {
                 id: 3,
@@ -711,7 +1037,17 @@
                 mota: "Chuyên sâu về tiếng Anh, biên phiên dịch, giảng dạy và văn hóa các nước nói tiếng Anh.",
                 khothi: ["D01", "D14", "D15", "D66", "D78"],
                 nhomNganh: "ngon-ngu",
-                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_Anh"
+                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_Anh",
+                yeucau: "Kỹ năng ngôn ngữ tốt, khả năng giao tiếp, hiểu biết văn hóa",
+                mucluong: "10-30 triệu/tháng tùy năng lực và lĩnh vực làm việc",
+                trienvong: "Cơ hội làm việc trong môi trường quốc tế, nhiều ngành nghề liên quan",
+                diemSan: 19,
+                diem2025: " 20-23 điểm",
+                hocPhi: "10-18 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Biên phiên dịch, giảng dạy, hướng dẫn viên, nhân viên đối ngoại, truyền thông",
+                kyNangCanThiet: "Nghe, nói, đọc, viết tiếng Anh thành thạo, kỹ năng giao tiếp đa văn hóa",
+                topTruong: "ĐH Hà Nội, ĐH Ngoại ngữ - ĐHQG Hà Nội, ĐH Sư phạm TP.HCM, ĐH Ngoại ngữ - ĐH Đà Nẵng"
             },
             {
                 id: 4,
@@ -719,7 +1055,17 @@
                 mota: "Đào tạo bác sĩ, dược sĩ, điều dưỡng với kiến thức chuyên sâu về chăm sóc sức khỏe con người.",
                 khothi: ["B00", "B08", "D08", "D90"],
                 nhomNganh: "y-duoc",
-                link: "https://vi.wikipedia.org/wiki/Y_h%E1%BB%8Dc"
+                link: "https://vi.wikipedia.org/wiki/Y_h%E1%BB%8Dc",
+                yeucau: "Kiến thức khoa học vững, tinh thần trách nhiệm cao, kiên nhẫn, tỉ mỉ",
+                mucluong: "15-40 triệu/tháng tùy chuyên môn và kinh nghiệm",
+                trienvong: "Nhu cầu ổn định, có ý nghĩa xã hội cao, cơ hội phát triển chuyên môn liên tục",
+                diemSan: 24,
+                diem2025: " 24-28 điểm",
+                hocPhi: "20-40 triệu/năm tùy trường",
+                thoiGianDaoTao: "6 năm (bác sĩ đa khoa), 5 năm (dược sĩ)",
+                coHoiViecLam: "Bác sĩ, dược sĩ tại bệnh viện, phòng khám, công ty dược phẩm, nghiên cứu y học",
+                kyNangCanThiet: "Kiến thức y sinh học, kỹ năng chẩn đoán, giao tiếp với bệnh nhân, làm việc nhóm",
+                topTruong: "ĐH Y Hà Nội, ĐH Y Dược TP.HCM, ĐH Y Dược Huế, ĐH Y Dược Cần Thơ"
             },
             {
                 id: 5,
@@ -727,7 +1073,17 @@
                 mota: "Đào tạo kỹ năng viết, biên tập, sản xuất nội dung truyền thông đa phương tiện.",
                 khothi: ["C00", "D14", "D15", "D78", "D84"],
                 nhomNganh: "ngon-ngu",
-                link: "https://vi.wikipedia.org/wiki/B%C3%A1o_ch%C3%AD"
+                link: "https://vi.wikipedia.org/wiki/B%C3%A1o_ch%C3%AD",
+                yeucau: "Kỹ năng viết tốt, tư duy phản biện, khả năng làm việc dưới áp lực",
+                mucluong: "8-25 triệu/tháng tùy vị trí và kinh nghiệm",
+                trienvong: "Đa dạng cơ hội việc làm trong truyền thông, báo chí, quảng cáo",
+                diemSan: 18,
+                diem2025: "19-22 điểm",
+                hocPhi: "10-16 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Phóng viên, biên tập viên, content creator, PR, truyền thông số",
+                kyNangCanThiet: "Viết lách, phỏng vấn, biên tập, sử dụng công cụ truyền thông, tư duy sáng tạo",
+                topTruong: "Học viện Báo chí và Tuyên truyền, ĐH Khoa học Xã hội & Nhân văn - ĐHQG Hà Nội, ĐH Văn hóa Hà Nội"
             },
             {
                 id: 6,
@@ -735,7 +1091,17 @@
                 mota: "Chuyên ngành về thiết kế, vận hành và bảo trì hệ thống điện, điện tử và tự động hóa.",
                 khothi: ["A00", "A01", "D01", "D07", "D90"],
                 nhomNganh: "cong-nghe",
-                link: "https://vi.wikipedia.org/wiki/K%E1%BB%B9_thu%E1%BA%ADt_%C4%91i%E1%BB%87n"
+                link: "https://vi.wikipedia.org/wiki/K%E1%BB%B9_thu%E1%BA%ADt_%C4%91i%E1%BB%87n",
+                yeucau: "Tư duy logic, kiến thức vật lý, toán học, khả năng phân tích kỹ thuật",
+                mucluong: "12-35 triệu/tháng tùy chuyên môn và kinh nghiệm",
+                trienvong: "Nhu cầu cao trong công nghiệp và tự động hóa, cơ hội phát triển ổn định",
+                diemSan: 20,
+                diem2025: "21-24 điểm",
+                hocPhi: "14-22 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Kỹ sư điện, điện tử, tự động hóa, kỹ sư bảo trì hệ thống, tư vấn kỹ thuật",
+                kyNangCanThiet: "Kiến thức điện, điện tử, lập trình vi điều khiển, đọc bản vẽ kỹ thuật, phân tích sự cố",
+                topTruong: "ĐH Bách Khoa Hà Nội, ĐH Bách Khoa TP.HCM, ĐH Công nghiệp Hà Nội, ĐH Sư phạm Kỹ thuật TP.HCM"
             },
             {
                 id: 7,
@@ -743,7 +1109,17 @@
                 mota: "Đào tạo chuyên sâu về kế toán, kiểm toán, tài chính và quản trị doanh nghiệp.",
                 khothi: ["A00", "A01", "D01", "D07", "D96"],
                 nhomNganh: "kinh-te",
-                link: "https://vi.wikipedia.org/wiki/K%E1%BA%BF_to%C3%A1n"
+                link: "https://vi.wikipedia.org/wiki/K%E1%BA%BF_to%C3%A1n",
+                yeucau: "Tính cẩn thận, tỉ mỉ, khả năng phân tích số liệu, hiểu biết về luật",
+                mucluong: "10-30 triệu/tháng tùy vị trí và chứng chỉ",
+                trienvong: "Nhu cầu ổn định trong mọi doanh nghiệp, cơ hội thăng tiến rõ ràng",
+                diemSan: 19,
+                diem2025: "20-23 điểm",
+                hocPhi: "12-18 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Kế toán, kiểm toán viên, tư vấn thuế, quản lý tài chính, kiểm soát nội bộ",
+                kyNangCanThiet: "Tính toán chính xác, sử dụng phần mềm kế toán, phân tích báo cáo tài chính, hiểu biết luật thuế",
+                topTruong: "ĐH Kinh tế Quốc dân, ĐH Ngoại thương, ĐH Kinh tế TP.HCM, ĐH Tài chính - Marketing"
             },
             {
                 id: 8,
@@ -751,7 +1127,17 @@
                 mota: "Đào tạo giáo viên dạy Toán với kiến thức chuyên môn và kỹ năng sư phạm.",
                 khothi: ["A00", "A01", "D01", "D07", "D90"],
                 nhomNganh: "su-pham",
-                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_To%C3%A1n_h%E1%BB%8Dc"
+                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_To%C3%A1n_h%E1%BB%8Dc",
+                yeucau: "Kiến thức toán học vững, kỹ năng sư phạm, kiên nhẫn, yêu thích giảng dạy",
+                mucluong: "8-20 triệu/tháng tùy cấp học và thâm niên",
+                trienvong: "Ổn định, có kỳ nghỉ hè, đóng góp cho xã hội thông qua giáo dục",
+                diemSan: 18,
+                diem2025: " 19-22 điểm",
+                hocPhi: "8-12 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Giáo viên Toán các cấp, gia sư, biên soạn sách giáo khoa, nghiên cứu giáo dục",
+                kyNangCanThiet: "Kiến thức toán học chuyên sâu, kỹ năng sư phạm, giao tiếp, quản lý lớp học",
+                topTruong: "ĐH Sư phạm Hà Nội, ĐH Sư phạm TP.HCM, ĐH Sư phạm - ĐH Huế, ĐH Sư phạm - ĐH Thái Nguyên"
             },
             {
                 id: 9,
@@ -759,7 +1145,17 @@
                 mota: "Ứng dụng sinh học vào sản xuất và phát triển sản phẩm trong y dược, nông nghiệp.",
                 khothi: ["B00", "A02", "D08", "D07", "D90"],
                 nhomNganh: "cong-nghe",
-                link: "https://vi.wikipedia.org/wiki/C%C3%B4ng_ngh%E1%BB%87_sinh_h%E1%BB%8Dc"
+                link: "https://vi.wikipedia.org/wiki/C%C3%B4ng_ngh%E1%BB%87_sinh_h%E1%BB%8Dc",
+                yeucau: "Kiến thức sinh học, hóa học, khả năng nghiên cứu và phân tích",
+                mucluong: "10-25 triệu/tháng tùy lĩnh vực và kinh nghiệm",
+                trienvong: "Triển vọng cao trong y dược, nông nghiệp và bảo vệ môi trường",
+                diemSan: 19,
+                diem2025: "20-23 điểm",
+                hocPhi: "12-20 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Nghiên cứu viên, kỹ sư công nghệ sinh học, chuyên viên phân tích, nhân viên phòng thí nghiệm",
+                kyNangCanThiet: "Kiến thức sinh học, hóa học, kỹ năng thí nghiệm, phân tích dữ liệu, nghiên cứu",
+                topTruong: "ĐH Khoa học Tự nhiên - ĐHQG Hà Nội, ĐH Khoa học Tự nhiên - ĐHQG TP.HCM, ĐH Nông Lâm TP.HCM"
             },
             {
                 id: 10,
@@ -767,7 +1163,17 @@
                 mota: "Đào tạo luật sư chuyên về lĩnh vực kinh tế, doanh nghiệp và thương mại.",
                 khothi: ["A00", "C00", "D01", "D14", "D66"],
                 nhomNganh: "phap-luat",
-                link: "https://vi.wikipedia.org/wiki/Lu%E1%BA%ADt_kinh_t%E1%BA%BF"
+                link: "https://vi.wikipedia.org/wiki/Lu%E1%BA%ADt_kinh_t%E1%BA%BF",
+                yeucau: "Tư duy logic, khả năng phân tích, hiểu biết pháp luật và kinh tế",
+                mucluong: "12-40 triệu/tháng tùy kinh nghiệm và lĩnh vực",
+                trienvong: "Nhu cầu cao trong doanh nghiệp, cơ hội làm việc đa dạng",
+                diemSan: 20,
+                diem2025: "21-24 điểm",
+                hocPhi: "12-18 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Luật sư, chuyên viên pháp lý, cố vấn pháp luật, công chứng viên",
+                kyNangCanThiet: "Tư duy pháp lý, phân tích văn bản, tranh tụng, đàm phán, hiểu biết kinh tế",
+                topTruong: "ĐH Luật Hà Nội, ĐH Luật TP.HCM, Khoa Luật - ĐHQG Hà Nội, ĐH Kinh tế - Luật - ĐHQG TP.HCM"
             },
             // Thêm các ngành mới cho các khối còn thiếu
             {
@@ -776,7 +1182,17 @@
                 mota: "Nghiên cứu về cấu trúc, thành phần và lịch sử của Trái Đất.",
                 khothi: ["A04", "B00", "B02", "D07"],
                 nhomNganh: "cong-nghe",
-                link: "https://vi.wikipedia.org/wiki/%C4%90%E1%BB%8Ba_ch%E1%BA%A5t_h%E1%BB%8Dc"
+                link: "https://vi.wikipedia.org/wiki/%C4%90%E1%BB%8Ba_ch%E1%BA%A5t_h%E1%BB%8Dc",
+                yeucau: "Kiến thức địa chất, hóa học, khả năng làm việc ngoài trời",
+                mucluong: "10-25 triệu/tháng tùy lĩnh vực và kinh nghiệm",
+                trienvong: "Nhu cầu trong ngành dầu khí, khoáng sản và môi trường",
+                diemSan: 17,
+                diem2025: " 18-21 điểm",
+                hocPhi: "10-15 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Địa chất viên, kỹ sư địa chất, nghiên cứu viên, tư vấn môi trường",
+                kyNangCanThiet: "Kiến thức địa chất, hóa học, kỹ năng thực địa, phân tích mẫu vật",
+                topTruong: "ĐH Mỏ - Địa chất, ĐH Khoa học Tự nhiên - ĐHQG Hà Nội, ĐH Khoa học Tự nhiên - ĐHQG TP.HCM"
             },
             {
                 id: 102,
@@ -784,15 +1200,36 @@
                 mota: "Nghiên cứu về lịch sử phát triển của tự nhiên và các loài sinh vật.",
                 khothi: ["B01", "B00", "C00"],
                 nhomNganh: "xahoi",
-                link: "https://vi.wikipedia.org/wiki/L%E1%BB%8Bch_s%E1%BB%AD_t%E1%BB%B1_nhi%C3%AAn"
+                link: "https://vi.wikipedia.org/wiki/L%E1%BB%8Bch_s%E1%BB%AD_t%E1%BB%B1_nhi%C3%AAn",
+                yeucau: "Kiến thức sinh học, lịch sử, khả năng nghiên cứu và phân tích",
+                mucluong: "8-20 triệu/tháng tùy vị trí và cơ quan",
+                trienvong: "Cơ hội làm việc trong bảo tàng, nghiên cứu và giáo dục",
+                diemSan: 16,
+                diem2025: " 17-20 điểm",
+                hocPhi: "8-12 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Nhà nghiên cứu, giảng viên, nhân viên bảo tàng, chuyên viên bảo tồn",
+                kyNangCanThiet: "Kiến thức sinh học, lịch sử, nghiên cứu khoa học, phân tích tài liệu",
+                topTruong: "ĐH Khoa học Xã hội & Nhân văn - ĐHQG Hà Nội, ĐH Sư phạm Hà Nội, ĐH Khoa học Xã hội & Nhân văn - ĐHQG TP.HCM"
             },
+            // Thêm các ngành khác từ file gốc
             {
                 id: 103,
                 ten: "Địa Vật Lý",
                 mota: "Nghiên cứu về các hiện tượng vật lý của Trái Đất và ứng dụng trong thăm dò.",
                 khothi: ["A04", "A00", "A01"],
                 nhomNganh: "cong-nghe",
-                link: "https://vi.wikipedia.org/wiki/%C4%90%E1%BB%8Ba_v%E1%BA%ADt_l%C3%BD"
+                link: "https://vi.wikipedia.org/wiki/%C4%90%E1%BB%8Ba_v%E1%BA%ADt_l%C3%BD",
+                yeucau: "Kiến thức vật lý, toán học, khả năng phân tích dữ liệu",
+                mucluong: "12-30 triệu/tháng tùy lĩnh vực và kinh nghiệm",
+                trienvong: "Nhu cầu cao trong thăm dò dầu khí và khoáng sản",
+                diemSan: 18,
+                diem2025: " 19-22 điểm",
+                hocPhi: "12-18 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Kỹ sư địa vật lý, nhà nghiên cứu, chuyên viên phân tích dữ liệu",
+                kyNangCanThiet: "Kiến thức vật lý, toán học, xử lý dữ liệu, phân tích kỹ thuật",
+                topTruong: "ĐH Mỏ - Địa chất, ĐH Khoa học Tự nhiên - ĐHQG Hà Nội, ĐH Bách Khoa Hà Nội"
             },
             {
                 id: 104,
@@ -800,7 +1237,17 @@
                 mota: "Chuyên về truyền thông và phổ biến kiến thức khoa học đến công chúng.",
                 khothi: ["B03", "C00", "D01"],
                 nhomNganh: "ngon-ngu",
-                link: "https://vi.wikipedia.org/wiki/B%C3%A1o_ch%C3%AD_khoa_h%E1%BB%8Dc"
+                link: "https://vi.wikipedia.org/wiki/B%C3%A1o_ch%C3%AD_khoa_h%E1%BB%8Dc",
+                yeucau: "Kỹ năng viết tốt, kiến thức khoa học, khả năng truyền đạt phức tạp thành đơn giản",
+                mucluong: "10-25 triệu/tháng tùy cơ quan và kinh nghiệm",
+                trienvong: "Nhu cầu ngày càng tăng trong truyền thông khoa học",
+                diemSan: 17,
+                diem2025: "18-21 điểm",
+                hocPhi: "10-15 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Phóng viên khoa học, biên tập viên, content creator khoa học, chuyên viên truyền thông",
+                kyNangCanThiet: "Viết lách, kiến thức khoa học, phỏng vấn, sản xuất nội dung đa phương tiện",
+                topTruong: "Học viện Báo chí và Tuyên truyền, ĐH Khoa học Xã hội & Nhân văn - ĐHQG Hà Nội, ĐH Khoa học Xã hội & Nhân văn - ĐHQG TP.HCM"
             },
             {
                 id: 105,
@@ -808,7 +1255,17 @@
                 mota: "Hỗ trợ và giải quyết các vấn đề xã hội, cải thiện chất lượng cuộc sống.",
                 khothi: ["B04", "C00", "D01", "D14"],
                 nhomNganh: "xahoi",
-                link: "https://vi.wikipedia.org/wiki/C%C3%B4ng_t%C3%A1c_x%C3%A3_h%E1%BB%99i"
+                link: "https://vi.wikipedia.org/wiki/C%C3%B4ng_t%C3%A1c_x%C3%A3_h%E1%BB%99i",
+                yeucau: "Kỹ năng giao tiếp, thấu cảm, kiên nhẫn, hiểu biết xã hội",
+                mucluong: "8-18 triệu/tháng tùy tổ chức và kinh nghiệm",
+                trienvong: "Nhu cầu ổn định trong các tổ chức xã hội và cộng đồng",
+                diemSan: 16,
+                diem2025: "17-20 điểm",
+                hocPhi: "8-12 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Nhân viên xã hội, tư vấn viên, quản lý dự án xã hội, cán bộ cộng đồng",
+                kyNangCanThiet: "Giao tiếp, thấu cảm, giải quyết vấn đề, làm việc nhóm, quản lý trường hợp",
+                topTruong: "ĐH Khoa học Xã hội & Nhân văn - ĐHQG Hà Nội, ĐH Lao động Xã hội, ĐH Sư phạm Hà Nội"
             },
             // Thêm ngành cho các khối C
             {
@@ -817,7 +1274,17 @@
                 mota: "Đào tạo giáo viên dạy Vật lý với kiến thức chuyên môn và kỹ năng sư phạm.",
                 khothi: ["C01", "A00", "A01"],
                 nhomNganh: "su-pham",
-                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_V%E1%BA%ADt_l%C3%BD"
+                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_V%E1%BA%ADt_l%C3%BD",
+                yeucau: "Kiến thức vật lý vững, kỹ năng sư phạm, khả năng truyền đạt",
+                mucluong: "8-20 triệu/tháng tùy cấp học và thâm niên",
+                trienvong: "Ổn định, có kỳ nghỉ hè, nhu cầu giáo viên vật lý luôn cao",
+                diemSan: 17,
+                diem2025: " 18-21 điểm",
+                hocPhi: "8-12 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Giáo viên Vật lý các cấp, gia sư, biên soạn sách giáo khoa, nghiên cứu giáo dục",
+                kyNangCanThiet: "Kiến thức vật lý chuyên sâu, kỹ năng sư phạm, thí nghiệm, quản lý lớp học",
+                topTruong: "ĐH Sư phạm Hà Nội, ĐH Sư phạm TP.HCM, ĐH Sư phạm - ĐH Huế, ĐH Sư phạm - ĐH Thái Nguyên"
             },
             {
                 id: 107,
@@ -825,7 +1292,17 @@
                 mota: "Đào tạo giáo viên dạy Hóa học với kiến thức chuyên môn và kỹ năng sư phạm.",
                 khothi: ["C02", "A00", "B00"],
                 nhomNganh: "su-pham",
-                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_H%C3%B3a_h%E1%BB%8Dc"
+                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_H%C3%B3a_h%E1%BB%8Dc",
+                yeucau: "Kiến thức hóa học vững, kỹ năng sư phạm, cẩn thận, tỉ mỉ",
+                mucluong: "8-20 triệu/tháng tùy cấp học và thâm niên",
+                trienvong: "Ổn định, có kỳ nghỉ hè, nhu cầu giáo viên hóa học luôn cao",
+                diemSan: 17,
+                diem2025: " 18-21 điểm",
+                hocPhi: "8-12 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Giáo viên Hóa học các cấp, gia sư, biên soạn sách giáo khoa, nghiên cứu giáo dục",
+                kyNangCanThiet: "Kiến thức hóa học chuyên sâu, kỹ năng sư phạm, thí nghiệm, an toàn phòng thí nghiệm",
+                topTruong: "ĐH Sư phạm Hà Nội, ĐH Sư phạm TP.HCM, ĐH Sư phạm - ĐH Huế, ĐH Sư phạm - ĐH Thái Nguyên"
             },
             {
                 id: 108,
@@ -833,7 +1310,17 @@
                 mota: "Đào tạo giáo viên dạy Lịch sử với kiến thức chuyên môn và kỹ năng sư phạm.",
                 khothi: ["C03", "C00", "D14"],
                 nhomNganh: "su-pham",
-                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_L%E1%BB%8Bch_s%E1%BB%AD"
+                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_L%E1%BB%8Bch_s%E1%BB%AD",
+                yeucau: "Kiến thức lịch sử phong phú, kỹ năng sư phạm, khả năng truyền cảm hứng",
+                mucluong: "8-20 triệu/tháng tùy cấp học và thâm niên",
+                trienvong: "Ổn định, có kỳ nghỉ hè, góp phần giáo dục thế hệ trẻ",
+                diemSan: 16,
+                diem2025: "17-20 điểm",
+                hocPhi: "8-12 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Giáo viên Lịch sử các cấp, gia sư, biên soạn sách giáo khoa, nghiên cứu lịch sử",
+                kyNangCanThiet: "Kiến thức lịch sử toàn diện, kỹ năng sư phạm, nghiên cứu tài liệu, truyền đạt hấp dẫn",
+                topTruong: "ĐH Sư phạm Hà Nội, ĐH Sư phạm TP.HCM, ĐH Sư phạm - ĐH Huế, ĐH Khoa học Xã hội & Nhân văn - ĐHQG Hà Nội"
             },
             {
                 id: 109,
@@ -841,7 +1328,17 @@
                 mota: "Đào tạo giáo viên dạy Địa lý với kiến thức chuyên môn và kỹ năng sư phạm.",
                 khothi: ["C04", "C00", "D15"],
                 nhomNganh: "su-pham",
-                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_%C4%90%E1%BB%8Ba_l%C3%BD"
+                link: "https://vi.wikipedia.org/wiki/S%C6%B0_ph%E1%BA%A1m_%C4%90%E1%BB%8Ba_l%C3%BD",
+                yeucau: "Kiến thức địa lý toàn diện, kỹ năng sư phạm, khả năng liên hệ thực tế",
+                mucluong: "8-20 triệu/tháng tùy cấp học và thâm niên",
+                trienvong: "Ổn định, có kỳ nghỉ hè, giúp học sinh hiểu về thế giới xung quanh",
+                diemSan: 16,
+                diem2025: " 17-20 điểm",
+                hocPhi: "8-12 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Giáo viên Địa lý các cấp, gia sư, biên soạn sách giáo khoa, nghiên cứu địa lý",
+                kyNangCanThiet: "Kiến thức địa lý toàn diện, kỹ năng sư phạm, đọc bản đồ, phân tích không gian",
+                topTruong: "ĐH Sư phạm Hà Nội, ĐH Sư phạm TP.HCM, ĐH Sư phạm - ĐH Huế, ĐH Khoa học Xã hội & Nhân văn - ĐHQG Hà Nội"
             },
             {
                 id: 110,
@@ -849,7 +1346,17 @@
                 mota: "Ứng dụng các nguyên lý vật lý vào giải quyết các vấn đề thực tiễn.",
                 khothi: ["C05", "A00", "A01"],
                 nhomNganh: "cong-nghe",
-                link: "https://vi.wikipedia.org/wiki/V%E1%BA%ADt_l%C3%BD_%E1%BB%A9ng_d%E1%BB%A5ng"
+                link: "https://vi.wikipedia.org/wiki/V%E1%BA%ADt_l%C3%BD_%E1%BB%A9ng_d%E1%BB%A5ng",
+                yeucau: "Kiến thức vật lý vững, tư duy phân tích, khả năng ứng dụng",
+                mucluong: "12-30 triệu/tháng tùy lĩnh vực và kinh nghiệm",
+                trienvong: "Nhu cầu cao trong nghiên cứu và phát triển sản phẩm",
+                diemSan: 18,
+                diem2025: " 19-22 điểm",
+                hocPhi: "12-18 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Kỹ sư ứng dụng, nhà nghiên cứu, chuyên viên kỹ thuật, tư vấn công nghệ",
+                kyNangCanThiet: "Kiến thức vật lý ứng dụng, toán học, mô phỏng, phân tích kỹ thuật",
+                topTruong: "ĐH Bách Khoa Hà Nội, ĐH Khoa học Tự nhiên - ĐHQG Hà Nội, ĐH Bách Khoa TP.HCM, ĐH Sư phạm Kỹ thuật TP.HCM"
             },
             {
                 id: 111,
@@ -857,7 +1364,17 @@
                 mota: "Nghiên cứu về các quá trình hóa học trong cơ thể sinh vật.",
                 khothi: ["C06", "B00", "A00"],
                 nhomNganh: "cong-nghe",
-                link: "https://vi.wikipedia.org/wiki/H%C3%B3a_sinh"
+                link: "https://vi.wikipedia.org/wiki/H%C3%B3a_sinh",
+                yeucau: "Kiến thức hóa học, sinh học, khả năng nghiên cứu trong phòng thí nghiệm",
+                mucluong: "10-25 triệu/tháng tùy lĩnh vực và kinh nghiệm",
+                trienvong: "Triển vọng trong y dược, công nghệ sinh học và nghiên cứu",
+                diemSan: 18,
+                diem2025: " 19-22 điểm",
+                hocPhi: "12-18 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Nhà nghiên cứu hóa sinh, kỹ thuật viên phòng thí nghiệm, chuyên viên phân tích",
+                kyNangCanThiet: "Kiến thức hóa sinh, kỹ năng thí nghiệm, phân tích dữ liệu, nghiên cứu khoa học",
+                topTruong: "ĐH Khoa học Tự nhiên - ĐHQG Hà Nội, ĐH Y Hà Nội, ĐH Khoa học Tự nhiên - ĐHQG TP.HCM, ĐH Y Dược TP.HCM"
             },
             {
                 id: 112,
@@ -865,7 +1382,17 @@
                 mota: "Nghiên cứu về chức năng và cơ chế hoạt động của các hệ thống trong cơ thể.",
                 khothi: ["C07", "B00", "A02"],
                 nhomNganh: "y-duoc",
-                link: "https://vi.wikipedia.org/wiki/Sinh_l%C3%BD_h%E1%BB%8Dc"
+                link: "https://vi.wikipedia.org/wiki/Sinh_l%C3%BD_h%E1%BB%8Dc",
+                yeucau: "Kiến thức sinh học, y học, khả năng nghiên cứu và phân tích",
+                mucluong: "12-30 triệu/tháng tùy lĩnh vực và kinh nghiệm",
+                trienvong: "Nhu cầu trong nghiên cứu y sinh và phát triển thuốc",
+                diemSan: 19,
+                diem2025: " 20-23 điểm",
+                hocPhi: "12-20 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Nhà nghiên cứu sinh lý, giảng viên, chuyên viên phòng thí nghiệm y sinh",
+                kyNangCanThiet: "Kiến thức sinh lý học, kỹ năng thí nghiệm, phân tích dữ liệu, nghiên cứu khoa học",
+                topTruong: "ĐH Y Hà Nội, ĐH Y Dược TP.HCM, ĐH Khoa học Tự nhiên - ĐHQG Hà Nội, ĐH Khoa học Tự nhiên - ĐHQG TP.HCM"
             },
             {
                 id: 113,
@@ -873,7 +1400,17 @@
                 mota: "Nghiên cứu về thiết kế, tổng hợp và phát triển thuốc chữa bệnh.",
                 khothi: ["C08", "B00", "A00"],
                 nhomNganh: "y-duoc",
-                link: "https://vi.wikipedia.org/wiki/H%C3%B3a_d%C6%B0%E1%BB%A3c"
+                link: "https://vi.wikipedia.org/wiki/H%C3%B3a_d%C6%B0%E1%BB%A3c",
+                yeucau: "Kiến thức hóa học, sinh học, khả năng nghiên cứu trong phòng thí nghiệm",
+                mucluong: "12-35 triệu/tháng tùy lĩnh vực và kinh nghiệm",
+                trienvong: "Triển vọng cao trong ngành dược phẩm và nghiên cứu y tế",
+                diemSan: 20,
+                diem2025: " 21-24 điểm",
+                hocPhi: "15-25 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Nhà nghiên cứu hóa dược, chuyên viên phát triển thuốc, kỹ thuật viên phòng thí nghiệm",
+                kyNangCanThiet: "Kiến thức hóa dược, kỹ năng tổng hợp hóa học, phân tích dữ liệu, nghiên cứu khoa học",
+                topTruong: "ĐH Dược Hà Nội, ĐH Y Dược TP.HCM, ĐH Khoa học Tự nhiên - ĐHQG Hà Nội, ĐH Khoa học Tự nhiên - ĐHQG TP.HCM"
             },
             {
                 id: 114,
@@ -881,7 +1418,17 @@
                 mota: "Nghiên cứu về tương tác giữa con người và môi trường tự nhiên.",
                 khothi: ["C09", "C00", "B00"],
                 nhomNganh: "nong-lam",
-                link: "https://vi.wikipedia.org/wiki/%C4%90%E1%BB%8Ba_l%C3%BD_m%C3%B4i_tr%C6%B0%E1%BB%9Dng"
+                link: "https://vi.wikipedia.org/wiki/%C4%90%E1%BB%8Ba_l%C3%BD_m%C3%B4i_tr%C6%B0%E1%BB%9Dng",
+                yeucau: "Kiến thức địa lý, môi trường, khả năng phân tích và đánh giá",
+                mucluong: "10-25 triệu/tháng tùy lĩnh vực và kinh nghiệm",
+                trienvong: "Nhu cầu ngày càng tăng trong bảo vệ môi trường và quy hoạch",
+                diemSan: 17,
+                diem2025: " 18-21 điểm",
+                hocPhi: "10-15 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Chuyên viên môi trường, nhà quy hoạch, nghiên cứu viên, tư vấn môi trường",
+                kyNangCanThiet: "Kiến thức địa lý môi trường, GIS, đánh giá tác động môi trường, phân tích không gian",
+                topTruong: "ĐH Khoa học Tự nhiên - ĐHQG Hà Nội, ĐH Khoa học Xã hội & Nhân văn - ĐHQG Hà Nội, ĐH Khoa học Tự nhiên - ĐHQG TP.HCM"
             },
             {
                 id: 115,
@@ -889,7 +1436,17 @@
                 mota: "Nghiên cứu về các quá trình hóa học trong môi trường và ô nhiễm.",
                 khothi: ["C10", "B00", "A00"],
                 nhomNganh: "nong-lam",
-                link: "https://vi.wikipedia.org/wiki/H%C3%B3a_m%C3%B4i_tr%C6%B0%E1%BB%9Dng"
+                link: "https://vi.wikipedia.org/wiki/H%C3%B3a_m%C3%B4i_tr%C6%B0%E1%BB%9Dng",
+                yeucau: "Kiến thức hóa học, môi trường, khả năng phân tích và đánh giá",
+                mucluong: "10-25 triệu/tháng tùy lĩnh vực và kinh nghiệm",
+                trienvong: "Nhu cầu cao trong quản lý môi trường và xử lý ô nhiễm",
+                diemSan: 17,
+                diem2025: "18-21 điểm",
+                hocPhi: "10-15 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Chuyên viên hóa môi trường, nhà nghiên cứu, kỹ sư xử lý ô nhiễm, tư vấn môi trường",
+                kyNangCanThiet: "Kiến thức hóa môi trường, phân tích mẫu, đánh giá chất lượng môi trường, xử lý ô nhiễm",
+                topTruong: "ĐH Khoa học Tự nhiên - ĐHQG Hà Nội, ĐH Bách Khoa Hà Nội, ĐH Khoa học Tự nhiên - ĐHQG TP.HCM, ĐH Bách Khoa TP.HCM"
             },
             // Thêm ngành cho các khối D
             {
@@ -898,7 +1455,17 @@
                 mota: "Nghiên cứu về quan hệ giữa các quốc gia, tổ chức quốc tế và ngoại giao.",
                 khothi: ["D01", "D14", "D15", "D78"],
                 nhomNganh: "xahoi",
-                link: "https://vi.wikipedia.org/wiki/Quan_h%E1%BB%87_qu%E1%BB%91c_t%E1%BA%BF"
+                link: "https://vi.wikipedia.org/wiki/Quan_h%E1%BB%87_qu%E1%BB%91c_t%E1%BA%BF",
+                yeucau: "Kiến thức chính trị, kinh tế quốc tế, kỹ năng giao tiếp và phân tích",
+                mucluong: "12-35 triệu/tháng tùy vị trí và kinh nghiệm",
+                trienvong: "Cơ hội làm việc trong ngoại giao, tổ chức quốc tế và doanh nghiệp đa quốc gia",
+                diemSan: 19,
+                diem2025: " 20-23 điểm",
+                hocPhi: "12-18 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Nhà ngoại giao, chuyên viên đối ngoại, nhà phân tích quốc tế, nhân viên tổ chức quốc tế",
+                kyNangCanThiet: "Kiến thức quan hệ quốc tế, ngoại ngữ, giao tiếp, phân tích chính trị, đàm phán",
+                topTruong: "Học viện Ngoại giao, ĐH Khoa học Xã hội & Nhân văn - ĐHQG Hà Nội, ĐH Ngoại thương, ĐH Khoa học Xã hội & Nhân văn - ĐHQG TP.HCM"
             },
             {
                 id: 117,
@@ -906,7 +1473,17 @@
                 mota: "Chuyên sâu về tiếng Pháp, biên phiên dịch, giảng dạy và văn hóa Pháp.",
                 khothi: ["D03", "D83", "D84"],
                 nhomNganh: "ngon-ngu",
-                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_Ph%C3%A1p"
+                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_Ph%C3%A1p",
+                yeucau: "Kỹ năng ngôn ngữ Pháp tốt, hiểu biết văn hóa Pháp, khả năng giao tiếp",
+                mucluong: "10-30 triệu/tháng tùy năng lực và lĩnh vực làm việc",
+                trienvong: "Cơ hội làm việc với các công ty Pháp, tổ chức quốc tế và giáo dục",
+                diemSan: 18,
+                diem2025: " 19-22 điểm",
+                hocPhi: "10-16 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Biên phiên dịch tiếng Pháp, giáo viên, hướng dẫn viên, nhân viên đối ngoại",
+                kyNangCanThiet: "Nghe, nói, đọc, viết tiếng Pháp thành thạo, hiểu biết văn hóa Pháp, giao tiếp đa văn hóa",
+                topTruong: "ĐH Hà Nội, ĐH Ngoại ngữ - ĐHQG Hà Nội, ĐH Sư phạm TP.HCM, ĐH Ngoại ngữ - ĐH Đà Nẵng"
             },
             {
                 id: 118,
@@ -914,7 +1491,17 @@
                 mota: "Chuyên sâu về tiếng Trung, biên phiên dịch, giảng dạy và văn hóa Trung Quốc.",
                 khothi: ["D04", "D85", "D89"],
                 nhomNganh: "ngon-ngu",
-                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_Trung"
+                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_Trung",
+                yeucau: "Kỹ năng ngôn ngữ Trung tốt, hiểu biết văn hóa Trung Quốc, khả năng giao tiếp",
+                mucluong: "12-35 triệu/tháng tùy năng lực và lĩnh vực làm việc",
+                trienvong: "Cơ hội rộng mở với sự phát triển của quan hệ Việt-Trung",
+                diemSan: 19,
+                diem2025: " 20-23 điểm",
+                hocPhi: "12-18 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Biên phiên dịch tiếng Trung, giáo viên, hướng dẫn viên, nhân viên thương mại quốc tế",
+                kyNangCanThiet: "Nghe, nói, đọc, viết tiếng Trung thành thạo, hiểu biết văn hóa Trung Quốc, giao tiếp thương mại",
+                topTruong: "ĐH Hà Nội, ĐH Ngoại ngữ - ĐHQG Hà Nội, ĐH Sư phạm TP.HCM, ĐH Ngoại ngữ - ĐH Đà Nẵng"
             },
             {
                 id: 119,
@@ -922,7 +1509,17 @@
                 mota: "Chuyên sâu về tiếng Nhật, biên phiên dịch, giảng dạy và văn hóa Nhật Bản.",
                 khothi: ["D06", "D69", "D74"],
                 nhomNganh: "ngon-ngu",
-                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_Nh%E1%BA%ADt"
+                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_Nh%E1%BA%ADt",
+                yeucau: "Kỹ năng ngôn ngữ Nhật tốt, hiểu biết văn hóa Nhật Bản, khả năng giao tiếp",
+                mucluong: "12-35 triệu/tháng tùy năng lực và lĩnh vực làm việc",
+                trienvong: "Nhu cầu cao với sự hiện diện của nhiều công ty Nhật tại Việt Nam",
+                diemSan: 19,
+                diem2025: " 20-23 điểm",
+                hocPhi: "12-18 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Biên phiên dịch tiếng Nhật, giáo viên, hướng dẫn viên, nhân viên công ty Nhật",
+                kyNangCanThiet: "Nghe, nói, đọc, viết tiếng Nhật thành thạo, hiểu biết văn hóa Nhật Bản, giao tiếp trong môi trường công sở",
+                topTruong: "ĐH Hà Nội, ĐH Ngoại ngữ - ĐHQG Hà Nội, ĐH Sư phạm TP.HCM, ĐH Ngoại ngữ - ĐH Đà Nẵng"
             },
             {
                 id: 120,
@@ -930,7 +1527,17 @@
                 mota: "Chuyên sâu về tiếng Hàn, biên phiên dịch, giảng dạy và văn hóa Hàn Quốc.",
                 khothi: ["D26", "D72", "D77"],
                 nhomNganh: "ngon-ngu",
-                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_H%C3%A0n"
+                link: "https://vi.wikipedia.org/wiki/Ng%C3%B4n_ng%E1%BB%AF_H%C3%A0n",
+                yeucau: "Kỹ năng ngôn ngữ Hàn tốt, hiểu biết văn hóa Hàn Quốc, khả năng giao tiếp",
+                mucluong: "12-35 triệu/tháng tùy năng lực và lĩnh vực làm việc",
+                trienvong: "Cơ hội rộng mở với làn sóng Hàn Quốc và đầu tư Hàn vào Việt Nam",
+                diemSan: 19,
+                diem2025: " 20-23 điểm",
+                hocPhi: "12-18 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Biên phiên dịch tiếng Hàn, giáo viên, hướng dẫn viên, nhân viên công ty Hàn Quốc",
+                kyNangCanThiet: "Nghe, nói, đọc, viết tiếng Hàn thành thạo, hiểu biết văn hóa Hàn Quốc, giao tiếp trong môi trường công sở",
+                topTruong: "ĐH Hà Nội, ĐH Ngoại ngữ - ĐHQG Hà Nội, ĐH Sư phạm TP.HCM, ĐH Ngoại ngữ - ĐH Đà Nẵng"
             },
             // Thêm ngành cho khối năng khiếu
             {
@@ -939,7 +1546,17 @@
                 mota: "Đào tạo kỹ năng hát, biểu diễn và lý thuyết âm nhạc chuyên nghiệp.",
                 khothi: ["N00", "N01", "N02"],
                 nhomNganh: "vanhoa-nghethuat",
-                link: "https://vi.wikipedia.org/wiki/Thanh_nh%E1%BA%A1c"
+                link: "https://vi.wikipedia.org/wiki/Thanh_nh%E1%BA%A1c",
+                yeucau: "Năng khiếu âm nhạc, giọng hát tốt, khả năng biểu diễn",
+                mucluong: "10-50 triệu/tháng tùy năng lực và danh tiếng",
+                trienvong: "Cơ hội trong biểu diễn, giảng dạy và sản xuất âm nhạc",
+                diemSan: "Theo kết quả thi năng khiếu",
+                diem2025: "Theo kết quả thi năng khiếu",
+                hocPhi: "15-25 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Ca sĩ, giáo viên thanh nhạc, nhạc sĩ, biên tập viên âm nhạc",
+                kyNangCanThiet: "Kỹ thuật thanh nhạc, biểu diễn, lý thuyết âm nhạc, cảm thụ âm nhạc",
+                topTruong: "Học viện Âm nhạc Quốc gia Việt Nam, Nhạc viện TP.HCM, ĐH Văn hóa Nghệ thuật Quân đội"
             },
             {
                 id: 122,
@@ -947,7 +1564,17 @@
                 mota: "Đào tạo kỹ năng diễn xuất, biểu cảm và sáng tạo nghệ thuật sân khấu.",
                 khothi: ["S00", "S01", "R00"],
                 nhomNganh: "vanhoa-nghethuat",
-                link: "https://vi.wikipedia.org/wiki/Di%E1%BB%85n_vi%C3%AAn_k%E1%BB%8Bch"
+                link: "https://vi.wikipedia.org/wiki/Di%E1%BB%85n_vi%C3%AAn_k%E1%BB%8Bch",
+                yeucau: "Năng khiếu diễn xuất, khả năng biểu cảm, sáng tạo",
+                mucluong: "10-40 triệu/tháng tùy năng lực và danh tiếng",
+                trienvong: "Cơ hội trong sân khấu, điện ảnh, truyền hình",
+                diemSan: "Theo kết quả thi năng khiếu",
+                diem2025: "Theo kết quả thi năng khiếu",
+                hocPhi: "15-25 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Diễn viên sân khấu, điện ảnh, truyền hình, đạo diễn, biên kịch",
+                kyNangCanThiet: "Diễn xuất, biểu cảm, ngôn ngữ cơ thể, sáng tạo nghệ thuật, làm việc nhóm",
+                topTruong: "ĐH Sân khấu Điện ảnh Hà Nội, ĐH Sân khấu Điện ảnh TP.HCM, Học viện Âm nhạc Huế"
             },
             {
                 id: 123,
@@ -955,7 +1582,17 @@
                 mota: "Đào tạo kỹ năng chỉ đạo nghệ thuật, sáng tạo và quản lý sản xuất phim.",
                 khothi: ["S00", "R00", "R01"],
                 nhomNganh: "vanhoa-nghethuat",
-                link: "https://vi.wikipedia.org/wiki/%C4%90%E1%BA%A1o_di%E1%BB%85n"
+                link: "https://vi.wikipedia.org/wiki/%C4%90%E1%BA%A1o_di%E1%BB%85n",
+                yeucau: "Tầm nhìn nghệ thuật, kỹ năng lãnh đạo, sáng tạo",
+                mucluong: "15-50 triệu/tháng tùy năng lực và danh tiếng",
+                trienvong: "Cơ hội trong điện ảnh, truyền hình và sân khấu",
+                diemSan: "Theo kết quả thi năng khiếu",
+                diem2025: "Theo kết quả thi năng khiếu",
+                hocPhi: "15-25 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Đạo diễn phim, truyền hình, sân khấu, quay phim, biên kịch",
+                kyNangCanThiet: "Chỉ đạo nghệ thuật, quản lý sản xuất, kỹ thuật quay phim, kể chuyện hình ảnh",
+                topTruong: "ĐH Sân khấu Điện ảnh Hà Nội, ĐH Sân khấu Điện ảnh TP.HCM, Học viện Báo chí và Tuyên truyền"
             },
             {
                 id: 124,
@@ -963,7 +1600,17 @@
                 mota: "Đào tạo kỹ năng sáng tác, vẽ và thể hiện ý tưởng thông qua hội họa.",
                 khothi: ["H00", "H01", "H02"],
                 nhomNganh: "vanhoa-nghethuat",
-                link: "https://vi.wikipedia.org/wiki/H%E1%BB%99i_h%E1%BB%8Da"
+                link: "https://vi.wikipedia.org/wiki/H%E1%BB%99i_h%E1%BB%8Da",
+                yeucau: "Năng khiếu hội họa, sáng tạo, khả năng thể hiện ý tưởng",
+                mucluong: "10-40 triệu/tháng tùy năng lực và danh tiếng",
+                trienvong: "Cơ hội trong sáng tác, giảng dạy và thiết kế",
+                diemSan: "Theo kết quả thi năng khiếu",
+                diem2025: "Theo kết quả thi năng khiếu",
+                hocPhi: "15-25 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Họa sĩ, giảng viên mỹ thuật, minh họa, thiết kế đồ họa",
+                kyNangCanThiet: "Kỹ thuật vẽ, sáng tác, phối màu, bố cục, quan sát và thể hiện",
+                topTruong: "ĐH Mỹ thuật Việt Nam, ĐH Mỹ thuật TP.HCM, ĐH Mỹ thuật Công nghiệp"
             },
             {
                 id: 125,
@@ -971,7 +1618,17 @@
                 mota: "Đào tạo kỹ năng tạo hình không gian, điêu khắc và sáng tác tác phẩm nghệ thuật.",
                 khothi: ["H00", "H01", "H07"],
                 nhomNganh: "vanhoa-nghethuat",
-                link: "https://vi.wikipedia.org/wiki/%C4%90i%C3%AAu_kh%E1%BA%AFc"
+                link: "https://vi.wikipedia.org/wiki/%C4%90i%C3%AAu_kh%E1%BA%AFc",
+                yeucau: "Năng khiếu điêu khắc, khả năng tạo hình, sáng tạo",
+                mucluong: "10-40 triệu/tháng tùy năng lực và danh tiếng",
+                trienvong: "Cơ hội trong sáng tác, giảng dạy và thiết kế không gian",
+                diemSan: "Theo kết quả thi năng khiếu",
+                diem2025: "Theo kết quả thi năng khiếu",
+                hocPhi: "15-25 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Nhà điêu khắc, giảng viên, thiết kế không gian, tạo mẫu",
+                kyNangCanThiet: "Kỹ thuật điêu khắc, tạo hình không gian, sáng tác, làm việc với chất liệu",
+                topTruong: "ĐH Mỹ thuật Việt Nam, ĐH Mỹ thuật TP.HCM, ĐH Mỹ thuật Công nghiệp"
             },
             {
                 id: 126,
@@ -979,7 +1636,17 @@
                 mota: "Đào tạo giáo viên dạy thể dục, huấn luyện viên và chuyên gia thể thao.",
                 khothi: ["T00", "T01", "T02", "T03", "T04", "T05"],
                 nhomNganh: "su-pham",
-                link: "https://vi.wikipedia.org/wiki/Gi%C3%A1o_d%E1%BB%A5c_th%E1%BB%83_ch%E1%BA%A5t"
+                link: "https://vi.wikipedia.org/wiki/Gi%C3%A1o_d%E1%BB%A5c_th%E1%BB%83_ch%E1%BA%A5t",
+                yeucau: "Thể lực tốt, kỹ năng thể thao, khả năng sư phạm",
+                mucluong: "8-25 triệu/tháng tùy vị trí và kinh nghiệm",
+                trienvong: "Ổn định trong giáo dục, cơ hội trong huấn luyện thể thao",
+                diemSan: "Theo kết quả thi năng khiếu",
+                diem2025: "Theo kết quả thi năng khiếu",
+                hocPhi: "10-15 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Giáo viên thể dục, huấn luyện viên, quản lý thể thao, hướng dẫn viên thể hình",
+                kyNangCanThiet: "Kỹ năng thể thao, sư phạm, huấn luyện, quản lý lớp học, sơ cứu",
+                topTruong: "ĐH Sư phạm Thể dục Thể thao Hà Nội, ĐH Thể dục Thể thao TP.HCM, ĐH Sư phạm Thể dục Thể thao TP.HCM"
             },
             // Thêm các ngành nổi bật khác
             {
@@ -988,7 +1655,17 @@
                 mota: "Nghiên cứu và phát triển hệ thống máy móc có khả năng thông minh như con người.",
                 khothi: ["A00", "A01", "D01", "D07"],
                 nhomNganh: "cong-nghe",
-                link: "https://vi.wikipedia.org/wiki/Tr%C3%AD_tu%E1%BB%87_nh%C3%A2n_t%E1%BA%A1o"
+                link: "https://vi.wikipedia.org/wiki/Tr%C3%AD_tu%E1%BB%87_nh%C3%A2n_t%E1%BA%A1o",
+                yeucau: "Tư duy logic, toán học, lập trình, khả năng sáng tạo",
+                mucluong: "20-70 triệu/tháng tùy kinh nghiệm và vị trí",
+                trienvong: "Ngành mũi nhọn, nhu cầu nhân lực cao, cơ hội toàn cầu",
+                diemSan: 22,
+                diem2025: " 25-29 điểm",
+                hocPhi: "18-28 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Kỹ sư AI, nhà nghiên cứu trí tuệ nhân tạo, chuyên viên học máy, phát triển thuật toán",
+                kyNangCanThiet: "Lập trình Python, toán học, học máy, xử lý dữ liệu lớn, tư duy thuật toán",
+                topTruong: "ĐH Bách Khoa Hà Nội, ĐH Công nghệ Thông tin - ĐHQG TP.HCM, ĐH Bách Khoa TP.HCM, ĐH FPT"
             },
             {
                 id: 128,
@@ -996,7 +1673,17 @@
                 mota: "Phân tích và khai thác dữ liệu lớn để đưa ra quyết định và dự báo.",
                 khothi: ["A00", "A01", "D01", "D07"],
                 nhomNganh: "cong-nghe",
-                link: "https://vi.wikipedia.org/wiki/Khoa_h%E1%BB%8Dc_d%E1%BB%AF_li%E1%BB%87u"
+                link: "https://vi.wikipedia.org/wiki/Khoa_h%E1%BB%8Dc_d%E1%BB%AF_li%E1%BB%87u",
+                yeucau: "Toán học, thống kê, lập trình, khả năng phân tích",
+                mucluong: "18-50 triệu/tháng tùy kinh nghiệm và vị trí",
+                trienvong: "Nhu cầu cao trong mọi ngành, cơ hội phát triển đa dạng",
+                diemSan: 21,
+                diem2025: " 24-28 điểm",
+                hocPhi: "16-24 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Nhà khoa học dữ liệu, chuyên viên phân tích dữ liệu, kỹ sư dữ liệu, tư vấn dữ liệu",
+                kyNangCanThiet: "Thống kê, lập trình Python/R, SQL, machine learning, trực quan hóa dữ liệu",
+                topTruong: "ĐH Bách Khoa Hà Nội, ĐH Công nghệ Thông tin - ĐHQG TP.HCM, ĐH Khoa học Tự nhiên - ĐHQG Hà Nội, ĐH Kinh tế Quốc dân"
             },
             {
                 id: 129,
@@ -1004,7 +1691,17 @@
                 mota: "Bảo vệ hệ thống thông tin, dữ liệu và mạng máy tính khỏi các mối đe dọa.",
                 khothi: ["A00", "A01", "D01", "D07"],
                 nhomNganh: "cong-nghe",
-                link: "https://vi.wikipedia.org/wiki/An_to%C3%A0n_th%C3%B4ng_tin"
+                link: "https://vi.wikipedia.org/wiki/An_to%C3%A0n_th%C3%B4ng_tin",
+                yeucau: "Kiến thức mạng máy tính, lập trình, tư duy bảo mật",
+                mucluong: "15-45 triệu/tháng tùy kinh nghiệm và vị trí",
+                trienvong: "Nhu cầu tăng cao với sự phát triển của công nghệ số",
+                diemSan: 20,
+                diem2025: " 21-24 điểm",
+                hocPhi: "15-23 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Chuyên viên an ninh mạng, kiểm thử bảo mật, quản trị bảo mật, tư vấn an toàn thông tin",
+                kyNangCanThiet: "Mạng máy tính, lập trình, bảo mật hệ thống, phân tích mã độc, đánh giá rủi ro",
+                topTruong: "Học viện Kỹ thuật Mật mã, ĐH Công nghệ Thông tin - ĐHQG TP.HCM, ĐH Bách Khoa Hà Nội, ĐH Bách Khoa TP.HCM"
             },
             {
                 id: 130,
@@ -1012,12 +1709,21 @@
                 mota: "Ứng dụng công nghệ vào lĩnh vực tài chính, ngân hàng và thanh toán.",
                 khothi: ["A00", "A01", "D01", "D96"],
                 nhomNganh: "kinh-te",
-                link: "https://vi.wikipedia.org/wiki/C%C3%B4ng_ngh%E1%BB%87_t%C3%A0i_ch%C3%ADnh"
+                link: "https://vi.wikipedia.org/wiki/C%C3%B4ng_ngh%E1%BB%87_t%C3%A0i_ch%C3%ADnh",
+                yeucau: "Kiến thức công nghệ, tài chính, khả năng đổi mới sáng tạo",
+                mucluong: "15-50 triệu/tháng tùy kinh nghiệm và vị trí",
+                trienvong: "Ngành mới nổi, tốc độ phát triển nhanh, cơ hội lớn",
+                diemSan: 21,
+                diem2025: "22-25 điểm",
+                hocPhi: "16-24 triệu/năm tùy trường",
+                thoiGianDaoTao: "4 năm",
+                coHoiViecLam: "Chuyên viên fintech, phát triển sản phẩm tài chính số, phân tích dữ liệu tài chính, tư vấn công nghệ tài chính",
+                kyNangCanThiet: "Lập trình, kiến thức tài chính ngân hàng, blockchain, phân tích dữ liệu, đổi mới sáng tạo",
+                topTruong: "ĐH Kinh tế Quốc dân, ĐH Ngoại thương, ĐH Kinh tế TP.HCM, ĐH Công nghệ Thông tin - ĐHQG TP.HCM"
             }
-            // ... (giữ nguyên các ngành còn lại từ bản gốc)
         ];
 
-        // Dữ liệu trường đại học mở rộng - ĐÃ BỔ SUNG THÊM TRƯỜNG MỚI
+        // Dữ liệu trường đại học mở rộng
         const truongHocData = [
             { ten: "Đại học Bách Khoa Hà Nội", diaDiem: "Hà Nội", website: "https://www.hust.edu.vn" },
             { ten: "Đại học Quốc gia Hà Nội", diaDiem: "Hà Nội", website: "https://www.vnu.edu.vn" },
@@ -1069,7 +1775,6 @@
             { ten: "Đại học Hải Phòng", diaDiem: "Hải Phòng", website: "https://www.dhhp.edu.vn" },
             { ten: "Đại học Thái Nguyên", diaDiem: "Thái Nguyên", website: "https://www.tnu.edu.vn" },
             { ten: "Đại học Hùng Vương", diaDiem: "Phú Thọ", website: "https://www.hvu.edu.vn" },
-            // Thêm 10 trường đại học mới
             { ten: "Đại học Duy Tân", diaDiem: "Đà Nẵng", website: "https://duytan.edu.vn" },
             { ten: "Đại học Công nghệ Đồng Nai", diaDiem: "Đồng Nai", website: "https://dntu.edu.vn" },
             { ten: "Đại học Kinh tế - Tài chính TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.uef.edu.vn" },
@@ -1079,7 +1784,141 @@
             { ten: "Đại học Thủ Dầu Một", diaDiem: "Bình Dương", website: "https://tdmu.edu.vn" },
             { ten: "Đại học Đồng Tháp", diaDiem: "Đồng Tháp", website: "https://www.dthu.edu.vn" },
             { ten: "Đại học An Giang", diaDiem: "An Giang", website: "https://www.agu.edu.vn" },
-            { ten: "Đại học Sư phạm Thể dục Thể thao TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://www.upes.edu.vn" }
+            { ten: "Đại học Sư phạm Thể dục Thể thao TP.HCM", diaDiem: "TP. Hồ Chí Minh", website: "https://upes.edu.vn/" }
+        ];
+
+        // Dữ liệu câu hỏi định hướng
+        const questionsData = [
+            {
+                id: 1,
+                question: "Bạn thích làm việc trong môi trường nào nhất?",
+                options: [
+                    { value: "cong-nghe", text: "Môi trường công nghệ, sáng tạo và đổi mới" },
+                    { value: "kinh-te", text: "Môi trường kinh doanh, tài chính và quản lý" },
+                    { value: "y-duoc", text: "Môi trường y tế, chăm sóc sức khỏe" },
+                    { value: "su-pham", text: "Môi trường giáo dục, giảng dạy" },
+                    { value: "ngon-ngu", text: "Môi trường giao tiếp, ngôn ngữ và văn hóa" },
+                    { value: "xahoi", text: "Môi trường nghiên cứu xã hội và nhân văn" },
+                    { value: "vanhoa-nghethuat", text: "Môi trường nghệ thuật, sáng tạo và văn hóa" }
+                ]
+            },
+            {
+                id: 2,
+                question: "Bạn có sở thích và năng khiếu gì?",
+                options: [
+                    { value: "cong-nghe", text: "Giải quyết vấn đề, lập trình, sáng tạo công nghệ" },
+                    { value: "kinh-te", text: "Quản lý, phân tích số liệu, giao tiếp và đàm phán" },
+                    { value: "y-duoc", text: "Chăm sóc người khác, nghiên cứu khoa học y tế" },
+                    { value: "su-pham", text: "Truyền đạt kiến thức, hướng dẫn và đào tạo" },
+                    { value: "ngon-ngu", text: "Giao tiếp, viết lách, tìm hiểu văn hóa" },
+                    { value: "xahoi", text: "Nghiên cứu, phân tích xã hội và con người" },
+                    { value: "vanhoa-nghethuat", text: "Sáng tạo nghệ thuật, biểu diễn, thiết kế" }
+                ]
+            },
+            {
+                id: 3,
+                question: "Bạn muốn mức thu nhập như thế nào?",
+                options: [
+                    { value: "cong-nghe", text: "Cao (trên 20 triệu/tháng)" },
+                    { value: "kinh-te", text: "Rất cao (trên 30 triệu/tháng)" },
+                    { value: "y-duoc", text: "Ổn định và cao (15-30 triệu/tháng)" },
+                    { value: "su-pham", text: "Ổn định (10-20 triệu/tháng)" },
+                    { value: "ngon-ngu", text: "Tùy thuộc vào năng lực (10-25 triệu/tháng)" },
+                    { value: "xahoi", text: "Ổn định và có ý nghĩa xã hội (8-18 triệu/tháng)" },
+                    { value: "vanhoa-nghethuat", text: "Linh hoạt, phụ thuộc vào tài năng (10-40 triệu/tháng)" }
+                ]
+            },
+            {
+                id: 4,
+                question: "Bạn muốn làm việc trong môi trường như thế nào?",
+                options: [
+                    { value: "cong-nghe", text: "Linh hoạt, sáng tạo, có thể làm việc từ xa" },
+                    { value: "kinh-te", text: "Năng động, cạnh tranh, có cơ hội thăng tiến" },
+                    { value: "y-duoc", text: "Ổn định, có trách nhiệm cao, làm theo ca" },
+                    { value: "su-pham", text: "Ổn định, có kỳ nghỉ theo năm học" },
+                    { value: "ngon-ngu", text: "Đa dạng, có thể làm việc với người nước ngoài" },
+                    { value: "xahoi", text: "Nghiên cứu, ổn định, có ý nghĩa xã hội" },
+                    { value: "vanhoa-nghethuat", text: "Sáng tạo, tự do, linh hoạt về thời gian" }
+                ]
+            },
+            {
+                id: 5,
+                question: "Bạn thích làm việc với đối tượng nào nhất?",
+                options: [
+                    { value: "cong-nghe", text: "Máy móc, hệ thống và công nghệ" },
+                    { value: "kinh-te", text: "Khách hàng, đối tác và nhân viên" },
+                    { value: "y-duoc", text: "Bệnh nhân và người cần chăm sóc sức khỏe" },
+                    { value: "su-pham", text: "Học sinh, sinh viên và người học" },
+                    { value: "ngon-ngu", text: "Người nước ngoài và các nền văn hóa khác" },
+                    { value: "xahoi", text: "Cộng đồng, nhóm xã hội và tổ chức" },
+                    { value: "vanhoa-nghethuat", text: "Khán giả, công chúng và người thưởng thức nghệ thuật" }
+                ]
+            },
+            {
+                id: 6,
+                question: "Bạn thích làm việc độc lập hay theo nhóm?",
+                options: [
+                    { value: "cong-nghe", text: "Độc lập, tự chủ trong công việc" },
+                    { value: "kinh-te", text: "Theo nhóm, hợp tác với nhiều người" },
+                    { value: "y-duoc", text: "Theo nhóm, nhưng có trách nhiệm cá nhân cao" },
+                    { value: "su-pham", text: "Độc lập nhưng có tương tác với người học" },
+                    { value: "ngon-ngu", text: "Cả hai, tùy thuộc vào dự án" },
+                    { value: "xahoi", text: "Linh hoạt, có cả làm việc độc lập và nhóm" },
+                    { value: "vanhoa-nghethuat", text: "Độc lập sáng tạo nhưng có thể hợp tác khi cần" }
+                ]
+            },
+            {
+                id: 7,
+                question: "Bạn có khả năng làm việc dưới áp lực như thế nào?",
+                options: [
+                    { value: "cong-nghe", text: "Rất tốt, thích thử thách và deadline" },
+                    { value: "kinh-te", text: "Tốt, có thể xử lý nhiều việc cùng lúc" },
+                    { value: "y-duoc", text: "Rất tốt, đặc biệt trong tình huống khẩn cấp" },
+                    { value: "su-pham", text: "Ổn, nhưng thích môi trường ít căng thẳng hơn" },
+                    { value: "ngon-ngu", text: "Tùy thuộc vào loại áp lực" },
+                    { value: "xahoi", text: "Ổn định, có thể làm việc với áp lực vừa phải" },
+                    { value: "vanhoa-nghethuat", text: "Tùy hứng cảm xúc, có lúc rất tốt có lúc kém" }
+                ]
+            },
+            {
+                id: 8,
+                question: "Bạn muốn công việc có tính ổn định như thế nào?",
+                options: [
+                    { value: "cong-nghe", text: "Không cần ổn định, thích sự thay đổi" },
+                    { value: "kinh-te", text: "Cân bằng giữa ổn định và thử thách" },
+                    { value: "y-duoc", text: "Rất ổn định, ít thay đổi" },
+                    { value: "su-pham", text: "Ổn định, với lộ trình rõ ràng" },
+                    { value: "ngon-ngu", text: "Linh hoạt, có thể thay đổi theo dự án" },
+                    { value: "xahoi", text: "Ổn định, với sự phát triển chuyên môn liên tục" },
+                    { value: "vanhoa-nghethuat", text: "Linh hoạt, có thể có dự án ngắn hạn và dài hạn" }
+                ]
+            },
+            {
+                id: 9,
+                question: "Bạn muốn phát triển kỹ năng gì trong tương lai?",
+                options: [
+                    { value: "cong-nghe", text: "Kỹ năng công nghệ và kỹ thuật chuyên sâu" },
+                    { value: "kinh-te", text: "Kỹ năng lãnh đạo và quản lý" },
+                    { value: "y-duoc", text: "Kỹ năng chuyên môn y tế và nghiên cứu" },
+                    { value: "su-pham", text: "Kỹ năng sư phạm và truyền đạt" },
+                    { value: "ngon-ngu", text: "Kỹ năng ngôn ngữ và giao tiếp đa văn hóa" },
+                    { value: "xahoi", text: "Kỹ năng nghiên cứu và phân tích xã hội" },
+                    { value: "vanhoa-nghethuat", text: "Kỹ năng sáng tạo và biểu diễn nghệ thuật" }
+                ]
+            },
+            {
+                id: 10,
+                question: "Bạn đánh giá thế nào về khả năng học tập của mình?",
+                options: [
+                    { value: "cong-nghe", text: "Rất tốt, thích học hỏi công nghệ mới" },
+                    { value: "kinh-te", text: "Tốt, có khả năng phân tích và tổng hợp" },
+                    { value: "y-duoc", text: "Rất tốt, kiên trì và tỉ mỉ trong học tập" },
+                    { value: "su-pham", text: "Tốt, thích nghiên cứu và truyền đạt kiến thức" },
+                    { value: "ngon-ngu", text: "Rất tốt, có năng khiếu ngôn ngữ" },
+                    { value: "xahoi", text: "Tốt, có khả năng tư duy phản biện" },
+                    { value: "vanhoa-nghethuat", text: "Tốt, có khả năng sáng tạo và cảm thụ nghệ thuật" }
+                ]
+            }
         ];
 
         // Hàm hiển thị ngành học
@@ -1101,9 +1940,14 @@
                     <div class="khoi-thi-list">
                         ${nganh.khothi.map(khoi => `<span class="khoi-thi" data-khoi="${khoi}">${khoi}</span>`).join('')}
                     </div>
-                    <a href="${nganh.link}" target="_blank" class="nganh-link">
-                        <i class="fas fa-external-link-alt"></i> Tìm hiểu thêm về ngành ${nganh.ten}
-                    </a>
+                    <div style="margin-top: auto;">
+                        <a href="${nganh.link}" target="_blank" class="nganh-link">
+                            <i class="fas fa-external-link-alt"></i> Tìm hiểu thêm
+                        </a>
+                        <button class="detail-btn" data-id="${nganh.id}">
+                            <i class="fas fa-info-circle"></i> Chi tiết
+                        </button>
+                    </div>
                 `;
                 container.appendChild(card);
             });
@@ -1116,6 +1960,122 @@
                     locNganhHoc();
                 });
             });
+            
+            // Thêm sự kiện click cho nút chi tiết
+            document.querySelectorAll('.detail-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const nganhId = parseInt(this.getAttribute('data-id'));
+                    const nganh = nganhHocData.find(n => n.id === nganhId);
+                    if (nganh) {
+                        hienThiChiTietNganh(nganh);
+                    }
+                });
+            });
+        }
+
+        // Hàm hiển thị chi tiết ngành học
+        function hienThiChiTietNganh(nganh) {
+            const modal = document.getElementById('nganhModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = nganh.ten;
+            
+            modalBody.innerHTML = `
+                <div class="info-section">
+                    <h3><i class="fas fa-info-circle"></i> Thông Tin Chung</h3>
+                    <p>${nganh.mota}</p>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>Khối Thi</h4>
+                            <p>${nganh.khothi.join(', ')}</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Thời Gian Đào Tạo</h4>
+                            <p>${nganh.thoiGianDaoTao}</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Nhóm Ngành</h4>
+                            <p>${layTenNhomNganh(nganh.nhomNganh)}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h3><i class="fas fa-graduation-cap"></i> Yêu Cầu & Kỹ Năng Cần Có</h3>
+                    <p>${nganh.yeucau}</p>
+                    <div class="info-item">
+                        <h4>Kỹ Năng Cần Thiết</h4>
+                        <p>${nganh.kyNangCanThiet}</p>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h3><i class="fas fa-chart-line"></i> Điểm Chuẩn & Học Phí</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>Điểm Sàn</h4>
+                            <p>${nganh.diemSan} điểm</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Điểm Chuẩn 2025 </h4>
+                            <p>${nganh.diem2025}</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Học Phí</h4>
+                            <p>${nganh.hocPhi}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h3><i class="fas fa-briefcase"></i> Triển Vọng Nghề Nghiệp</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>Cơ Hội Việc Làm</h4>
+                            <p>${nganh.coHoiViecLam}</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Mức Lương</h4>
+                            <p>${nganh.mucluong}</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>Triển Vọng</h4>
+                            <p>${nganh.trienvong}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h3><i class="fas fa-university"></i> Các Trường Đào Tạo</h3>
+                    <p>${nganh.topTruong}</p>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="${nganh.link}" target="_blank" class="nganh-link" style="font-size: 1rem;">
+                        <i class="fas fa-external-link-alt"></i> Tìm Hiểu Thêm Về Ngành ${nganh.ten}
+                    </a>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        // Hàm lấy tên nhóm ngành
+        function layTenNhomNganh(maNhom) {
+            const nhomNganh = {
+                'cong-nghe': 'Công nghệ - Kỹ thuật',
+                'kinh-te': 'Kinh tế - Quản lý',
+                'y-duoc': 'Y dược - Sức khỏe',
+                'su-pham': 'Sư phạm - Giáo dục',
+                'ngon-ngu': 'Ngôn ngữ - Văn hóa',
+                'xahoi': 'Khoa học xã hội',
+                'nong-lam': 'Nông - Lâm - Ngư nghiệp',
+                'vanhoa-nghethuat': 'Văn hóa - Nghệ thuật',
+                'phap-luat': 'Pháp luật',
+                'quan-su': 'Quân sự - An ninh'
+            };
+            return nhomNganh[maNhom] || maNhom;
         }
 
         // Hàm hiển thị trường học
@@ -1123,8 +2083,13 @@
             const tbody = document.querySelector('#truongHocTable tbody');
             tbody.innerHTML = '';
             
-            truongHocData.forEach(truong => {
+            // Hiển thị 10 trường đầu tiên
+            const soLuongHienThi = 10;
+            truongHocData.forEach((truong, index) => {
                 const row = document.createElement('tr');
+                if (index >= soLuongHienThi) {
+                    row.classList.add('hidden-rows');
+                }
                 row.innerHTML = `
                     <td>${truong.ten}</td>
                     <td>${truong.diaDiem}</td>
@@ -1132,6 +2097,46 @@
                 `;
                 tbody.appendChild(row);
             });
+        }
+
+        // Hàm hiển thị câu hỏi
+        function hienThiCauHoi() {
+            const container = document.getElementById('questionContainer');
+            container.innerHTML = '';
+            
+            questionsData.forEach(q => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.id = `question${q.id}`;
+                
+                let optionsHTML = '';
+                q.options.forEach(option => {
+                    optionsHTML += `
+                        <label class="option">
+                            <input type="radio" name="q${q.id}" value="${option.value}">
+                            ${option.text}
+                        </label>
+                    `;
+                });
+                
+                questionDiv.innerHTML = `
+                    <h3>Câu ${q.id}: ${q.question}</h3>
+                    <div class="options">
+                        ${optionsHTML}
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+            
+            // Thêm nút gửi
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'submit-btn';
+            submitBtn.id = 'submitQuiz';
+            submitBtn.textContent = 'Xem kết quả định hướng';
+            submitBtn.addEventListener('click', xuLyKetQuaTraNghiem);
+            
+            container.appendChild(submitBtn);
         }
 
         // Hàm lọc ngành học
@@ -1153,17 +2158,136 @@
             hienThiNganhHoc(ketQuaLoc);
         }
 
+        // Hàm xử lý kết quả trắc nghiệm
+        function xuLyKetQuaTraNghiem() {
+            const answers = {};
+            
+            // Lấy tất cả câu trả lời
+            questionsData.forEach(q => {
+                const selectedOption = document.querySelector(`input[name="q${q.id}"]:checked`);
+                if (selectedOption) {
+                    answers[`q${q.id}`] = selectedOption.value;
+                }
+            });
+            
+            // Kiểm tra xem người dùng đã trả lời đủ câu hỏi chưa
+            if (Object.keys(answers).length !== questionsData.length) {
+                alert('Vui lòng trả lời tất cả các câu hỏi trước khi xem kết quả!');
+                return;
+            }
+            
+            // Tính điểm cho từng nhóm ngành
+            const scores = {};
+            Object.values(answers).forEach(answer => {
+                scores[answer] = (scores[answer] || 0) + 1;
+            });
+            
+            // Tìm nhóm ngành có điểm cao nhất
+            let maxScore = 0;
+            let recommendedGroups = [];
+            
+            for (const [group, score] of Object.entries(scores)) {
+                if (score > maxScore) {
+                    maxScore = score;
+                    recommendedGroups = [group];
+                } else if (score === maxScore) {
+                    recommendedGroups.push(group);
+                }
+            }
+            
+            // Lọc các ngành thuộc nhóm được đề xuất
+            const recommendedCareers = [];
+            recommendedGroups.forEach(group => {
+                const careersInGroup = nganhHocData.filter(nganh => nganh.nhomNganh === group);
+                recommendedCareers.push(...careersInGroup);
+            });
+            
+            // Hiển thị kết quả
+            hienThiKetQua(recommendedCareers, recommendedGroups);
+        }
+
+        // Hàm hiển thị kết quả
+        function hienThiKetQua(careers, groups) {
+            const resultContainer = document.getElementById('resultContainer');
+            const careerResults = document.getElementById('careerResults');
+            
+            careerResults.innerHTML = '';
+            
+            if (careers.length === 0) {
+                careerResults.innerHTML = '<p>Không tìm thấy nghề nghiệp phù hợp với kết quả của bạn.</p>';
+            } else {
+                // Sắp xếp ngành theo điểm sàn (từ cao đến thấp)
+                careers.sort((a, b) => b.diemSan - a.diemSan);
+                
+                careers.forEach(career => {
+                    const careerCard = document.createElement('div');
+                    careerCard.className = 'career-card';
+                    careerCard.innerHTML = `
+                        <h3>${career.ten}</h3>
+                        <p>${career.mota}</p>
+                        <div class="career-details">
+                            <div class="detail-item">
+                                <h4>Yêu cầu</h4>
+                                <p>${career.yeucau}</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>Mức lương bình quân</h4>
+                                <p>${career.mucluong}</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>Triển vọng nghề nghiệp</h4>
+                                <p>${career.trienvong}</p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <a href="${career.link}" target="_blank" class="nganh-link">
+                                <i class="fas fa-external-link-alt"></i> Tìm hiểu thêm
+                            </a>
+                            <button class="detail-btn" data-id="${career.id}">
+                                <i class="fas fa-info-circle"></i> Chi tiết
+                            </button>
+                        </div>
+                    `;
+                    careerResults.appendChild(careerCard);
+                });
+                
+                // Thêm sự kiện click cho nút chi tiết trong kết quả
+                document.querySelectorAll('#careerResults .detail-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const nganhId = parseInt(this.getAttribute('data-id'));
+                        const nganh = nganhHocData.find(n => n.id === nganhId);
+                        if (nganh) {
+                            hienThiChiTietNganh(nganh);
+                        }
+                    });
+                });
+            }
+            
+            resultContainer.style.display = 'block';
+            resultContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
         // Khởi tạo khi trang được tải
         document.addEventListener('DOMContentLoaded', function() {
             // Hiển thị dữ liệu ban đầu
             hienThiNganhHoc(nganhHocData);
             hienThiTruongHoc();
+            hienThiCauHoi();
             
             // Thêm sự kiện cho bộ lọc
             document.getElementById('khoiFilter').addEventListener('change', locNganhHoc);
             document.getElementById('nhomNganhFilter').addEventListener('change', locNganhHoc);
             document.getElementById('searchInput').addEventListener('input', locNganhHoc);
             document.getElementById('searchBtn').addEventListener('click', locNganhHoc);
+            
+            // Thêm sự kiện cho nút xem thêm trường
+            document.getElementById('showMoreBtn').addEventListener('click', function() {
+                const hiddenRows = document.querySelectorAll('.hidden-rows');
+                hiddenRows.forEach(row => {
+                    row.classList.remove('hidden-rows');
+                });
+                this.style.display = 'none';
+            });
             
             // Thêm sự kiện cho menu mobile
             document.querySelector('.mobile-menu').addEventListener('click', function() {
@@ -1191,6 +2315,31 @@
                     // Đóng menu mobile nếu đang mở
                     document.querySelector('.nav-links').classList.remove('active');
                 });
+            });
+            
+            // Thêm sự kiện cho nút đóng modal
+            document.getElementById('closeModal').addEventListener('click', function() {
+                document.getElementById('nganhModal').style.display = 'none';
+            });
+            
+            // Đóng modal khi click bên ngoài
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('nganhModal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // Thêm sự kiện cho nút thu gọn/mở rộng trắc nghiệm
+            document.getElementById('quizToggle').addEventListener('click', function() {
+                const questionContainer = document.getElementById('questionContainer');
+                questionContainer.classList.toggle('show');
+                
+                if (questionContainer.classList.contains('show')) {
+                    this.innerHTML = '<i class="fas fa-chevron-up"></i> Thu Gọn Trắc Nghiệm';
+                } else {
+                    this.innerHTML = '<i class="fas fa-chevron-down"></i> Bắt Đầu Trắc Nghiệm Định Hướng';
+                }
             });
         });
     </script>
