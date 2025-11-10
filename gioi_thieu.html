@@ -563,6 +563,27 @@
                 grid-template-columns: 1fr;
             }
         }
+        @media (max-width: 480px) {
+    .hero h2 {
+        font-size: 1.8rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .subject-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .main-content {
+        padding: 20px 15px;
+    }
+}
     </style>
 </head>
 <body>
@@ -580,7 +601,7 @@
         <ul class="sidebar-menu">
             <li><a href="index.html"><i class="fas fa-home"></i> Trang Chủ</a></li>
             
-            <li><a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/ng%C6%B0%E1%BB%9Di-th%E1%BA%AFp-%C4%91%C3%A8n?authuser=0"><i class="fas fa-user-graduate"></i> Người Thắp Đèn</a></li>
+            <li><a href="nguoi_thap_den.html"><i class="fas fa-user-graduate"></i> Người Thắp Đèn</a></li>
             <li><a href="dinh_huong.html"><i class="fas fa-compass"></i> Định Hướng Nghề Nghiệp</a></li>
             <li><a href="phuong_phap.html"><i class="fas fa-book-open"></i> Phương Pháp Học Tập</a></li>
             <li><a href="index.html"><i class="fas fa-chalkboard-teacher"></i> Khóa Học Lớp 12</a></li>
@@ -798,7 +819,24 @@
                 card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
                 observer.observe(card);
             });
-        });
+        }); 
+        let lastScrollTop = 0;
+const header = document.querySelector('header');
+const scrollThreshold = 50; // Ngưỡng cuộn để ẩn header
+
+window.addEventListener('scroll', function() {
+    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
+        // Cuộn xuống và vượt quá ngưỡng -> ẩn header
+        header.style.transform = 'translateY(-100%)';
+    } else {
+        // Cuộn lên -> hiện header
+        header.style.transform = 'translateY(0)';
+    }
+    
+    lastScrollTop = scrollTop;
+});
     </script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyWithMe - Thời Khóa Biểu Thông Minh</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -46,238 +46,13 @@
             color: var(--dark);
             line-height: 1.6;
             min-height: 100vh;
+            padding: 20px;
             transition: background 0.5s ease, color 0.3s ease;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        /* Header */
-        header {
-            background-color: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 999;
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease;
-            transform: translateY(0);
-        }
-
-        header.hidden {
-            transform: translateY(-100%);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo h1 {
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-left: 10px;
-            font-weight: 700;
-        }
-
-        .logo-icon {
-            font-size: 2rem;
-            color: var(--primary);
-        }
-
-        .menu-toggle {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--primary);
-            cursor: pointer;
-            margin-right: 15px;
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-        }
-
-        nav ul li {
-            margin-left: 25px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 500;
-            transition: color 0.3s;
-            padding: 5px 10px;
-            border-radius: 4px;
-            position: relative;
-        }
-
-        nav ul li a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            transition: width 0.3s;
-        }
-
-        nav ul li a:hover::after {
-            width: 100%;
-        }
-
-        nav ul li a:hover {
-            color: var(--primary);
-        }
-
-        .auth-buttons {
-            display: flex;
-            gap: 15px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
-        .user-name {
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border: none;
-        }
-
-        .btn-outline {
-            border: 2px solid var(--primary);
-            color: var(--primary);
-            background: transparent;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: white;
-            border: none;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px;
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            overflow-y: auto;
-        }
-
-        .sidebar.active {
-            transform: translateX(0);
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sidebar-header h3 {
-            margin: 0;
-        }
-
-        .close-sidebar {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar-menu li {
-            border-bottom: 1px solid #eee;
-        }
-
-        .sidebar-menu li a {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            color: var(--dark);
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .sidebar-menu li a:hover {
-            background: #f5f5f5;
-            color: var(--primary);
-        }
-
-        .sidebar-menu li a i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
         }
 
         /* Login Screen */
@@ -285,9 +60,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            min-height: 80vh;
             animation: fadeIn 1s ease;
-            padding: 20px;
         }
 
         .login-card {
@@ -381,17 +155,16 @@
         /* Main App */
         .app {
             display: none;
-            padding: 100px 0 20px;
         }
 
-        .app-header {
+        header {
             text-align: center;
             margin-bottom: 30px;
             color: white;
             animation: fadeIn 1s ease;
         }
 
-        .app-logo {
+        .logo {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -399,7 +172,7 @@
             margin-bottom: 10px;
         }
 
-        .app-logo i {
+        .logo i {
             font-size: 2.5rem;
             background: white;
             color: var(--primary);
@@ -408,7 +181,7 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .app-logo h1 {
+        .logo h1 {
             font-size: 2.8rem;
             font-weight: 800;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
@@ -576,16 +349,11 @@
         }
 
         /* Weekly Schedule */
-        .schedule-container {
-            overflow-x: auto;
-            margin-top: 20px;
-        }
-
         .weekly-schedule {
             display: grid;
             grid-template-columns: 100px repeat(7, 1fr);
             gap: 10px;
-            min-width: 1000px;
+            margin-top: 20px;
         }
 
         .time-slot {
@@ -847,271 +615,13 @@
             color: var(--secondary);
             text-decoration: underline;
         }
-
-        /* User Dropdown */
-        .user-dropdown {
-            position: absolute;
-            top: 70px;
-            right: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            width: 200px;
-            z-index: 1000;
-            display: none;
-        }
-
-        .user-dropdown.active {
-            display: block;
-        }
-
-        .user-dropdown a {
-            display: block;
-            padding: 12px 15px;
-            text-decoration: none;
-            color: var(--dark);
-            border-bottom: 1px solid #eee;
-            transition: background 0.3s;
-        }
-
-        .user-dropdown a:last-child {
-            border-bottom: none;
-        }
-
-        .user-dropdown a:hover {
-            background: #f5f5f5;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-wrap: wrap;
-            }
-
-            nav ul {
-                margin: 15px 0;
-                flex-wrap: wrap;
-                justify-content: center;
-                order: 3;
-                width: 100%;
-            }
-
-            nav ul li {
-                margin: 5px 10px;
-            }
-
-            .auth-buttons {
-                margin-top: 0;
-            }
-
-            .app {
-                padding: 120px 0 20px;
-            }
-
-            .app-logo h1 {
-                font-size: 2.2rem;
-            }
-
-            .tagline {
-                font-size: 1.1rem;
-            }
-
-            .clock {
-                font-size: 2.5rem;
-            }
-
-            .date {
-                font-size: 1.1rem;
-            }
-
-            .card-body {
-                padding: 20px;
-            }
-
-            .tabs {
-                flex-wrap: wrap;
-            }
-
-            .tab {
-                flex: 1;
-                text-align: center;
-                padding: 10px 15px;
-            }
-
-            .weekly-schedule {
-                min-width: 800px;
-                grid-template-columns: 80px repeat(7, 1fr);
-            }
-
-            .time-slot {
-                padding: 8px 5px;
-                font-size: 0.9rem;
-            }
-
-            .day-header {
-                padding: 12px 5px;
-                font-size: 0.9rem;
-            }
-
-            .schedule-cell {
-                min-height: 70px;
-                padding: 6px;
-            }
-
-            .schedule-item {
-                font-size: 0.8rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 10px;
-            }
-
-            .app {
-                padding: 100px 0 20px;
-            }
-
-            .app-logo h1 {
-                font-size: 1.8rem;
-            }
-
-            .tagline {
-                font-size: 1rem;
-            }
-
-            .clock {
-                font-size: 2rem;
-            }
-
-            .date {
-                font-size: 1rem;
-            }
-
-            .login-card {
-                padding: 30px 20px;
-            }
-
-            .card-body {
-                padding: 15px;
-            }
-
-            .weekly-schedule {
-                min-width: 700px;
-                grid-template-columns: 70px repeat(7, 1fr);
-            }
-
-            .time-slot {
-                padding: 6px 3px;
-                font-size: 0.8rem;
-            }
-
-            .day-header {
-                padding: 10px 3px;
-                font-size: 0.8rem;
-            }
-
-            .schedule-cell {
-                min-height: 60px;
-                padding: 4px;
-            }
-
-            .schedule-item {
-                font-size: 0.7rem;
-            }
-        }
-
-        /* Tối ưu hóa cho màn hình 1080x2340 */
-        @media (min-width: 400px) and (max-width: 500px) and (min-height: 800px) {
-            .app-logo h1 {
-                font-size: 2rem;
-            }
-
-            .tagline {
-                font-size: 1.1rem;
-            }
-
-            .clock {
-                font-size: 2.5rem;
-            }
-
-            .date {
-                font-size: 1.1rem;
-            }
-
-            .card-body {
-                padding: 20px;
-            }
-
-            .weekly-schedule {
-                min-width: 800px;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header id="mainHeader">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <button class="menu-toggle" id="menuToggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <span class="logo-icon"><i class="fas fa-graduation-cap"></i></span>
-                    <h1>StudyWithMe</h1>
-                </div>
-                <nav>
-                    <ul>
-                        <li><a href="index.html"><i class="fas fa-home"></i> Trang Chủ</a></li>
-                        <li><a href="gioi_thieu.html"><i class="fas fa-info-circle"></i> Giới Thiệu</a></li>
-                    
-                        <li><a href="lien_he.html"><i class="fas fa-envelope"></i> Liên Hệ</a></li>
-                    </ul>
-                </nav>
-                <div class="auth-buttons" id="authButtons">
-                    <button class="btn btn-outline" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</button>
-                    <button class="btn btn-primary" id="signupBtn"><i class="fas fa-user-plus"></i> Đăng Ký</button>
-                </div>
-                <div class="user-info" id="userInfo" style="display: none;">
-                    <div class="user-avatar" id="userAvatar">U</div>
-                    <span class="user-name" id="userName">Tài khoản</span>
-                </div>
-                <div class="user-dropdown" id="userDropdown">
-                    
-                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3>StudyWithMe</h3>
-            <button class="close-sidebar" id="closeSidebar">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="index.html"><i class="fas fa-home"></i> Trang Chủ</a></li>
-            <li><a href="nguoi_thap_den.html"><i class="fas fa-user-graduate"></i> Người Thắp Đèn</a></li>
-            <li><a href="dinh_huong.html"><i class="fas fa-compass"></i> Định Hướng Nghề Nghiệp</a></li>
-            <li><a href="phuong_phap.html"><i class="fas fa-book-open"></i> Phương Pháp Học Tập</a></li>
-            <li><a href="#" id="class12Link"><i class="fas fa-chalkboard-teacher"></i> Khóa Học Lớp 12</a></li>
-            <li><a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/k%C3%AAnh-h%E1%BB%8Dc-t%E1%BA%ADp?authuser=0"><i class="fas fa-play-circle"></i> Kênh Học Tập</a></li>
-            <li><a href="thoi_bieu.html"><i class="fas fa-calendar-alt"></i> Thời Khóa Biểu</a></li>
-            <li><a href="tai_lieu.html"><i class="fas fa-file-alt"></i> Tài Liệu</a></li>
-            <li><a href="https://discord.gg/uHYE9VWp5e"><i class="fab fa-discord"></i> Cộng Đồng Discord</a></li>
-            <li><a href="https://studywithme.forumvi.com/"><i class="fas fa-users"></i> Diễn Đàn Học Tập</a></li>
-            <li><a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/quiz-ng%E1%BA%AFn?authuser=0/"><i class="fa-regular fa-circle-question"></i>Quiz Ngắn</a></li>
-        </ul>
-    </div>
-
     <!-- Login Screen -->
     <div class="login-container" id="loginScreen">
         <div class="login-card">
-            <div class="app-logo">
+            <div class="logo">
                 <i class="fas fa-graduation-cap"></i>
                 <h1>StudyWithMe</h1>
             </div>
@@ -1168,13 +678,13 @@
     <!-- Main Application -->
     <div class="app" id="mainApp">
         <div class="container">
-            <div class="app-header">
-                <div class="app-logo">
+            <header>
+                <div class="logo">
                     <i class="fas fa-graduation-cap"></i>
                     <h1>StudyWithMe</h1>
                 </div>
                 <p class="tagline">Thời khóa biểu thông minh - Nhắc bạn học tập, không bỏ lỡ bất kỳ buổi học nào!</p>
-            </div>
+            </header>
 
             <section class="user-info">
                 <div class="current-user" id="currentUser">Chào mừng đến với StudyWithMe!</div>
@@ -1255,10 +765,8 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
                         <h2>Thời Khóa Biểu Hàng Tuần</h2>
                     </div>
                     <div class="card-body">
-                        <div class="schedule-container">
-                            <div id="weeklySchedule" class="weekly-schedule">
-                                <!-- Weekly schedule will be generated by JavaScript -->
-                            </div>
+                        <div id="weeklySchedule" class="weekly-schedule">
+                            <!-- Weekly schedule will be generated by JavaScript -->
                         </div>
                     </div>
                 </div>
@@ -1276,7 +784,10 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
             <h3>Đến giờ học!</h3>
             <p id="alertMessage">Môn học của bạn sắp bắt đầu</p>
             <button id="closeAlertBtn" class="btn-primary">
+        
                 <i class="fas fa-check"></i> Đã hiểu
+               
+
             </button>
         </div>
     </div>
@@ -1321,17 +832,6 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
         const alertOverlay = document.getElementById('alertOverlay');
         const alertMessage = document.getElementById('alertMessage');
         const closeAlertBtn = document.getElementById('closeAlertBtn');
-        
-        // Thêm DOM Elements cho header
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const closeSidebar = document.getElementById('closeSidebar');
-        const authButtons = document.getElementById('authButtons');
-        const userInfo = document.getElementById('userInfo');
-        const userDropdown = document.getElementById('userDropdown');
-        const userAvatar = document.getElementById('userAvatar');
-        const userName = document.getElementById('userName');
-        const mainHeader = document.getElementById('mainHeader');
 
         // Đăng ký sự kiện
         tabs.forEach(tab => {
@@ -1346,22 +846,6 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
         closeAlertBtn.addEventListener('click', closeAlert);
         showRegisterFormLink.addEventListener('click', showRegisterForm);
         showLoginFormLink.addEventListener('click', showLoginForm);
-        
-        // Thêm sự kiện cho header
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.add('active');
-        });
-        closeSidebar.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-        });
-        userInfo.addEventListener('click', () => {
-            userDropdown.classList.toggle('active');
-        });
-        document.addEventListener('click', (e) => {
-            if (!userInfo.contains(e.target) && !userDropdown.contains(e.target)) {
-                userDropdown.classList.remove('active');
-            }
-        });
 
         // Kiểm tra trạng thái đăng nhập khi trang được tải
         document.addEventListener('DOMContentLoaded', function() {
@@ -1370,7 +854,6 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
                 currentUser = savedUser;
                 loadUserData();
                 showMainApp();
-                updateUserInterface(currentUser);
             } else {
                 showLoginScreen();
             }
@@ -1385,33 +868,7 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
                 document.body.classList.add('dark-mode');
                 modeToggle.innerHTML = '<i class="fas fa-sun"></i>';
             }
-            
-            // Thêm hiệu ứng ẩn/hiện header khi cuộn
-            let lastScrollTop = 0;
-            const scrollThreshold = 50;
-            
-            window.addEventListener('scroll', function() {
-                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                
-                if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
-                    // Cuộn xuống và vượt quá ngưỡng -> ẩn header
-                    mainHeader.classList.add('hidden');
-                } else {
-                    // Cuộn lên -> hiện header
-                    mainHeader.classList.remove('hidden');
-                }
-                
-                lastScrollTop = scrollTop;
-            }, { passive: true });
         });
-
-        // Hàm cập nhật giao diện khi đã đăng nhập
-        function updateUserInterface(userName) {
-            authButtons.style.display = 'none';
-            userInfo.style.display = 'flex';
-            userName.textContent = userName;
-            userAvatar.textContent = userName.charAt(0).toUpperCase();
-        }
 
         // Hàm hiển thị form đăng ký
         function showRegisterForm(e) {
@@ -1442,7 +899,6 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
                 }
                 loadUserData();
                 showMainApp();
-                updateUserInterface(username);
                 showNotification('Đăng nhập thành công!');
             } else {
                 showNotification('Tên đăng nhập hoặc mật khẩu không đúng!', 'error');
@@ -1484,7 +940,6 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
             localStorage.setItem('studyWithMeCurrentUser', username);
             loadUserData();
             showMainApp();
-            updateUserInterface(username);
             showNotification('Đăng ký thành công!');
         }
 
