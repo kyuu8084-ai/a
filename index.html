@@ -853,6 +853,7 @@
             <li><a href="https://discord.gg/uHYE9VWp5e"><i class="fab fa-discord"></i> Cộng Đồng Discord</a></li>
             <li><a href="https://studywithme.forumvi.com/"><i class="fas fa-users"></i> Diễn Đàn Học Tập</a></li>
             <li><a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/quiz-ng%E1%BA%AFn?authuser=0/"><i class="fa-regular fa-circle-question"></i>Quiz Ngắn</a></li>
+            <li><a href="phuong_phap.html"><i class="fa-solid fa-gamepad"></i> EduGames Hub</a></li>
         </ul>
     </div>
 
@@ -975,6 +976,36 @@
                         </div>
                     </div>
                 </div>
+            
+            <!-- Thời khoá biểu -->
+                <div class="feature-card">
+                    <div class="card-image" style="background-image: url('https://res.cloudinary.com/dhybzbyp3/image/upload/v1765637563/t%E1%BA%A3i_xu%E1%BB%91ng_1_t1ye5c.jpg');">
+                    </div>
+                    <div class="card-content">
+                        <h3>Thời Khoá Biểu</h3>
+                        <p>Giúp lên lịch cá nhân, làm chủ thời gian, tối ưu hiệu suất.</p>
+                        <a href="thoi_bieu.html" class="btn btn-outline">Thử Ngay</a>
+                        <div class="card-stats">
+                            <span><i class="fas fa-question-circle"></i> Kế hoạch kĩ càng.</span>
+                            <span><i class="fas fa-clock"></i> Giờ nào - việc nấy! </span>
+                        </div>
+                    </div>
+                </div>
+            
+            <!-- MiniGamee -->
+                <div class="feature-card">
+                    <div class="card-image" style="background-image: url('https://res.cloudinary.com/dhybzbyp3/image/upload/v1765637563/t%E1%BA%A3i_xu%E1%BB%91ng_2_b1aags.jpg');">
+                    </div>
+                    <div class="card-content">
+                        <h3>EduGames Hub</h3>
+                        <p>Trò chơi học tập, rèn luyện kiến thức.</p>
+                        <a href="gamee.html" class="btn btn-outline">Thử Ngay</a>
+                        <div class="card-stats">
+                            <span><i class="fas fa-question-circle"></i> Giải trí.</span>
+                            <span><i class="fas fa-clock"></i> Gia tăng hiểu biết. </span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- CTA Section -->
@@ -1070,7 +1101,7 @@
                     <div class="card-content">
                         <h3>Cộng Đồng Discord</h3>
                         <p>Tham gia cộng đồng học tập sôi động trên Discord để trao đổi, thảo luận và học hỏi cùng nhau trong môi trường tương tác đa chiều.</p>
-                        <a href="https://discord.com/invite/k9K7qRHn" class="btn btn-outline">Tham Gia Ngay</a>
+                        <a href="https://discord.gg/uHYE9VWp5e" class="btn btn-outline">Tham Gia Ngay</a>
                         <div class="card-stats">
                             <span><i class="fab fa-discord"></i> Nhiều Thành Viên</span>
                             <span><i class="fas fa-comments"></i> Trò Chuyện Trực Tuyến</span>
@@ -1129,7 +1160,7 @@
                         <a href="https://www.facebook.com/profile.php?id=100081257824203"><i class="fab fa-facebook-f"></i></a>
                         
                         <a href="https://www.tiktok.com/@studywithme97mt?_t=ZS-90qPBEngpOs&_r=1"><i class="fab fa-tiktok"></i></a>
-                        <a href="https://discord.com/invite/k9K7qRHn"><i class="fab fa-discord"></i></a>
+                        <a href="https://discord.gg/uHYE9VWp5e"><i class="fab fa-discord"></i></a>
                     </div>
                     <form id="newsletterForm" style="margin-top: 20px;">
                         <div class="form-group">
@@ -1140,7 +1171,7 @@
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2025 StudyWithMe. Tất cả các quyền được bảo lưu.</p>
+                <p>&copy; Copyright</p>
             </div>
         </div>
     </footer>
@@ -1210,13 +1241,14 @@
                 // Vị trí ngẫu nhiên
                 const posX = Math.random() * 100;
                 const posY = Math.random() * 100;
+
                 
                 // Kích thước ngẫu nhiên
-                const size = Math.random() * 3 + 1;
+                const size = Math.random() * 2 + 1;
                 
                 // Thời gian animation ngẫu nhiên
-                const duration = Math.random() * 10 + 5;
-                const delay = Math.random() * 20;
+                const duration = Math.random() * 15 + 5;
+                const delay = Math.random() * 10;
                 
                 star.style.left = `${posX}%`;
                 star.style.top = `${posY}%`;
@@ -1228,7 +1260,8 @@
                 container.appendChild(star);
             }
         }
-        
+         
+
         // Sidebar functionality
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
@@ -1459,6 +1492,9 @@ window.addEventListener('scroll', function() {
     
     lastScrollTop = scrollTop;
 });
+
+
+
     </script>
 </body>
 </html>

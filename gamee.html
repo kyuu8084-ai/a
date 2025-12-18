@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduGames Hub - Trang Chủ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6c63ff;
+            --secondary: #ff6584;
+            --accent: #36d1dc;
+            --light: #f8f9ff;
+            --dark: #1a1a2e;
+            --gold: #ffd166;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: var(--light);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        /* Hiệu ứng nền sao chuyển động */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle linear infinite;
+        }
+
+        .star.small { width: 1px; height: 1px; }
+        .star.medium { width: 2px; height: 2px; }
+        .star.large { width: 3px; height: 3px; }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* Container chính */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 40px 0 60px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            font-size: 3.5rem;
+            color: var(--gold);
+            filter: drop-shadow(0 0 10px rgba(255, 209, 102, 0.5));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .logo-text {
+            font-size: 3.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--gold), var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tagline {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* Grid các game */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 35px;
+            margin: 60px 0;
+        }
+
+        /* Card game */
+        .game-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            height: 480px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.03) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.8s;
+        }
+
+        .game-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .game-card:hover {
+            transform: translateY(-20px) scale(1.03);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 40px rgba(108, 99, 255, 0.3);
+            border-color: rgba(108, 99, 255, 0.4);
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+            box-shadow: 0 5px 15px rgba(255, 101, 132, 0.3);
+        }
+
+        .game-icon-container {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-icon {
+            font-size: 6rem;
+            z-index: 1;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .game-card:hover .game-icon {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .game-icon-bg {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.3;
+            transition: all 0.5s ease;
+        }
+
+        .game-card:hover .game-icon-bg {
+            transform: scale(1.3);
+            opacity: 0.5;
+        }
+
+        .game-content {
+            padding: 30px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        .game-title {
+            font-size: 1.9rem;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, white, var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .game-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+            margin-bottom: 25px;
+            flex-grow: 1;
+            font-weight: 300;
+        }
+
+        .game-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .game-features li {
+            padding: 8px 0;
+            color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+        }
+
+        .game-features i {
+            color: var(--accent);
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        .play-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(108, 99, 255, 0.3);
+            align-self: flex-start;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        .play-btn:hover::before {
+            left: 100%;
+        }
+
+        .play-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(108, 99, 255, 0.5);
+            background: linear-gradient(45deg, var(--accent), var(--primary));
+        }
+
+        /* Phần nổi bật */
+        .highlight-section {
+            text-align: center;
+            padding: 60px 40px;
+            margin: 60px 0;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(108, 99, 255, 0.05) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .highlight-title {
+            font-size: 3rem;
+            margin-bottom: 25px;
+            background: linear-gradient(to right, var(--gold), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .highlight-text {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 0 40px;
+            margin-top: 80px;
+            border-top: 1px solid var(--glass-border);
+            position: relative;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-bottom: 50px;
+        }
+
+        .footer-logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--gold), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        .footer-links h4, .footer-contact h4 {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            color: white;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 300;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-icon:hover {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            transform: translateY(-5px);
+        }
+
+        .copyright {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .games-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo-text {
+                font-size: 2.8rem;
+            }
+            
+            .tagline {
+                font-size: 1.2rem;
+            }
+            
+            .highlight-title {
+                font-size: 2.5rem;
+            }
+            
+            .highlight-text {
+                font-size: 1.1rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="starfield" id="starfield"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <i class="fas fa-crown logo-icon"></i>
+                <h1 class="logo-text">EduGames Hub</h1>
+            </div>
+            <p class="tagline">Nơi tri thức gặp gỡ niềm vui - Khám phá thế giới học tập qua những trò chơi tinh tế và đầy cảm hứng</p>
+        </header>
+        
+        <section class="highlight-section">
+            <h2 class="highlight-title">Trải Nghiệm Học Tập Đỉnh Cao</h2>
+            <p class="highlight-text">EduGames Hub mang đến bộ sưu tập trò chơi giáo dục được thiết kế tỉ mỉ, kết hợp giữa yếu tố giải trí và kiến thức chuyên sâu. Mỗi trò chơi là một tác phẩm nghệ thuật số, giúp người chơi tiếp thu kiến thức một cách tự nhiên và đầy hứng khởi.</p>
+        </section>
+        
+        <section class="games-grid">
+            <div class="game-card">
+                <div class="game-badge">Phổ biến</div>
+                <div class="game-icon-container">
+                    <div class="game-icon-bg" style="background: #6c63ff;"></div>
+                    <i class="fas fa-globe-americas game-icon" style="color: #6c63ff;"></i>
+                </div>
+                <div class="game-content">
+                    <h3 class="game-title">Vũ Trụ Tri Thức</h3>
+                    <p class="game-description">Du hành qua các thiên hà và chinh phục hành tinh tri thức với hệ thống câu hỏi đa dạng từ 10 lĩnh vực học thuật.</p>
+                    <ul class="game-features">
+                        <li><i class="fas fa-gem"></i> Đồ họa 3D chân thực</li>
+                        <li><i class="fas fa-brain"></i> Nhiều câu hỏi chất lượng cao</li>
+                        
+                    </ul>
+                    <a href="hanh.html" class="play-btn"><i class="fas fa-play-circle"></i> Khởi Động</a>
+                </div>
+            </div>
+            
+            <div class="game-card">
+                <div class="game-badge">Mới nhất</div>
+                <div class="game-icon-container">
+                    <div class="game-icon-bg" style="background: #ffd166 ;"></div>
+                    <i class="fas fa-chess-queen game-icon" style="color: #ffd166 ;"></i>
+                </div>
+                <div class="game-content">
+                    <h3 class="game-title">Thách Đấu Trí Tuệ</h3>
+                    <p class="game-description">Thử thách trí thông minh với những câu đố logic và bài toán tư duy được thiết kế bởi các chuyên gia giáo dục hàng đầu.</p>
+                    <ul class="game-features">
+                        <li><i class="fas fa-puzzle-piece"></i> 7 cấp độ thử thách</li>
+                        
+                        <li><i class="fas fa-chart-line"></i> Theo dõi tiến độ học tập</li>
+                    </ul>
+                    <a href="#" class="play-btn"><i class="fas fa-play-circle"></i> Khởi Động</a>
+                </div>
+            </div>
+            
+            <div class="game-card">
+                <div class="game-badge">Sáng tạo</div>
+                <div class="game-icon-container">
+                    <div class="game-icon-bg" style="background: #36d1dc;"></div>
+                    <i class="fas fa-palette game-icon" style="color: #36d1dc;"></i>
+                </div>
+                <div class="game-content">
+                    <h3 class="game-title">Thế Giới Ngôn Từ</h3>
+                    <p class="game-description">Khám phá vẻ đẹp ngôn ngữ qua các trò chơi từ vựng, ngữ pháp và văn học với giao diện nghệ thuật độc đáo.</p>
+                    <ul class="game-features">
+                        <li><i class="fas fa-language"></i> 5 ngôn ngữ phổ biến</li>
+                        <li><i class="fas fa-book-open"></i> Thư viện tác phẩm kinh điển</li>
+                        <li><i class="fas fa-microphone-alt"></i> Hệ thống phát âm AI</li>
+                    </ul>
+                    <a href="#" class="play-btn"><i class="fas fa-play-circle"></i> Khởi Động</a>
+                </div>
+            </div>
+            
+            <div class="game-card">
+                <div class="game-badge">Độc quyền</div>
+                <div class="game-icon-container">
+                    <div class="game-icon-bg" style="background: #ff6584;"></div>
+                    <i class="fa-solid fa-dragon game-icon" style="color: #ff6584;"></i>
+                </div>
+                <div class="game-content">
+                    <h3 class="game-title">Thủ Lĩnh Diệt Rồng</h3>
+                    <p class="game-description">Dùng kiến thức đã trải nghiệm để tiêu diệt những quái vật mạnh mẽ, hướng tới boss cuối là rồng hùng mạnh.</p>
+                    <ul class="game-features">
+                        <li><i class="fas fa-gem"></i> Diệt quái vật</li>
+                        <li><i class="fas fa-brain"></i> Đa dạng câu hỏi</li>
+                        <li><i class="fas fa-vr-cardboard"></i> Kịch tính, hồi hộp, sống động.</li>
+                    </ul>
+                    <a href="GameDinhCao.html" class="play-btn"><i class="fas fa-play-circle"></i> Khởi Động</a>
+                </div>
+            </div>
+             </div>
+       
+        
+        
+    
+
+    <script>
+        // Tạo hiệu ứng sao chuyển động
+        function createStarfield() {
+            const starfield = document.getElementById('starfield');
+            const starCount = 300;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                
+                // Loại sao ngẫu nhiên
+                const starTypes = ['small', 'medium', 'large'];
+                const starType = starTypes[Math.floor(Math.random() * starTypes.length)];
+                star.classList.add('star', starType);
+                
+                // Vị trí ngẫu nhiên
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Độ mờ ngẫu nhiên
+                star.style.opacity = Math.random() * 0.7 + 0.3;
+                
+                // Tốc độ và hướng di chuyển ngẫu nhiên
+                const duration = Math.random() * 50 + 30;
+                const delay = Math.random() * 5;
+                const directionX = Math.random() > 0.5 ? 1 : -1;
+                const directionY = Math.random() > 0.5 ? 1 : -1;
+                
+                star.style.animation = `twinkle ${duration}s infinite ${delay}s, 
+                                       moveStar ${duration * 2}s linear infinite ${delay}s`;
+                
+                // Thêm CSS cho chuyển động sao
+                const moveDistance = 100 + Math.random() * 200;
+                const moveX = directionX * moveDistance;
+                const moveY = directionY * moveDistance;
+                
+                const moveKeyframes = `
+                    @keyframes moveStar-${i} {
+                        0% { transform: translate(0, 0); }
+                        25% { transform: translate(${moveX}px, ${moveY}px); }
+                        50% { transform: translate(${moveX * 1.5}px, ${moveY * 1.5}px); }
+                        75% { transform: translate(${moveX}px, ${moveY}px); }
+                        100% { transform: translate(0, 0); }
+                    }
+                `;
+                
+                // Thêm keyframes động
+                const style = document.createElement('style');
+                style.innerHTML = moveKeyframes;
+                document.head.appendChild(style);
+                
+                // Áp dụng animation
+                star.style.animation = `twinkle ${duration}s infinite ${delay}s, 
+                                       moveStar-${i} ${duration * 4}s linear infinite ${delay}s`;
+                
+                starfield.appendChild(star);
+            }
+        }
+        
+        // Hiệu ứng cho các card game
+        document.querySelectorAll('.game-card').forEach((card, index) => {
+            // Hiệu ứng xuất hiện
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(50px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 200 * index);
+            
+            // Hiệu ứng hover
+            card.addEventListener('mouseenter', function() {
+                const icon = this.querySelector('.game-icon');
+                if (icon) {
+                    icon.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                }
+            });
+        });
+        
+        // Hiệu ứng cho nút play
+        document.querySelectorAll('.play-btn').forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.05)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+        
+        // Hiệu ứng cho phần nổi bật
+        const highlightSection = document.querySelector('.highlight-section');
+        const observerOptions = {
+            threshold: 0.3,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    highlightSection.style.opacity = '1';
+                    highlightSection.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Áp dụng hiệu ứng ban đầu
+        highlightSection.style.opacity = '0';
+        highlightSection.style.transform = 'translateY(50px)';
+        highlightSection.style.transition = 'opacity 1s ease, transform 1s ease';
+        
+        // Bắt đầu quan sát
+        observer.observe(highlightSection);
+        
+        // Khởi tạo khi trang được tải
+        window.onload = function() {
+            createStarfield();
+            
+            // Kích hoạt hiệu ứng cho highlight section
+            setTimeout(() => {
+                highlightSection.style.opacity = '1';
+                highlightSection.style.transform = 'translateY(0)';
+            }, 500);
+        };
+    </script>
+</body>
+</html>

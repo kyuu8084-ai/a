@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EduCraft: Ultimate Monster Collection</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --bg-color: #000;
+            --ui-bg: rgba(20, 10, 30, 0.95);
+            --accent: #d35400; 
+            --danger: #c0392b;
+            --magic: #9b59b6; 
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background: #111;
+            overflow: hidden;
+            font-family: 'VT323', monospace;
+            touch-action: none; 
+            user-select: none;
+        }
+
+        canvas {
+            display: block;
+            image-rendering: pixelated; 
+        }
+
+        /* UI Overlays */
+        .ui-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 15px; box-sizing: border-box;
+            z-index: 10;
+        }
+
+        /* HUD */
+        .hud-bar {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            pointer-events: auto;
+        }
+        .stat-box {
+            background: var(--ui-bg); border: 3px solid #8e44ad;
+            padding: 10px 20px; color: #fff; font-size: 26px;
+            box-shadow: 0 0 10px #8e44ad;
+            min-width: 180px; text-shadow: 2px 2px #000;
+        }
+        .hp-container {
+            width: 100%; height: 15px; background: #333; margin-top: 5px; border: 1px solid #fff;
+        }
+        .hp-fill {
+            width: 100%; height: 100%; background: linear-gradient(90deg, #e74c3c, #c0392b);
+            transition: width 0.2s;
+        }
+
+        /* Toast Message */
+        #toast-msg {
+            position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9); color: #f1c40f; padding: 20px 40px;
+            border: 4px solid var(--danger); border-radius: 5px;
+            font-size: 35px; opacity: 0; transition: opacity 0.3s;
+            pointer-events: none; z-index: 999; text-align: center;
+            text-shadow: 2px 2px #000;
+        }
+        #toast-msg.show { opacity: 1; animation: bounce 0.5s; }
+
+        /* Ambush Overlay */
+        #ambush-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(100, 0, 100, 0.3); 
+            display: none; justify-content: center; align-items: center;
+            z-index: 50; animation: flashRed 0.5s infinite;
+        }
+        .ambush-text {
+            font-size: 80px; color: #fff; text-shadow: 5px 5px #8e44ad;
+            background: rgba(0,0,0,0.8); padding: 20px 40px; border: 5px solid #8e44ad;
+            transform: rotate(-5deg);
+        }
+
+        /* Controls */
+        .controls-area {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            padding-bottom: 20px; pointer-events: auto; opacity: 0.9;
+        }
+        .dpad { position: relative; width: 160px; height: 160px; }
+        .dbtn {
+            position: absolute; width: 55px; height: 55px;
+            background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.5);
+            display: flex; justify-content: center; align-items: center;
+            color: white; font-size: 24px; cursor: pointer; border-radius: 8px;
+            backdrop-filter: blur(2px);
+        }
+        .dbtn:active { background: rgba(255,255,255,0.3); transform: scale(0.95); }
+        .d-up { top: 0; left: 52px; } .d-down { bottom: 0; left: 52px; }
+        .d-left { top: 52px; left: 0; } .d-right { top: 52px; right: 0; }
+        
+        .fire-group {
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+        }
+        .fire-btn {
+            width: 90px; height: 90px; background: rgba(192, 57, 43, 0.8);
+            border: 4px solid #e74c3c; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            color: #fff; font-weight: bold; font-size: 22px;
+            cursor: pointer; box-shadow: 0 0 20px rgba(231, 76, 60, 0.6);
+        }
+        .fire-btn:active { background: #ff0000; transform: scale(0.95); }
+        .ammo-count {
+            background: #000; color: #f1c40f; padding: 5px 10px; border: 1px solid #fff;
+            font-size: 20px; font-weight: bold;
+        }
+
+        /* Modals */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 100;
+            display: none; justify-content: center; align-items: center;
+        }
+        .modal.active { display: flex; animation: popIn 0.3s; }
+        
+        .dialog-box {
+            background: #2c3e50; border: 6px solid #8e44ad;
+            width: 90%; max-width: 700px; padding: 30px;
+            color: #fff; text-align: center; box-shadow: 0 0 50px rgba(142, 68, 173, 0.6);
+            border-radius: 10px;
+        }
+        
+        .question-text { font-size: 28px; margin: 20px 0; line-height: 1.4; color: #ecf0f1; min-height: 80px; }
+        .subject-tag { display: inline-block; background: #e67e22; padding: 4px 10px; font-size: 20px; border-radius: 4px; margin-bottom: 10px; text-transform: uppercase;}
+
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .ans-btn {
+            background: #34495e; border: 2px solid #7f8c8d; color: #fff;
+            padding: 15px; font-family: 'VT323', monospace; font-size: 24px;
+            cursor: pointer; transition: 0.1s;
+        }
+        .ans-btn:hover { background: #8e44ad; color: #fff; border-color: #fff; }
+
+        .boss-input {
+            width: 70%; padding: 10px; font-size: 30px; text-align: center;
+            background: #000; border: 3px solid var(--magic); color: #fff;
+            font-family: 'VT323', monospace; margin: 20px 0;
+        }
+
+        @keyframes flashRed { 0% {opacity:0.5;} 50% {opacity:1;} 100% {opacity:0.5;} }
+        @keyframes popIn { from {transform: scale(0.8); opacity: 0;} to {transform: scale(1); opacity: 1;} }
+        @keyframes bounce { 0% {transform: translate(-50%, -50%) scale(0.8);} 50% {transform: translate(-50%, -50%) scale(1.1);} 100% {transform: translate(-50%, -50%) scale(1);} }
+
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="ambush-overlay"><div class="ambush-text">⚠ QUÁI VẬT TẤN CÔNG! ⚠</div></div>
+        <div id="toast-msg">CHƯA ĐỦ KILLS!</div>
+
+        <div class="ui-layer">
+            <div class="hud-bar">
+                <div class="stat-box">
+                    HP: <span id="hp-text">100</span>
+                    <div class="hp-container"><div class="hp-fill" id="hp-bar"></div></div>
+                </div>
+                <div class="stat-box" style="text-align: right;">
+                    KILLS: <span id="score" style="color: var(--accent)">0</span>/30<br>
+                    <span style="font-size: 18px; color: #aaa;">Sẽ Bị Phục Kích Sau: <span id="ambush-timer">10</span>s</span>
+                </div>
+            </div>
+
+            <div class="controls-area">
+                <div class="dpad">
+                    <div class="dbtn d-up" data-key="ArrowUp">▲</div>
+                    <div class="dbtn d-down" data-key="ArrowDown">▼</div>
+                    <div class="dbtn d-left" data-key="ArrowLeft">◀</div>
+                    <div class="dbtn d-right" data-key="ArrowRight">▶</div>
+                </div>
+                <div class="fire-group">
+                    <div class="ammo-count">ĐẠN: <span id="ammo-val">15</span></div>
+                    <div class="fire-btn" id="btn-fire">BẮN</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="start-screen" class="modal active">
+            <div class="dialog-box" style="background: linear-gradient(to bottom, #2c3e50, #000);">
+                <h1 style="font-size: 70px; color: #9b59b6; margin: 0; text-shadow: 4px 4px #000;">THỦ LĨNH DIỆT RỒNG</h1>
+                <h3 style="color: #fff; letter-spacing: 3px;">FULL MONSTER EDITION</h3>
+                <p style="font-size: 22px;">Nhiệm vụ: Tiêu diệt RỒNG ENDER </p>
+                <div style="font-size: 18px; background: rgba(0,0,0,0.5); padding: 15px; margin: 20px; border: 2px solid #8e44ad; text-align: left;">
+                    ⚔️ <b>HARDCORE:</b> Bạn chỉ có <b>15 viên đạn</b>. Không thể hồi đạn!<br>
+                    🧟 <b>NHIỆM VỤ:</b> Hạ gục <b>30 Quái vật</b> để khiến RỒNG ENDER thức giấc.<br>
+                    🐉 <b>BOSS:</b> RỒNG ENDER đã hiện nguyên hình (Full Body).<br>
+                    🧠 <b>TRÍ TUỆ:</b> Trả lời 8 câu hỏi khi đấu RỒNG ENDER để chiến thắng.
+                </div>
+                <button class="ans-btn" style="background: #27ae60; border-color: #fff; width: 200px; font-size: 30px;" onclick="startGame()">KHỞI HÀNH</button>
+            </div>
+        </div>
+
+        <div id="battle-modal" class="modal">
+            <div class="dialog-box">
+                <h2 id="battle-title" style="color: var(--danger); font-size: 40px;">BỊ TẤN CÔNG!</h2>
+                <div class="question-text" id="battle-question">...</div>
+                <div class="options-grid" id="battle-options"></div>
+            </div>
+        </div>
+
+        <div id="boss-modal" class="modal">
+            <div class="dialog-box" style="border-color: #c0392b; background: #2b0000;">
+                <h2 style="color: #e74c3c; font-size: 50px; text-shadow: 0 0 10px #fff;">RỒNG ENDER</h2>
+                <div style="font-size: 24px; margin-bottom: 10px; color: #fff;">
+                    ⏳ Thời gian: <span id="boss-timer-val">30</span>s
+                </div>
+                <div class="question-text" id="boss-question">...</div>
+                <input type="text" class="boss-input" id="boss-input" placeholder="Nhập đáp án..." autocomplete="off" style="border-color: #e74c3c;">
+                <br>
+                <button class="ans-btn" style="background: #fff; color: #000; width: 150px;" onclick="checkBossAnswer()">TẤN CÔNG</button>
+                <p style="margin-top: 10px;">Thanh máu Boss: <span id="boss-progress">1</span>/8</p>
+            </div>
+        </div>
+
+        <div id="end-screen" class="modal">
+            <div class="dialog-box">
+                <h2 id="end-title" style="font-size: 60px;">VICTORY!</h2>
+                <p id="end-msg" style="font-size: 30px;">...</p>
+                <div id="firework-container"></div>
+                <p style="color: #aaa; font-size: 20px;">(Tự động chơi lại sau 4 giây...)</p>
+            </div>
+        </div>
+    </div>
+
+<script>
+// --- DATA WAREHOUSE ---
+const RAW_QUESTIONS = [
+    
+    // --- LỊCH SỬ (Việt Nam & Thế Giới) ---
+    { s: "Lịch Sử", q: "Vị vua cuối cùng của triều đại phong kiến Việt Nam là ai?", a: ["Bảo Đại", "Khải Định", "Duy Tân", "Tự Đức"], c: 0 },
+    { s: "Lịch Sử", q: "Ai là tác giả của tác phẩm 'Bình Ngô Đại Cáo'?", a: ["Nguyễn Trãi", "Lê Lợi", "Nguyễn Du", "Trần Hưng Đạo"], c: 0 },
+    { s: "Lịch Sử", q: "Cuộc cách mạng công nghiệp lần thứ nhất bắt đầu tại quốc gia nào?", a: ["Anh", "Pháp", "Mỹ", "Đức"], c: 0 },
+    { s: "Lịch Sử", q: "Chiến tranh thế giới thứ hai kết thúc vào năm nào?", a: ["1945", "1939", "1954", "1918"], c: 0 },
+    { s: "Lịch Sử", q: "Vị tướng nào đã chỉ huy chiến dịch Hồ Chí Minh năm 1975?", a: ["Văn Tiến Dũng", "Võ Nguyên Giáp", "Nguyễn Chí Thanh", "Hoàng Văn Thái"], c: 0 },
+    { s: "Lịch Sử", q: "Tên gọi khác của thành phố Sài Gòn trước năm 1698 là gì?", a: ["Prey Nokor", "Gia Định", "Bến Nghé", "Chợ Lớn"], c: 0 },
+    { s: "Lịch Sử", q: "Nữ hoàng duy nhất trong lịch sử phong kiến Việt Nam là ai?", a: ["Lý Chiêu Hoàng", "Dương Vân Nga", "Ỷ Lan", "Huyền Trân Công Chúa"], c: 0 },
+    { s: "Lịch Sử", q: "Ai là người đầu tiên đặt chân lên Mặt Trăng?", a: ["Neil Armstrong", "Yuri Gagarin", "Buzz Aldrin", "Michael Collins"], c: 0 },
+    { s: "Lịch Sử", q: "Phong trào Cần Vương do ai phát động?", a: ["Vua Hàm Nghi", "Vua Duy Tân", "Phan Đình Phùng", "Tôn Thất Thuyết"], c: 0 },
+    { s: "Lịch Sử", q: "Năm 1789 gắn liền với sự kiện lịch sử nào của thế giới?", a: ["Cách mạng tư sản Pháp", "Cách mạng tháng Mười Nga", "Nước Mỹ giành độc lập", "Phát kiến địa lý"], c: 0 },
+
+    // --- ĐỊA LÝ ---
+    { s: "Địa Lí", q: "Tỉnh nào của Việt Nam có đường biên giới giáp với cả Lào và Campuchia?", a: ["Kon Tum", "Gia Lai", "Đắk Lắk", "Điện Biên"], c: 0 },
+    { s: "Địa Lí", q: "Hồ nước ngọt lớn nhất thế giới (theo diện tích) là hồ nào?", a: ["Hồ thượng (Superior)", "Hồ Victoria", "Hồ Baikal", "Hồ Michigan"], c: 0 },
+    { s: "Địa Lí", q: "Thủ đô của Úc (Australia) là thành phố nào?", a: ["Canberra", "Sydney", "Melbourne", "Perth"], c: 0 },
+    { s: "Địa Lí", q: "Sa mạc lớn nhất thế giới là?", a: ["Sa mạc Nam Cực", "Sa mạc Sahara", "Sa mạc Gobi", "Sa mạc Kalahari"], c: 0 },
+    { s: "Địa Lí", q: "Đất nước nào được mệnh danh là 'Xứ sở vạn đảo'?", a: ["Indonesia", "Philippines", "Nhật Bản", "Malaysia"], c: 0 },
+    { s: "Địa Lí", q: "Dòng sông nào chảy qua nhiều quốc gia nhất thế giới?", a: ["Sông Danube", "Sông Nile", "Sông Amazon", "Sông Mê Kông"], c: 0 },
+    { s: "Địa Lí", q: "Nơi nào được xem là điểm cực Đông của Tổ quốc Việt Nam (trên đất liền)?", a: ["Mũi Đôi (Khánh Hòa)", "Mũi Điện (Phú Yên)", "Mũi Cà Mau", "Mũi Ngọc (Quảng Ninh)"], c: 0 },
+    { s: "Địa Lí", q: "Tầng khí quyển nào nằm sát mặt đất nhất?", a: ["Tầng đối lưu", "Tầng bình lưu", "Tầng trung lưu", "Tầng điện ly"], c: 0 },
+    { s: "Địa Lí", q: "Eo biển nào nối liền Địa Trung Hải và Đại Tây Dương?", a: ["Eo biển Gibraltar", "Eo biển Malacca", "Eo biển Bering", "Eo biển Hormuz"], c: 0 },
+    { s: "Địa Lí", q: "Quốc gia nào có diện tích nhỏ nhất thế giới?", a: ["Vatican", "Monaco", "Singapore", "Maldives"], c: 0 },
+
+    // --- VẬT LÝ ---
+    { s: "Vật Lí", q: "Hiện tượng cầu vồng là kết quả của quá trình nào?", a: ["Tán sắc ánh sáng", "Nhiễu xạ ánh sáng", "Giao thoa ánh sáng", "Hấp thụ ánh sáng"], c: 0 },
+    { s: "Vật Lí", q: "Đơn vị đo điện dung là gì?", a: ["Farad (F)", "Henry (H)", "Tesla (T)", "Weber (Wb)"], c: 0 },
+    { s: "Vật Lí", q: "Trong chân không, sóng nào sau đây không truyền được?", a: ["Sóng âm", "Sóng ánh sáng", "Sóng vô tuyến", "Tia X"], c: 0 },
+    { s: "Vật Lí", q: "Định luật I Newton còn được gọi là định luật gì?", a: ["Quán tính", "Bảo toàn động lượng", "Vạn vật hấp dẫn", "Phản lực"], c: 0 },
+    { s: "Vật Lí", q: "Hạt nhân nguyên tử được cấu tạo bởi những hạt nào?", a: ["Proton và Neutron", "Proton và Electron", "Neutron và Electron", "Chỉ có Proton"], c: 0 },
+    { s: "Vật Lí", q: "Người ta dùng dụng cụ nào để đo áp suất khí quyển?", a: ["Áp kế (Barometer)", "Nhiệt kế", "Vôn kế", "Lực kế"], c: 0 },
+    { s: "Vật Lí", q: "Máy biến áp hoạt động dựa trên hiện tượng gì?", a: ["Cảm ứng điện từ", "Tự cảm", "Cộng hưởng điện", "Dòng điện Foucault"], c: 0 },
+    { s: "Vật Lí", q: "Khi ánh sáng truyền từ không khí vào nước, vận tốc của nó sẽ như thế nào?", a: ["Giảm đi", "Tăng lên", "Không đổi", "Tăng gấp đôi"], c: 0 },
+    { s: "Vật Lí", q: "Đơn vị đo công suất là gì?", a: ["Watt", "Joule", "Newton", "Hertz"], c: 0 },
+    { s: "Vật Lí", q: "Vật chất ở trạng thái nào có hình dạng và thể tích xác định?", a: ["Rắn", "Lỏng", "Khí", "Plasma"], c: 0 },
+
+    // --- HÓA HỌC ---
+    { s: "Hóa Học", q: "Kim loại nào dẫn điện tốt nhất?", a: ["Bạc", "Đồng", "Vàng", "Nhôm"], c: 0 },
+    { s: "Hóa Học", q: "Khí nào là thành phần chính của khí thiên nhiên (biogas)?", a: ["Metan (CH4)", "Etan (C2H6)", "Propan (C3H8)", "Butan (C4H10)"], c: 0 },
+    { s: "Hóa Học", q: "Nguyên tố nào là nguyên tố phổ biến nhất trong vỏ Trái Đất?", a: ["Oxy", "Silic", "Nhôm", "Sắt"], c: 0 },
+    { s: "Hóa Học", q: "Dung dịch làm quỳ tím chuyển sang màu đỏ là?", a: ["Axit", "Bazo", "Muối", "Nước cất"], c: 0 },
+    { s: "Hóa Học", q: "Thủy ngân (Hg) ở điều kiện thường ở trạng thái nào?", a: ["Lỏng", "Rắn", "Khí", "Plasma"], c: 0 },
+    { s: "Hóa Học", q: "Công thức hóa học của 'Vôi sống' là gì?", a: ["CaO", "CaCO3", "Ca(OH)2", "CaCl2"], c: 0 },
+    { s: "Hóa Học", q: "Khí cười (Laughing gas) có công thức là gì?", a: ["N2O", "NO2", "NO", "N2"], c: 0 },
+    { s: "Hóa Học", q: "Nguyên tố hóa học nào có ký hiệu là 'K'?", a: ["Kali", "Kẽm", "Krypton", "Canxi"], c: 0 },
+    { s: "Hóa Học", q: "Chất nào được mệnh danh là 'Vàng đen'?", a: ["Dầu mỏ", "Than đá", "Cà phê", "Hạt tiêu"], c: 0 },
+    { s: "Hóa Học", q: "Hợp chất hữu cơ đơn giản nhất là gì?", a: ["Metan", "Etan", "Metanol", "Benzen"], c: 0 },
+
+    // --- SINH HỌC ---
+    { s: "Sinh Học", q: "Bào quan nào được coi là 'nhà máy năng lượng' của tế bào?", a: ["Ty thể", "Lục lạp", "Riboxom", "Bộ máy Golgi"], c: 0 },
+    { s: "Sinh Học", q: "Nhóm máu nào được gọi là nhóm máu 'chuyên cho'?", a: ["O", "AB", "A", "B"], c: 0 },
+    { s: "Sinh Học", q: "Động vật nào có tuổi thọ trung bình cao nhất?", a: ["Rùa", "Voi", "Cá voi xanh", "Đại bàng"], c: 0 },
+    { s: "Sinh Học", q: "Phần lớn quá trình hấp thụ chất dinh dưỡng diễn ra ở đâu?", a: ["Ruột non", "Dạ dày", "Ruột già", "Thực quản"], c: 0 },
+    { s: "Sinh Học", q: "Hệ thần kinh của con người gồm hai bộ phận chính là gì?", a: ["Trung ương và ngoại biên", "Não và tủy sống", "Não và dây thần kinh", "Cảm giác và vận động"], c: 0 },
+    { s: "Sinh Học", q: "Loài thực vật nào không có hoa?", a: ["Dương xỉ", "Lúa", "Sen", "Mướp"], c: 0 },
+    { s: "Sinh Học", q: "Hormone Insulin do tuyến nào tiết ra?", a: ["Tụy", "Giáp", "Yên", "Thượng thận"], c: 0 },
+    { s: "Sinh Học", q: "Đơn vị cấu tạo nhỏ nhất của sự sống là gì?", a: ["Tế bào", "Mô", "Cơ quan", "Phân tử"], c: 0 },
+    { s: "Sinh Học", q: "Trong tế bào thực vật, thành phần nào giúp cây đứng vững?", a: ["Vách tế bào", "Màng sinh chất", "Không bào", "Lục lạp"], c: 0 },
+    { s: "Sinh Học", q: "Thú mỏ vịt là loài động vật đẻ gì?", a: ["Đẻ trứng", "Đẻ con", "Đẻ trứng thai", "Phân đôi"], c: 0 },
+
+    // --- VĂN HỌC ---
+    { s: "Văn Học", q: "Tác phẩm 'Số đỏ' là của nhà văn nào?", a: ["Vũ Trọng Phụng", "Nam Cao", "Ngô Tất Tố", "Nguyễn Công Hoan"], c: 0 },
+    { s: "Văn Học", q: "Nhà văn nào được mệnh danh là 'Ông vua phóng sự đất Bắc'?", a: ["Vũ Trọng Phụng", "Nguyên Hồng", "Thạch Lam", "Nguyễn Tuân"], c: 0 },
+    { s: "Văn Học", q: "Nhân vật Sherlock Holmes xuất hiện lần đầu trong tác phẩm nào?", a: ["Chiếc nhẫn tình cờ", "Dấu bộ tứ", "Vụ án mạng ở Baskerville", "Thung lũng khủng khiếp"], c: 0 },
+    { s: "Văn Học", q: "Ai là tác giả của bộ tiểu thuyết 'Harry Potter'?", a: ["J.K. Rowling", "J.R.R. Tolkien", "Stephen King", "Dan Brown"], c: 0 },
+    { s: "Văn Học", q: "Bài thơ 'Tây Tiến' do ai sáng tác?", a: ["Quang Dũng", "Chính Hữu", "Phạm Tiến Duật", "Tố Hữu"], c: 0 },
+    { s: "Văn Học", q: "Trong 'Truyện Kiều', tên thật của Hoạn Thư là gì?", a: ["Không được nhắc đến", "Thúy Hoạn", "Tiểu Thư", "Kiều Loan"], c: 0 },
+    { s: "Văn Học", q: "Giải Nobel Văn học đầu tiên được trao vào năm nào?", a: ["1901", "1900", "1896", "1910"], c: 0 },
+    { s: "Văn Học", q: "Tác phẩm 'Chiếc lược ngà' viết về tình cảm gì?", a: ["Cha con", "Mẹ con", "Vợ chồng", "Đồng đội"], c: 0 },
+    { s: "Văn Học", q: "Đại thi hào William Shakespeare là người nước nào?", a: ["Anh", "Pháp", "Mỹ", "Đức"], c: 0 },
+    { s: "Văn Học", q: "Bài thơ 'Sóng' của Xuân Quỳnh được in trong tập thơ nào?", a: ["Hoa dọc chiến hào", "Gió lào cát trắng", "Tự hát", "Tơ tằm - Chồi biếc"], c: 0 },
+
+    // --- TOÁN HỌC ---
+    { s: "Toán", q: "Tổng các góc trong của một tứ giác lồi bằng bao nhiêu?", a: ["360 độ", "180 độ", "90 độ", "270 độ"], c: 0 },
+    { s: "Toán", q: "Số nguyên tố chẵn duy nhất là số mấy?", a: ["2", "4", "0", "Không có"], c: 0 },
+    { s: "Toán", q: "Hình đa diện đều loại {4;3} là hình gì?", a: ["Hình lập phương", "Hình tứ diện đều", "Hình bát diện đều", "Hình 12 mặt đều"], c: 0 },
+    { s: "Toán", q: "Căn bậc hai số học của 225 là?", a: ["15", "25", "12", "14"], c: 0 },
+    { s: "Toán", q: "Trong hệ nhị phân, số 10 tương ứng với số mấy trong hệ thập phân?", a: ["2", "10", "1", "4"], c: 0 },
+    { s: "Toán", q: "Định lý Pytago áp dụng cho loại tam giác nào?", a: ["Tam giác vuông", "Tam giác đều", "Tam giác cân", "Mọi tam giác"], c: 0 },
+    { s: "Toán", q: "Số nghịch đảo của phân số 3/4 là?", a: ["4/3", "-3/4", "-4/3", "1"], c: 0 },
+    { s: "Toán", q: "Hình thoi có hai đường chéo như thế nào?", a: ["Vuông góc với nhau", "Bằng nhau", "Song song", "Trùng nhau"], c: 0 },
+    { s: "Toán", q: "Logarit cơ số 10 của 100 bằng bao nhiêu?", a: ["2", "10", "100", "1"], c: 0 },
+    { s: "Toán", q: "Số Pi (π) là loại số gì?", a: ["Số vô tỉ", "Số hữu tỉ", "Số nguyên", "Số ảo"], c: 0 },
+
+    // --- CÔNG NGHỆ & TIN HỌC ---
+    { s: "Công Nghệ", q: "Cha đẻ của hệ điều hành Linux là ai?", a: ["Linus Torvalds", "Bill Gates", "Steve Jobs", "Mark Zuckerberg"], c: 0 },
+    { s: "Công Nghệ", q: "Giao thức bảo mật được sử dụng phổ biến trên trình duyệt web là?", a: ["HTTPS", "HTTP", "FTP", "SMTP"], c: 0 },
+    { s: "Công Nghệ", q: "Đơn vị thông tin nhỏ nhất trong máy tính là gì?", a: ["Bit", "Byte", "Kb", "Mb"], c: 0 },
+    { s: "Công Nghệ", q: "AI là viết tắt của thuật ngữ nào?", a: ["Artificial Intelligence", "Automated Interface", "Apple Inc", "Advanced Internet"], c: 0 },
+    { s: "Công Nghệ", q: "Ngôn ngữ lập trình nào có biểu tượng là con trăn?", a: ["Python", "Java", "C++", "Ruby"], c: 0 },
+    { s: "Công Nghệ", q: "Thiết bị nào sau đây là thiết bị xuất (Output device)?", a: ["Máy in", "Chuột", "Bàn phím", "Scanner"], c: 0 },
+    { s: "Công Nghệ", q: "Mạng LAN là viết tắt của?", a: ["Local Area Network", "Large Area Network", "Long Area Network", "Local Access Network"], c: 0 },
+    { s: "Công Nghệ", q: "Công ty nào sản xuất dòng chip Snapdragon?", a: ["Qualcomm", "Intel", "AMD", "MediaTek"], c: 0 },
+    { s: "Công Nghệ", q: "Phím tắt để mở Task Manager trực tiếp trên Windows là?", a: ["Ctrl + Shift + Esc", "Ctrl + Alt + Del", "Alt + F4", "Win + Tab"], c: 0 },
+    { s: "Công Nghệ", q: "Địa chỉ IP phiên bản 4 (IPv4) có bao nhiêu bit?", a: ["32 bit", "64 bit", "128 bit", "16 bit"], c: 0 },
+
+    // --- TIẾNG ANH ---
+    { s: "Tiếng Anh", q: "Thành ngữ 'Raining cats and dogs' nghĩa là gì?", a: ["Mưa rất to", "Chó mèo cắn nhau", "Trời nắng đẹp", "Mưa phùn"], c: 0 },
+    { s: "Tiếng Anh", q: "Từ nào đồng nghĩa với 'Smart'?", a: ["Intelligent", "Stupid", "Slow", "Hard"], c: 0 },
+    { s: "Tiếng Anh", q: "Dạng quá khứ phân từ (V3) của động từ 'Eat' là?", a: ["Eaten", "Ate", "Eating", "Eats"], c: 0 },
+    { s: "Tiếng Anh", q: "Trong câu 'She plays piano', từ 'plays' là thì gì?", a: ["Hiện tại đơn", "Quá khứ đơn", "Tương lai đơn", "Hiện tại tiếp diễn"], c: 0 },
+    { s: "Tiếng Anh", q: "Tiền tố 'Un-' trong từ 'Unhappy' có nghĩa là gì?", a: ["Không (Not)", "Rất (Very)", "Lại (Re)", "Trước (Pre)"], c: 0 },
+    { s: "Tiếng Anh", q: "Số thứ tự thứ 1 (First) viết tắt là gì?", a: ["1st", "1nd", "1rd", "1th"], c: 0 },
+    { s: "Tiếng Anh", q: "Từ 'Architect' nghĩa là nghề gì?", a: ["Kiến trúc sư", "Kỹ sư", "Bác sĩ", "Họa sĩ"], c: 0 },
+    { s: "Tiếng Anh", q: "Cụm từ 'Piece of cake' có nghĩa bóng là?", a: ["Rất dễ dàng", "Một mẩu bánh", "Rất khó khăn", "Ngon miệng"], c: 0 },
+    { s: "Tiếng Anh", q: "Từ nào phát âm khác với các từ còn lại: Cat, Hat, Map, Car?", a: ["Car", "Cat", "Hat", "Map"], c: 0 },
+    { s: "Tiếng Anh", q: "Giới từ đi cùng với 'Interested' là gì?", a: ["in", "on", "at", "with"], c: 0 },
+
+    // --- THỂ THAO & NGHỆ THUẬT ---
+    { s: "Thể Thao", q: "Một trận đấu bóng rổ có mấy hiệp chính?", a: ["4", "2", "3", "5"], c: 0 },
+    { s: "Thể Thao", q: "Kỷ lục chạy 100m thế giới hiện do ai nắm giữ?", a: ["Usain Bolt", "Tyson Gay", "Yohan Blake", "Justin Gatlin"], c: 0 },
+    { s: "Thể Thao", q: "World Cup bóng đá nam đầu tiên được tổ chức ở đâu?", a: ["Uruguay", "Brazil", "Ý", "Pháp"], c: 0 },
+    { s: "Thể Thao", q: "Trong môn Tennis, điểm số '40-40' được gọi là gì?", a: ["Deuce", "Tie", "Equal", "Match point"], c: 0 },
+    { s: "Âm Nhạc", q: "Bức họa 'Mona Lisa' là tác phẩm của ai?", a: ["Leonardo da Vinci", "Pablo Picasso", "Vincent van Gogh", "Michelangelo"], c: 0 },
+    { s: "Âm Nhạc", q: "Nhạc sĩ thiên tài Beethoven là người nước nào?", a: ["Đức", "Áo", "Pháp", "Ba Lan"], c: 0 },
+    { s: "Âm Nhạc", q: "Nhạc cụ nào được mệnh danh là 'Vua của các loại nhạc cụ'?", a: ["Piano", "Violin", "Guitar", "Trống"], c: 0 },
+    { s: "Âm Nhạc", q: "Bài hát 'Quốc ca Việt Nam' có tên gốc là gì?", a: ["Tiến quân ca", "Diệt phát xít", "Ca ngợi Hồ Chủ tịch", "Thanh niên làm theo lời Bác"], c: 0 },
+    { s: "Âm Nhạc", q: "Ca trù là loại hình nghệ thuật truyền thống của vùng nào?", a: ["Bắc Bộ", "Trung Bộ", "Nam Bộ", "Tây Nguyên"], c: 0 },
+
+    // --- THIÊN VĂN & KIẾN THỨC CHUNG ---
+    { s: "Thiên Văn", q: "Hành tinh nào được gọi là 'Hành tinh Đỏ'?", a: ["Sao Hỏa", "Sao Kim", "Sao Mộc", "Sao Thổ"], c: 0 },
+    { s: "Thiên Văn", q: "Ngôi sao nào sáng nhất trên bầu trời đêm?", a: ["Sirius (Sao Thiên Lang)", "Polaris (Sao Bắc Cực)", "Betelgeuse", "Vega"], c: 0 },
+    { s: "Thiên Văn", q: "Hệ Mặt Trời có bao nhiêu hành tinh?", a: ["8", "9", "7", "10"], c: 0 },
+    { s: "Kiến Thức", q: "Đơn vị tiền tệ của Nhật Bản là gì?", a: ["Yên", "Won", "Nhân dân tệ", "Baht"], c: 0 },
+    { s: "Kiến Thức", q: "Giải thưởng Oscar là giải thưởng của lĩnh vực nào?", a: ["Điện ảnh", "Âm nhạc", "Văn học", "Khoa học"], c: 0 },
+    { s: "Kiến Thức", q: "Logo của hãng xe Mercedes-Benz có hình gì?", a: ["Ngôi sao 3 cánh", "Ngôi sao 4 cánh", "Vòng tròn Olympic", "Con ngựa"], c: 0 },
+    { s: "Kiến Thức", q: "Loại hình rubik tiêu chuẩn có bao nhiêu mặt?", a: ["6", "4", "8", "12"], c: 0 },
+    { s: "Kiến Thức", q: "Biểu tượng của ngành Y dược là con gì?", a: ["Con rắn", "Con đại bàng", "Con rồng", "Con hổ"], c: 0 }
+
+];
+
+const RAW_BOSS_QUESTIONS = [
+    { q: "Nước nào đông dân nhất thế giới hiện nay? ( Đáp án không dấu )", a: "An Do" }, 
+    { q: "Tam giác có 3 cạnh bằng nhau gọi là tam giác gì? ( Đáp án không dấu )", a: "Deu" },
+    { q: "Đỉnh núi cao nhất Việt Nam?", a: "Fansipan" },
+    { q: "Virus gây đại dịch Covid-19 xuất hiện đầu tiên ở đâu? ( Đáp án không dấu )", a: "Vu Han" },
+    { q: "Tháng 2 năm nhuận có bao nhiêu ngày?", a: "29" },
+    { q: "Thủ đô của nước Mỹ là gì (viết tắt)?", a: "Washington DC" },
+    { q: "Tên thật của Bác Hồ thời niên thiếu? ( Đáp án không dấu )", a: "Nguyen Sinh Cung" },
+    { q: "Hành tinh đỏ là tên gọi khác của sao nào?", a: "Sao Hoa" },
+    { q: "Công thức hóa học của Axit Sunfuric?", a: "H2SO4" },
+    { q: "Ai là người đầu tiên đặt chân lên mặt trăng?", a: "Neil Armstrong" },
+    { q: "Việt Nam có bao nhiêu tỉnh thành ( trước khi xác nhập ) ?", a: "63" },
+    { q: "Loài vật nào chạy nhanh nhất trên cạn? ( Đáp án không dấu )", a: "Bao" },
+    { q: "Máy tính đầu tiên trên thế giới tên là gì?", a: "ENIAC" },
+    { q: "Cha đẻ của thuyết tương đối là ai?", a: "Albert Einstein" },
+    { q: "Ngọn núi cao nhất Nhật Bản? ( Đáp án không dấu )", a: "Phu Si" },
+    { q: "Tác giả của bộ truyện Harry Potter?", a: "JK Rowling" },
+    { q: "Đơn vị nhỏ nhất của vật chất là gì? ( Đáp án không dấu )", a: "Nguyen tu" },
+    { q: "Thành phố nào được mệnh danh là Hòn ngọc Viễn Đông? ( Đáp án không dấu )", a: "Sai Gon" },
+    { q: "Tên loại khí dùng để bơm bóng bay?", a: "Heli" },
+    { q: "Con sông nào chảy qua thủ đô Hà Nội? ( Đáp án không dấu )", a: "Hong" },
+    { q: "Đàn độc huyền là tên gọi khác của loại đàn nào? ( Đáp án không dấu )", a: "Dan Bau" },
+    { q: "Thành phố cố đô của Nhật Bản là?", a: "Tokyo" },
+    { q: "Khi rơi tự do vật bị lệch về phương nào? ( Đáp án không dấu )", a: "Dong" },
+    { q: "Số electron tối đa có thể chứa trong lớp p là?", a: "6" },
+    { q: "Năm Châu Phi là năm nào?", a: "1960" },
+    { q: "Từ 1 đến 150 có bao nhiêu chữ số 0?", a: "16" },
+    { q: "Corren phát hiện di truyền qua tế bào chất vào năm nào?", a: "1961" },
+    { q: "What letter is a questions?", a: "Y" },
+    { q: "Vua cho lập Văn Miếu ở Thăng Long năm 1070 là? ( Đáp án không dấu )", a: "Ly Thanh Tong" },
+    { q: "Nước nào giành chiến thắng trong cuộc thi Miss Earth năm 2018? ( Đáp án không dấu )", a: "Viet Nam" },
+    { q: "Who is the Queen of Pop?" ,  a: "Madonna" },
+    { q: "Hành tinh quay nhanh nhất trong Hệ mặt trời là? ( Đáp án không dấu )", a: "Sao Moc" }
+];
+
+let questionDeck = [];
+let bossDeck = [];
+function refreshDeck() { questionDeck = [...RAW_QUESTIONS]; }
+function getUniqueQuestion() {
+    if (questionDeck.length === 0) refreshDeck();
+    const index = Math.floor(Math.random() * questionDeck.length);
+    return questionDeck.splice(index, 1)[0];
+}
+
+// --- GAME ENGINE ---
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let cw, ch;
+
+// Config Maps
+const MAP_W = 4000;
+const MAP_H = 2000;
+
+// Colors Palette (Day & Night)
+// UPDATE: PATH COLOR CHANGED to Brighter Earthy Tone (#e0c097)
+const C_DAY = { DIRT: '#27ae60', PATH: '#e0c097', SKY: '#87CEEB' };
+const C_NIGHT = { DIRT: '#000000', PATH: '#2c3e50', SKY: '#000000' };
+let C = {...C_DAY};
+
+// Game State
+let gameState = 'MENU'; 
+let player = { x: 100, y: MAP_H/2, w: 32, h: 48, hp: 100, score: 0, speed: 10, face: 1, ammo: 15 };
+let camera = { x: 0, y: 0 };
+let bullets = [];
+let monsters = [];
+let trees = [];
+let rocks = [];
+let flowers = []; 
+let ponds = [];
+let stars = [];
+let meteors = [];
+let pathPoints = [];
+let floatTexts = []; 
+let bossActive = false; 
+
+let ambushTime = 0;
+let isDragging = false;
+let dragStart = {x:0, y:0};
+let camOffset = {x:0, y:0};
+
+function init() {
+    resize();
+    window.addEventListener('resize', resize);
+    generateMap();
+    setupControls();
+    refreshDeck();
+    requestAnimationFrame(gameLoop);
+}
+
+function resize() {
+    cw = canvas.width = window.innerWidth;
+    ch = canvas.height = window.innerHeight;
+}
+
+function generateMap() {
+    pathPoints = [];
+    let steps = 400;
+    for(let i=0; i<=steps; i++) {
+        let t = i / steps;
+        let x = t * MAP_W;
+        let y = (MAP_H/2) + Math.sin(t * 12) * 350 + Math.sin(t * 30) * 120;
+        pathPoints.push({x, y});
+    }
+
+    ponds = [];
+    for(let i=0; i<15; i++) {
+        let x = Math.random() * MAP_W;
+        let y = Math.random() * MAP_H;
+        let pathY = getPathY(x);
+        if (Math.abs(y - pathY) > 150) {
+            ponds.push({x, y, r: 60 + Math.random()*80});
+        }
+    }
+
+    trees = [];
+    rocks = [];
+    flowers = []; 
+    
+    for(let i=0; i<1200; i++) { 
+        let x = Math.random() * MAP_W;
+        let y = Math.random() * MAP_H;
+        let pathY = getPathY(x);
+        let inPond = ponds.some(p => Math.hypot(x-p.x, y-p.y) < p.r);
+        
+        if (Math.abs(y - pathY) > 120 && !inPond) {
+            let rand = Math.random();
+            if (rand < 0.1) rocks.push({x, y});
+            else if (rand < 0.3) trees.push({x, y, scale: 0.8 + Math.random() * 0.6});
+            else flowers.push({x, y, type: Math.floor(Math.random()*5)}); 
+        }
+    }
+
+    monsters = [];
+    for(let i=0; i<30; i++) spawnMonster();
+
+    stars = [];
+    for(let i=0; i<300; i++) {
+        stars.push({x: Math.random()*cw, y: Math.random()*ch, s: Math.random()*2});
+    }
+}
+
+function getPathY(x) {
+    let step = MAP_W / 400;
+    let idx = Math.floor(x / step);
+    if(idx < 0) idx = 0;
+    if(idx >= pathPoints.length) idx = pathPoints.length-1;
+    return pathPoints[idx].y;
+}
+
+function spawnMonster() {
+    if (bossActive) return; 
+    // EXPANDED TO 8 TYPES (0-7)
+    let type = Math.floor(Math.random() * 8); 
+    
+    let mx = 600 + Math.random() * (MAP_W - 800);
+    let my = getPathY(mx) + (Math.random()-0.5) * 600;
+    if(my < 50) my = 50; if(my > MAP_H-50) my = MAP_H-50;
+
+    let w = 32, h = 32;
+    // New types
+    if (type === 0) { w = 24; h = 24; } // Bee
+    if (type === 1) { w = 40; h = 28; } // Fox
+    if (type === 2) { w = 36; h = 20; } // Axolotl
+    if (type === 3) { w = 48; h = 56; } // Wither
+    // Old types (Imported)
+    if (type === 4) { w = 32; h = 48; } // Zombie
+    if (type === 5) { w = 32; h = 48; } // Skeleton
+    if (type === 6) { w = 32; h = 44; } // Creeper
+    if (type === 7) { w = 32; h = 56; } // Enderman
+
+    monsters.push({
+        x: mx, y: my, w: w, h: h, 
+        type: type,
+        speed: (type===1 ? 2.5 : 1.5) + Math.random() * 0.5,
+        timer: 0,
+        dir: {x:0, y:0}
+    });
+}
+
+function spawnMeteor() {
+    if(!bossActive) return;
+    meteors.push({
+        x: Math.random() * cw + cw, 
+        y: Math.random() * ch/2,
+        vx: -15 - Math.random()*10,
+        vy: 5 + Math.random()*5,
+        len: 50 + Math.random()*100
+    });
+}
+
+function setupControls() {
+    window.addEventListener('keydown', e => {
+        if(gameState === 'PLAY') {
+            if(e.code === 'ArrowUp') player.dy = -1;
+            if(e.code === 'ArrowDown') player.dy = 1;
+            if(e.code === 'ArrowLeft') { player.dx = -1; player.face = -1; }
+            if(e.code === 'ArrowRight') { player.dx = 1; player.face = 1; }
+            if(e.code === 'Space') fire();
+        }
+    });
+    window.addEventListener('keyup', e => {
+        if(e.code === 'ArrowUp' || e.code === 'ArrowDown') player.dy = 0;
+        if(e.code === 'ArrowLeft' || e.code === 'ArrowRight') player.dx = 0;
+    });
+
+    const bindTouch = (cls, cb) => {
+        const el = document.querySelector(cls);
+        if(el) {
+            el.addEventListener('touchstart', (e) => { e.preventDefault(); cb(true); });
+            el.addEventListener('touchend', (e) => { e.preventDefault(); cb(false); });
+        }
+    };
+    bindTouch('.d-up', (p) => player.dy = p ? -1 : 0);
+    bindTouch('.d-down', (p) => player.dy = p ? 1 : 0);
+    bindTouch('.d-left', (p) => { if(p) {player.dx=-1; player.face=-1} else player.dx=0; });
+    bindTouch('.d-right', (p) => { if(p) {player.dx=1; player.face=1} else player.dx=0; });
+    
+    const btnFire = document.getElementById('btn-fire');
+    if(btnFire) {
+        btnFire.addEventListener('touchstart', (e)=>{ e.preventDefault(); if(gameState==='PLAY') fire(); });
+        btnFire.addEventListener('mousedown', (e)=>{ e.preventDefault(); if(gameState==='PLAY') fire(); });
+    }
+}
+
+function fire() {
+    if (player.ammo <= 0) {
+        addFloatText(player.x, player.y - 40, "HẾT ĐẠN!", "#fff");
+        return;
+    }
+    player.ammo--;
+    updateHUD();
+    
+    bullets.push({
+        x: player.x + 16, y: player.y + 24,
+        vx: player.face * 25, vy: 0, life: 60,
+        w: 12, h: 4 
+    });
+}
+
+function startGame() {
+    document.getElementById('start-screen').classList.remove('active');
+    gameState = 'PLAY';
+    ambushTime = Date.now();
+    player.hp = 100; player.score = 0; player.ammo = 15;
+    bossActive = false;
+    C = {...C_DAY}; 
+    updateHUD();
+}
+
+function gameLoop() {
+    if(gameState === 'PLAY') update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+function update() {
+    let now = Date.now();
+
+    if (!bossActive) {
+        let timeLeft = Math.max(0, 10 - Math.floor((now - ambushTime)/1000));
+        document.getElementById('ambush-timer').innerText = timeLeft;
+        if (now - ambushTime > 10000) {
+            ambushTime = now;
+            triggerBattle(null, 'AMBUSH');
+            return;
+        }
+    } else {
+        document.getElementById('ambush-timer').innerText = "---";
+        if(Math.random() < 0.05) spawnMeteor();
+        for(let i=meteors.length-1; i>=0; i--) {
+            let m = meteors[i]; m.x += m.vx; m.y += m.vy;
+            if(m.y > ch || m.x < -100) meteors.splice(i,1);
+        }
+    }
+
+    if (player.dx) player.x += player.dx * player.speed;
+    if (player.dy) player.y += player.dy * player.speed;
+    
+    player.x = Math.max(0, Math.min(player.x, MAP_W - 32));
+    player.y = Math.max(0, Math.min(player.y, MAP_H - 48));
+
+    let tx = player.x - cw/2; let ty = player.y - ch/2;
+    camera.x += (tx - camera.x) * 0.1;
+    camera.y += (ty - camera.y) * 0.1;
+    camera.x = Math.max(0, Math.min(camera.x, MAP_W - cw));
+    camera.y = Math.max(0, Math.min(camera.y, MAP_H - ch));
+
+    for (let i = bullets.length - 1; i >= 0; i--) {
+        let b = bullets[i];
+        b.x += b.vx; b.life--;
+        if (b.life <= 0) { bullets.splice(i, 1); continue; }
+
+        for (let j = monsters.length - 1; j >= 0; j--) {
+            let m = monsters[j];
+            if (b.x < m.x + m.w && b.x + b.w > m.x && b.y < m.y + m.h && b.y + b.h > m.y) {
+                spawnExplosion(m.x + m.w/2, m.y + m.h/2);
+                addFloatText(m.x, m.y, "+1 KILL");
+                monsters.splice(j, 1);
+                bullets.splice(i, 1);
+                player.score++;
+                
+                if (player.score >= 30 && !bossActive) {
+                    activateBossMode();
+                } else if (!bossActive) {
+                    spawnMonster(); 
+                }
+                updateHUD();
+                break; 
+            }
+        }
+    }
+
+    for (let m of monsters) {
+        let dist = Math.hypot(player.x - m.x, player.y - m.y);
+        
+        // Float logic for Bee(0), Wither(3)
+        if (m.type === 0 || m.type === 3) {
+            m.y += Math.sin(Date.now()/200)*0.5;
+        }
+
+        if (dist < 350) { 
+            let angle = Math.atan2(player.y - m.y, player.x - m.x);
+            m.x += Math.cos(angle) * m.speed * 1.5; 
+            m.y += Math.sin(angle) * m.speed * 1.5;
+        } else { 
+            if (now > m.timer) {
+                m.dir = {x: Math.random()-0.5, y: Math.random()-0.5};
+                m.timer = now + 1000 + Math.random()*2000;
+            }
+            m.x += m.dir.x * m.speed;
+            m.y += m.dir.y * m.speed;
+        }
+
+        if (player.x > m.x) m.face = 1; else m.face = -1;
+
+        if (rectCollide(player, m)) {
+            triggerBattle(m, 'DEFEND');
+            return;
+        }
+    }
+
+    if (player.x > MAP_W - 400) {
+        if (!bossActive) {
+            player.x = MAP_W - 420;
+            showToast("CẦN 30 KILLS ĐỂ GẶP BOSS!");
+        } else {
+            startBossFight();
+        }
+    }
+
+    updateParticles();
+    updateFloatTexts();
+}
+
+function activateBossMode() {
+    bossActive = true;
+    monsters = []; 
+    C = {...C_NIGHT};
+    showToast("THỜI KHẮC ĐÃ ĐẾN, RỒNG ENDER GIÁNG LÂM!");
+    for(let i=0; i<50; i++) spawnExplosion(camera.x + cw/2, camera.y + ch/2, 50);
+}
+
+function updateHUD() {
+    document.getElementById('score').innerText = player.score;
+    document.getElementById('hp-text').innerText = player.hp;
+    document.getElementById('hp-bar').style.width = player.hp + '%';
+    document.getElementById('ammo-val').innerText = player.ammo;
+}
+
+function showToast(msg) {
+    let t = document.getElementById('toast-msg');
+    t.innerText = msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+function rectCollide(r1, r2) {
+    return (r1.x < r2.x + r2.w && r1.x + r1.w > r2.x &&
+            r1.y < r2.y + r2.h && r1.y + r1.h > r2.y);
+}
+
+let currentEnemy = null;
+let bossStage = 0;
+let bossTimer = null;
+
+function triggerBattle(enemy, mode) {
+    gameState = 'BATTLE';
+    currentEnemy = enemy;
+    
+    if(mode === 'AMBUSH') {
+        document.getElementById('ambush-overlay').style.display = 'flex';
+        setTimeout(() => document.getElementById('ambush-overlay').style.display = 'none', 1500);
+    }
+
+    const modal = document.getElementById('battle-modal');
+    document.getElementById('battle-title').innerText = mode === 'AMBUSH' ? "PHỤC KÍCH BẤT NGỜ!" : "BỊ TẤN CÔNG!";
+    modal.classList.add('active');
+    
+    let qData = getUniqueQuestion();
+    document.getElementById('battle-question').innerHTML = `<span class="subject-tag">${qData.s}</span><br>${qData.q}`;
+    
+    const optBox = document.getElementById('battle-options');
+    optBox.innerHTML = '';
+    
+    let answers = qData.a.map((val, idx) => ({val, idx}));
+    answers.sort(() => Math.random() - 0.5);
+
+    answers.forEach(ans => {
+        let btn = document.createElement('button');
+        btn.className = 'ans-btn';
+        btn.innerText = ans.val;
+        btn.onclick = () => resolveBattle(ans.idx === qData.c, mode);
+        optBox.appendChild(btn);
+    });
+}
+
+function resolveBattle(correct, mode) {
+    document.getElementById('battle-modal').classList.remove('active');
+    
+    if (correct) {
+        player.score++;
+        addFloatText(player.x, player.y - 40, "ĐÚNG RỒI!", "#f1c40f");
+
+        if (currentEnemy && mode !== 'AMBUSH') {
+            let idx = monsters.indexOf(currentEnemy);
+            if (idx > -1) {
+                spawnExplosion(currentEnemy.x, currentEnemy.y);
+                monsters.splice(idx, 1);
+                
+                if (player.score >= 30 && !bossActive) activateBossMode();
+                else if (!bossActive) spawnMonster(); 
+            }
+        }
+        
+        if(player.hp < 100) player.hp = Math.min(100, player.hp + 5);
+        updateHUD();
+
+    } else {
+        player.hp -= 15;
+        addFloatText(player.x, player.y - 20, "-15 HP", "red");
+        if (currentEnemy) currentEnemy.x += (currentEnemy.x > player.x ? 100 : -100);
+        updateHUD();
+        if(player.hp <= 0) endGame(false);
+    }
+    
+    gameState = 'PLAY';
+    ambushTime = Date.now();
+}
+
+function startBossFight() {
+    gameState = 'BOSS';
+    bossStage = 0;
+    bossDeck = [...RAW_BOSS_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 8);
+    
+    document.getElementById('boss-modal').classList.add('active');
+    loadBossQuestion();
+}
+
+function loadBossQuestion() {
+    if (bossStage >= 8) { endGame(true); return; }
+
+    let q = bossDeck[bossStage];
+    document.getElementById('boss-question').innerText = q.q;
+    document.getElementById('boss-input').value = '';
+    document.getElementById('boss-progress').innerText = (bossStage + 1);
+    document.getElementById('boss-input').focus();
+
+    let time = 30;
+    document.getElementById('boss-timer-val').innerText = time;
+    
+    if (bossTimer) clearInterval(bossTimer);
+    bossTimer = setInterval(() => {
+        time--;
+        document.getElementById('boss-timer-val').innerText = time;
+        if (time <= 0) { clearInterval(bossTimer); endGame(false); }
+    }, 1000);
+}
+
+function checkBossAnswer() {
+    let input = document.getElementById('boss-input').value.trim().toLowerCase();
+    input = input.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
+    let correct = bossDeck[bossStage].a.toLowerCase();
+
+    if (input === correct || input.includes(correct)) {
+        bossStage++;
+        spawnExplosion(player.x + 200, player.y, 40); 
+        loadBossQuestion();
+    } else {
+        player.hp -= 20;
+        document.getElementById('boss-input').style.borderColor = "red";
+        setTimeout(() => document.getElementById('boss-input').style.borderColor = "#9b59b6", 500);
+        if(player.hp <= 0) { clearInterval(bossTimer); endGame(false); }
+        updateHUD();
+    }
+}
+
+function endGame(win) {
+    gameState = 'OVER';
+    document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+    document.getElementById('end-screen').classList.add('active');
+    
+    let title = document.getElementById('end-title');
+    let msg = document.getElementById('end-msg');
+    
+    if (win) {
+        title.innerHTML = "CHIẾN THẮNG HUY HOÀNG!";
+        title.style.color = "#f1c40f";
+        msg.innerHTML = "Bạn đã tiêu diệt RỒNG ENDER và bảo vệ thế giới!<br>🏆 Kỷ lục: " + player.score + " Kills";
+        setInterval(() => spawnExplosion(Math.random()*cw, Math.random()*ch, 20), 200);
+    } else {
+        title.innerText = "GAME OVER";
+        title.style.color = "#e74c3c";
+        msg.innerText = "RỒNG ENDER đã thiêu rụi tất cả...";
+    }
+    
+    // AUTO RELOAD ADDED HERE
+    setTimeout(() => {
+        location.reload();
+    }, 4000);
+}
+
+// --- RENDER ---
+function draw() {
+    let drawCamX = camera.x - camOffset.x;
+    let drawCamY = camera.y - camOffset.y;
+
+    ctx.fillStyle = C.DIRT;
+    ctx.fillRect(0, 0, cw, ch);
+
+    if(bossActive) {
+        ctx.fillStyle = "#fff";
+        for(let s of stars) {
+            ctx.globalAlpha = Math.random();
+            ctx.fillRect(s.x, s.y, s.s, s.s);
+        }
+        ctx.globalAlpha = 1;
+
+        ctx.fillStyle = "#f1c40f";
+        for(let m of meteors) {
+            ctx.beginPath();
+            let grad = ctx.createLinearGradient(m.x, m.y, m.x - m.len, m.y - m.vy*2);
+            grad.addColorStop(0, "rgba(255,255,255,1)");
+            grad.addColorStop(1, "rgba(255,255,255,0)");
+            ctx.strokeStyle = grad; ctx.lineWidth = 2;
+            ctx.moveTo(m.x, m.y); ctx.lineTo(m.x + m.vx*5, m.y + m.vy*5);
+            ctx.stroke();
+        }
+    }
+    
+    ctx.save();
+    ctx.translate(-drawCamX, -drawCamY);
+
+    if(!bossActive) {
+        ctx.fillStyle = '#3498db';
+        for(let p of ponds) {
+            if (p.x + p.r > drawCamX && p.x - p.r < drawCamX + cw) {
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+            }
+        }
+    }
+    
+    // Draw Path
+    ctx.lineCap = 'butt'; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    pathPoints.forEach((p, i) => i==0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+    ctx.lineWidth = 150; ctx.strokeStyle = C.PATH; ctx.stroke();
+
+    // Sort Objects
+    let objects = [...trees, ...rocks, ...flowers, ...monsters, player];
+    objects.sort((a,b) => (a.y+ (a.h||0)) - (b.y+ (b.h||0)));
+
+    for(let o of objects) {
+        if (o === player) drawPlayer(o);
+        else if (o.type !== undefined && o.w) drawMonsterSprite(o); 
+        else if (o.type !== undefined) drawFlower(o); 
+        else if (o.scale) drawTree(o);
+        else drawRock(o);
+    }
+
+    ctx.fillStyle = '#f1c40f';
+    for(let b of bullets) ctx.fillRect(b.x, b.y, b.w, b.h);
+
+    if (bossActive) {
+        drawEnderDragon(MAP_W - 250, MAP_H/2);
+    }
+
+    drawParticles();
+    drawFloatTexts();
+    ctx.restore();
+}
+
+function drawPlayer(p) {
+    let x = Math.floor(p.x), y = Math.floor(p.y);
+    let walk = (gameState==='PLAY' && (p.dx||p.dy)) ? Math.sin(Date.now()/80)*3 : 0;
+    
+    ctx.fillStyle = '#483D8B'; ctx.fillRect(x+8, y+30, 6, 14+walk); ctx.fillRect(x+18, y+30, 6, 14-walk); 
+    ctx.fillStyle = '#2F4F4F'; ctx.fillRect(x+8, y+42+walk, 6, 2); ctx.fillRect(x+18, y+42-walk, 6, 2);
+    ctx.fillStyle = '#00BFFF'; ctx.fillRect(x+4, y+14, 24, 18);
+    ctx.fillStyle = '#00BFFF'; ctx.fillRect(x-2, y+14+walk, 6, 6); ctx.fillRect(x+28, y+14-walk, 6, 6);
+    ctx.fillStyle = '#ffccaa'; ctx.fillRect(x-2, y+20+walk, 6, 10); ctx.fillRect(x+28, y+20-walk, 6, 10);
+    ctx.fillStyle = '#ffccaa'; ctx.fillRect(x+4, y-4, 24, 20); 
+    ctx.fillStyle = '#4a3020'; ctx.fillRect(x+4, y-8, 24, 8); ctx.fillRect(x+2, y-4, 4, 10); ctx.fillRect(x+26, y-4, 4, 10); 
+    ctx.fillStyle = '#fff'; ctx.fillRect(x+8, y+2, 4, 4); ctx.fillRect(x+20, y+2, 4, 4); 
+    ctx.fillStyle = '#3a2010'; ctx.fillRect(x+10, y+2, 2, 4); ctx.fillRect(x+20, y+2, 2, 4); 
+    ctx.fillStyle = '#6d4c41'; ctx.fillRect(x+12, y+10, 8, 2); 
+
+    ctx.fillStyle = '#95a5a6';
+    if(p.face === 1) { ctx.fillRect(x+20, y+20, 18, 6); ctx.fillStyle='#000'; ctx.fillRect(x+38, y+20, 4, 6); }
+    else { ctx.fillRect(x-6, y+20, 18, 6); ctx.fillStyle='#000'; ctx.fillRect(x-10, y+20, 4, 6); }
+}
+
+function drawMonsterSprite(m) {
+    let x = Math.floor(m.x), y = Math.floor(m.y);
+    let h = Math.abs(Math.sin(Date.now()/200))*3;
+    
+    // Type 0: BEE
+    if (m.type === 0) { 
+        ctx.fillStyle = '#f1c40f'; ctx.fillRect(x, y, 24, 24);
+        ctx.fillStyle = '#000'; 
+        ctx.fillRect(x+4, y, 4, 24); ctx.fillRect(x+16, y, 4, 24); 
+        ctx.fillStyle = '#333'; ctx.fillRect(x+2, y+4, 4, 4); ctx.fillRect(x+18, y+4, 4, 4); 
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.fillRect(x-6, y-6, 8, 12); ctx.fillRect(x+22, y-6, 8, 12);
+    } 
+    // Type 1: FOX
+    else if (m.type === 1) { 
+        ctx.fillStyle = '#e67e22'; 
+        ctx.fillRect(x, y+8, 40, 20); 
+        ctx.fillRect(x+30, y-4, 16, 16); 
+        ctx.fillStyle = '#fff'; 
+        ctx.fillRect(x-4, y+12, 8, 8); 
+        ctx.fillRect(x+42, y+6, 4, 6); 
+        ctx.fillStyle = '#d35400';
+        ctx.fillRect(x+4, y+28-h, 4, 8); ctx.fillRect(x+28, y+28+h, 4, 8);
+        ctx.fillStyle = '#333'; ctx.fillRect(x+32, y-8, 4, 4); ctx.fillRect(x+40, y-8, 4, 4);
+    }
+    // Type 2: AXOLOTL
+    else if (m.type === 2) { 
+        ctx.fillStyle = '#f8a5c2'; 
+        ctx.fillRect(x, y+6, 36, 14); 
+        ctx.fillRect(x+24, y, 16, 16); 
+        ctx.fillStyle = '#e66767';
+        ctx.fillRect(x+36, y-2, 4, 6); ctx.fillRect(x+22, y-2, 4, 6);
+        ctx.fillStyle = '#000'; ctx.fillRect(x+28, y+4, 2, 2); ctx.fillRect(x+36, y+4, 2, 2);
+        ctx.fillStyle = '#f8a5c2'; ctx.fillRect(x-6, y+10, 8, 6);
+    }
+    // Type 3: WITHER
+    else if (m.type === 3) { 
+        ctx.fillStyle = '#2d3436'; 
+        ctx.fillRect(x+16, y, 16, 40); 
+        ctx.fillRect(x, y, 48, 12); 
+        ctx.fillStyle = '#000';
+        ctx.fillRect(x+12, y-12, 24, 24); 
+        ctx.fillRect(x-8, y-4, 16, 16); 
+        ctx.fillRect(x+40, y-4, 16, 16); 
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(x+16, y-4, 4, 4); ctx.fillRect(x+28, y-4, 4, 4);
+        ctx.fillRect(x-4, y, 2, 2); ctx.fillRect(x+4, y, 2, 2);
+        ctx.fillRect(x+44, y, 2, 2); ctx.fillRect(x+52, y, 2, 2);
+    }
+    // IMPORTED MONSTERS FROM MAU.HTML
+    // Type 4: ZOMBIE
+    else if (m.type === 4) {
+        ctx.fillStyle = '#228B22'; ctx.fillRect(x+4, y-4-h, 24, 20); // Green Head
+        ctx.fillStyle = '#00AAAA'; ctx.fillRect(x+4, y+16-h, 24, 18); // Cyan Shirt
+        ctx.fillStyle = '#483D8B'; ctx.fillRect(x+8, y+34-h, 6, 14); ctx.fillRect(x+18, y+34-h, 6, 14); // Indigo Pants
+        ctx.fillStyle = '#228B22'; ctx.fillRect(x-2, y+16-h, 6, 20); ctx.fillRect(x+28, y+16-h, 6, 20); // Green Arms
+        ctx.fillStyle = '#000'; ctx.fillRect(x+8, y+2-h, 6, 4); ctx.fillRect(x+18, y+2-h, 6, 4); // Eyes
+    }
+    // Type 5: SKELETON
+    else if (m.type === 5) {
+        ctx.fillStyle = '#E0E0E0'; ctx.fillRect(x+6, y-4-h, 20, 18); // Head
+        ctx.fillRect(x+12, y+14-h, 8, 16); // Spine
+        ctx.fillRect(x+6, y+16-h, 20, 2); ctx.fillRect(x+6, y+20-h, 20, 2); // Ribs
+        ctx.fillRect(x+8, y+30-h, 4, 18); ctx.fillRect(x+20, y+30-h, 4, 18); // Legs
+        ctx.fillStyle = '#404040'; ctx.fillRect(x+8, y+2-h, 4, 4); ctx.fillRect(x+20, y+2-h, 4, 4); // Eyes
+        ctx.strokeStyle = '#8B4513'; ctx.lineWidth=2; 
+        ctx.beginPath(); ctx.arc(x+2, y+20-h, 14, -Math.PI/2, Math.PI/2); ctx.stroke();
+    }
+    // Type 6: CREEPER
+    else if (m.type === 6) {
+        ctx.fillStyle = '#32CD32'; ctx.fillRect(x+4, y-4-h, 24, 24); // Head
+        ctx.fillStyle = '#228B22'; ctx.fillRect(x+8, y+20-h, 16, 20); // Body
+        ctx.fillStyle = '#006400'; ctx.fillRect(x+4, y+40-h, 6, 8); ctx.fillRect(x+22, y+40-h, 6, 8); // Feet
+        ctx.fillStyle = '#000';
+        ctx.fillRect(x+8, y+4-h, 6, 6); ctx.fillRect(x+18, y+4-h, 6, 6); // Eyes
+        ctx.fillRect(x+13, y+12-h, 6, 4); ctx.fillRect(x+10, y+16-h, 12, 4); ctx.fillRect(x+10, y+18-h, 4, 6); ctx.fillRect(x+18, y+18-h, 4, 6); 
+    }
+    // Type 7: ENDERMAN
+    else if (m.type === 7) {
+        ctx.fillStyle = '#050505'; 
+        ctx.fillRect(x+6, y-14-h, 20, 20); // Head
+        ctx.fillRect(x+10, y+6-h, 12, 24); // Body
+        ctx.fillRect(x+10, y+30-h, 4, 26); ctx.fillRect(x+18, y+30-h, 4, 26); // Legs
+        ctx.fillRect(x+4, y+8-h, 4, 30); ctx.fillRect(x+24, y+8-h, 4, 30); // Arms
+        ctx.fillStyle = '#d000ff'; ctx.fillRect(x+6, y-6-h, 6, 3); ctx.fillRect(x+20, y-6-h, 6, 3); // Eyes
+    }
+    
+    // HP bar mini
+    ctx.fillStyle = 'red'; ctx.fillRect(x, y-15, m.w, 3);
+}
+
+function drawEnderDragon(bx, by) {
+    let float = Math.sin(Date.now()/500)*20;
+    
+    // Pillars
+    ctx.fillStyle = '#3a0b0b'; 
+    ctx.fillRect(bx+40, by+100, 60, 200);
+    ctx.fillStyle = '#f1c40f'; ctx.fillRect(bx+50, by+60+float, 40, 40); 
+    ctx.fillStyle = 'rgba(255,200,0,0.5)'; ctx.fillRect(bx+50, by+60+float, 40, 40); 
+
+    let hx = bx, hy = by + float;
+    
+    // --- ADDED DRAGON BODY (INVERSE KINEMATICS SIMULATION) ---
+    ctx.fillStyle = '#c0392b'; // Body Red
+    for(let i=10; i>0; i--) {
+        // Create snake-like movement behind head
+        let bodyX = hx + i * 40 + Math.sin(Date.now()/300 + i)*20; 
+        let bodyY = hy + Math.sin(Date.now()/400 + i)*30;
+        
+        ctx.fillRect(bodyX, bodyY, 60, 50); // Body Segment
+        
+        // Spines on back
+        ctx.fillStyle = '#111';
+        ctx.fillRect(bodyX+20, bodyY-10, 20, 10);
+        
+        ctx.fillStyle = '#c0392b'; // Reset color
+    }
+    // ---------------------------------------------------------
+
+    // HEAD
+    ctx.fillStyle = '#c0392b'; ctx.fillRect(hx-80, hy-60, 100, 80); 
+    ctx.fillStyle = '#a93226'; ctx.fillRect(hx-140, hy-30, 60, 50);
+    
+    ctx.fillStyle = '#f1c40f'; 
+    ctx.fillRect(hx-70, hy-40, 25, 12);
+    ctx.shadowBlur = 10; ctx.shadowColor = '#f39c12';
+    ctx.fillRect(hx-120, hy-40, 10, 10); 
+    ctx.shadowBlur = 0;
+    
+    ctx.fillStyle = '#111';
+    ctx.fillRect(hx-20, hy-80, 20, 30);
+    ctx.fillRect(hx+10, hy-70, 20, 20);
+
+    if(Math.random() > 0.5) {
+        particles.push({x: hx-140, y: hy+10, vx: -5-Math.random()*5, vy: (Math.random()-0.5)*2, l: 0.8, c: '#e67e22'});
+    }
+    
+    ctx.fillStyle = '#e74c3c'; ctx.font = "40px VT323"; 
+    ctx.fillText("RED DRAGON", hx-100, hy-100);
+}
+
+function drawTree(o) {
+    if(bossActive) return; 
+    let w = 20 * o.scale, h = 60 * o.scale;
+    let lx = 60 * o.scale, ly = 40 * o.scale;
+    ctx.fillStyle = '#5d4037'; ctx.fillRect(o.x+w/2, o.y-h/2, w, h); 
+    ctx.fillStyle = '#2ecc71'; 
+    ctx.fillRect(o.x+w/2 - lx/2 + w/2, o.y-h/2 - ly, lx, ly);
+    ctx.fillRect(o.x+w/2 - lx/3 + w/2, o.y-h/2 - ly - 20, lx*0.7, 20);
+}
+
+function drawRock(o) {
+    if(bossActive) return; 
+    ctx.fillStyle = '#7f8c8d'; ctx.fillRect(o.x, o.y, 30, 20);
+    ctx.fillStyle = '#95a5a6'; ctx.fillRect(o.x+5, o.y+5, 10, 5);
+}
+
+function drawFlower(o) {
+    if(bossActive) return; 
+    
+    let x = o.x, y = o.y;
+    ctx.fillStyle = '#2ecc71'; ctx.fillRect(x+4, y+10, 2, 10); 
+    
+    if (o.type === 0) { 
+        ctx.fillStyle = '#c0392b'; ctx.fillRect(x, y+2, 10, 8); 
+        ctx.fillStyle = '#e74c3c'; ctx.fillRect(x+2, y+4, 6, 4);
+        ctx.fillStyle = '#000'; ctx.fillRect(x+4, y+6, 2, 2);
+    } 
+    else if (o.type === 1) { 
+        ctx.fillStyle = '#f1c40f'; ctx.fillRect(x+1, y+2, 8, 8); 
+        ctx.fillStyle = '#f39c12'; ctx.fillRect(x+3, y+4, 4, 4);
+    } 
+    else if (o.type === 2) { 
+        ctx.fillStyle = '#3498db'; ctx.fillRect(x, y, 10, 10);
+        ctx.fillStyle = '#fff'; ctx.fillRect(x+3, y+3, 4, 4);
+    }
+    else if (o.type === 3) { 
+        ctx.fillStyle = '#9b59b6'; ctx.fillRect(x, y, 10, 10); 
+        ctx.fillStyle = '#8e44ad'; ctx.fillRect(x+2, y+2, 6, 6);
+    }
+    else if (o.type === 4) { 
+        ctx.fillStyle = '#e67e22'; ctx.fillRect(x+2, y, 6, 10);
+        ctx.fillStyle = '#d35400'; ctx.fillRect(x+2, y+6, 6, 4);
+    }
+}
+
+let particles = [];
+function spawnExplosion(x, y, count=12) {
+    for(let i=0; i<count; i++) particles.push({x, y, vx:(Math.random()-.5)*15, vy:(Math.random()-.5)*15, l:1, c:Math.random()>.5?'#f1c40f':'#e74c3c'});
+}
+function updateParticles() {
+    for(let i=particles.length-1; i>=0; i--) {
+        let p = particles[i]; p.x+=p.vx; p.y+=p.vy; p.l-=0.05;
+        if(p.l<=0) particles.splice(i,1);
+    }
+}
+function drawParticles() {
+    for(let p of particles) {
+        ctx.globalAlpha=p.l; ctx.fillStyle=p.c; ctx.fillRect(p.x,p.y,8,8);
+    }
+    ctx.globalAlpha=1;
+}
+
+function addFloatText(x, y, text, color="#fff") {
+    floatTexts.push({x, y, text, color, life: 1.0});
+}
+function updateFloatTexts() {
+    for(let i=floatTexts.length-1; i>=0; i--) {
+        floatTexts[i].y -= 1.5;
+        floatTexts[i].life -= 0.02;
+        if(floatTexts[i].life <= 0) floatTexts.splice(i,1);
+    }
+}
+function drawFloatTexts() {
+    ctx.font = "24px VT323";
+    for(let t of floatTexts) {
+        ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.strokeStyle = "black"; ctx.lineWidth = 3;
+        ctx.strokeText(t.text, t.x, t.y); ctx.fillText(t.text, t.x, t.y);
+    }
+    ctx.globalAlpha = 1;
+}
+
+init();
+
+</script>
+</body>
+</html>

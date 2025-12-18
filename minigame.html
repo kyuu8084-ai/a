@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hành Trình Hệ Mặt Trời</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --bg-color: #050505;
+            --ui-bg: rgba(20, 30, 50, 0.95);
+            --accent: #3498db;
+            --gold: #f1c40f;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --text-color: #ecf0f1;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background: var(--bg-color);
+            overflow: hidden;
+            font-family: 'VT323', monospace;
+            touch-action: none; 
+            user-select: none;
+            color: var(--text-color);
+        }
+
+        canvas { display: block; }
+
+        /* UI */
+        .ui-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 15px; box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .hud-bar {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            pointer-events: auto;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--accent);
+            padding: 10px 20px;
+            font-size: 26px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .mission-info {
+            text-align: right;
+        }
+        
+        .timer-box { color: var(--gold); font-size: 32px; font-weight: bold; }
+        .timer-box.critical { color: var(--danger); animation: pulse 0.5s infinite; }
+
+        /* Controls */
+        .controls-area {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            padding-bottom: 20px; pointer-events: auto; opacity: 0.8;
+        }
+        .dpad { position: relative; width: 160px; height: 160px; }
+        .dbtn {
+            position: absolute; width: 50px; height: 50px;
+            background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 24px; cursor: pointer; border-radius: 10px;
+            color: white;
+        }
+        .dbtn:active { background: rgba(255,255,255,0.4); transform: scale(0.95); }
+        .d-up { top: 0; left: 55px; } .d-down { bottom: 0; left: 55px; }
+        .d-left { top: 55px; left: 0; } .d-right { top: 55px; right: 0; }
+
+        .boost-btn {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: rgba(241, 196, 15, 0.2); border: 3px solid var(--gold);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 20px; color: var(--gold); font-weight: bold;
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);
+        }
+        .boost-btn:active { background: var(--gold); color: #000; }
+
+        /* Modal */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 100;
+            display: none; justify-content: center; align-items: center;
+        }
+        .modal.active { display: flex; animation: zoomIn 0.3s; }
+
+        .dialog-box {
+            background: linear-gradient(135deg, #2c3e50, #000);
+            border: 4px solid var(--accent);
+            width: 95%; max-width: 700px; padding: 30px;
+            text-align: center; border-radius: 20px;
+            box-shadow: 0 0 50px rgba(52, 152, 219, 0.5);
+            position: relative;
+        }
+
+        .planet-icon { font-size: 60px; margin-bottom: 10px; display: block; animation: float 3s infinite ease-in-out; }
+        
+        .question-progress {
+            color: #bdc3c7; font-size: 20px; margin-bottom: 10px;
+            text-transform: uppercase; letter-spacing: 2px;
+        }
+
+        .question-text { font-size: 28px; margin: 20px 0; line-height: 1.4; color: #fff; min-height: 80px; }
+        
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .ans-btn {
+            background: #34495e; border: 2px solid #7f8c8d; color: #fff;
+            padding: 15px; font-family: 'VT323', monospace; font-size: 24px;
+            cursor: pointer; transition: 0.2s; border-radius: 8px;
+        }
+        .ans-btn:hover { background: var(--accent); border-color: #fff; }
+        
+        .start-btn {
+            background: var(--success); color: #fff; font-size: 30px;
+            padding: 15px 50px; border: none; border-radius: 50px;
+            cursor: pointer; font-family: 'VT323', monospace;
+            animation: pulseBtn 1.5s infinite;
+        }
+
+        @keyframes zoomIn { from {transform: scale(0.8); opacity: 0;} to {transform: scale(1); opacity: 1;} }
+        @keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.5;} 100% {opacity: 1;} }
+        @keyframes pulseBtn { 0% {transform: scale(1); box-shadow: 0 0 0 rgba(46,204,113,0.7);} 70% {transform: scale(1.05); box-shadow: 0 0 20px rgba(46,204,113,0);} }
+        @keyframes float { 0%,100% {transform: translateY(0);} 50% {transform: translateY(-15px);} }
+
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+
+        <div class="ui-layer">
+            <div class="hud-bar">
+                <div class="stat-box">
+                    🪐 HÀNH TINH: <span id="conquered-count" style="color: var(--accent)">0</span>/8
+                </div>
+                <div class="stat-box timer-box" id="timer">05:00</div>
+            </div>
+
+            <div class="controls-area">
+                <div class="dpad">
+                    <div class="dbtn d-up">▲</div>
+                    <div class="dbtn d-down">▼</div>
+                    <div class="dbtn d-left">◀</div>
+                    <div class="dbtn d-right">▶</div>
+                </div>
+                <div class="boost-btn" id="btn-boost">TỐC ĐỘ</div>
+            </div>
+        </div>
+
+        <div id="start-screen" class="modal active">
+            <div class="dialog-box" style="border-color: var(--gold);">
+                <h1 style="font-size: 70px; color: var(--gold); margin: 0;">THIÊN HÀ TRI THỨC</h1>
+                <p style="font-size: 24px; color: #ccc;">Nhiệm vụ: Chinh phục Hệ Mặt Trời</p>
+                <div style="text-align: left; background: rgba(255,255,255,0.1); padding: 20px; margin: 20px; border-radius: 10px; font-size: 20px;">
+                    1. 🛸 <b>Lái Tàu:</b> Dùng phím mũi tên hoặc nút ảo để tìm hành tinh.<br>
+                    2. 🪐 <b>Chinh Phục:</b> Đụng vào hành tinh và trả lời đúng <b>3 câu hỏi</b>.<br>
+                    3. ☀️ <b>Boss Cuối:</b> Sau khi xong 8 hành tinh, Mặt Trời & Mặt Trăng xuất hiện.<br>
+                    4. 🏆 <b>Chiến Thắng:</b> Trả lời 5 câu hỏi ở Boss để hoàn thành.<br>
+                    ⏳ <b>Thời Gian:</b> 5 Phút.
+                </div>
+                <button class="start-btn" onclick="startGame()">KHỞI HÀNH NGAY</button>
+            </div>
+        </div>
+
+        <div id="quiz-modal" class="modal">
+            <div class="dialog-box" id="quiz-box">
+                <div class="planet-icon" id="q-icon">🪐</div>
+                <h2 style="margin: 0; color: var(--accent);" id="q-planet-name">Sao Hỏa</h2>
+                <div class="question-progress">Câu hỏi: <span id="q-progress">1</span>/<span id="q-total">3</span></div>
+                <div class="question-text" id="q-content">...</div>
+                <div class="options-grid" id="q-options"></div>
+            </div>
+        </div>
+
+        <div id="end-screen" class="modal">
+            <div class="dialog-box">
+                <h1 id="end-title" style="font-size: 60px;">THÀNH CÔNG!</h1>
+                <p id="end-msg" style="font-size: 28px;">Bạn đã chinh phục toàn bộ Hệ Mặt Trời!</p>
+                <button class="ans-btn" style="width: 200px; background: var(--success);" onclick="location.reload()">CHƠI LẠI</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+/**
+ * --- DATA CÂU HỎI (100 CÂU ĐA DẠNG) ---
+ */
+const QUESTION_DB = [
+    // Toán
+    {s:"Toán", q:"Kết quả của 12 x 12 là?", a:["144","124","148","122"], c:0},
+    {s:"Toán", q:"Số nguyên tố nhỏ nhất là số mấy?", a:["2","1","3","0"], c:0},
+    {s:"Toán", q:"Một hình vuông có bao nhiêu cạnh bằng nhau?", a:["4","2","3","0"], c:0},
+    {s:"Toán", q:"Tổng 3 góc trong một tam giác là?", a:["180 độ","360 độ","90 độ","270 độ"], c:0},
+    {s:"Toán", q:"Căn bậc 2 của 64 là?", a:["8","6","16","32"], c:0},
+    {s:"Toán", q:"Phân số 1/2 bằng số thập phân nào?", a:["0.5","0.2","0.25","0.1"], c:0},
+    {s:"Toán", q:"Số Pi xấp xỉ bằng bao nhiêu?", a:["3.14","3.15","3.12","3.16"], c:0},
+    {s:"Toán", q:"Hình lục giác có bao nhiêu cạnh?", a:["6","5","8","4"], c:0},
+    {s:"Toán", q:"1 giờ có bao nhiêu giây?", a:["3600","60","360","1200"], c:0},
+    {s:"Toán", q:"Số nào chia hết cho cả 2 và 5?", a:["10","12","15","18"], c:0},
+    {s:"Toán", q:"Diện tích hình chữ nhật tính thế nào?", a:["Dài x Rộng","Dài + Rộng","(Dài + Rộng)x2","Cạnh x Cạnh"], c:0},
+    {s:"Toán", q:"Số chẵn liền sau số 98 là?", a:["100","99","102","96"], c:0},
+
+    // Vật Lý
+    {s:"Lý", q:"Tốc độ ánh sáng trong chân không là?", a:["300.000 km/s","340 m/s","150.000 km/s","1080 km/h"], c:0},
+    {s:"Lý", q:"Đơn vị đo lực là gì?", a:["Newton (N)","Kilogam (kg)","Joule (J)","Watt (W)"], c:0},
+    {s:"Lý", q:"Nước sôi ở bao nhiêu độ C (áp suất thường)?", a:["100","90","110","80"], c:0},
+    {s:"Lý", q:"Công thức tính vận tốc là?", a:["v = s/t","v = m.a","v = s.t","v = d/t"], c:0},
+    {s:"Lý", q:"Hiện tượng cầu vồng xuất hiện sau khi nào?", a:["Mưa","Nắng hạn","Bão tuyết","Động đất"], c:0},
+    {s:"Lý", q:"Âm thanh truyền nhanh nhất trong môi trường nào?", a:["Rắn","Lỏng","Khí","Chân không"], c:0},
+    {s:"Lý", q:"Trái Đất quay quanh trục của nó mất bao lâu?", a:["24 giờ","365 ngày","12 giờ","1 tháng"], c:0},
+    {s:"Lý", q:"Ai là người tìm ra lực hấp dẫn?", a:["Isaac Newton","Einstein","Edison","Galileo"], c:0},
+    {s:"Lý", q:"Nam châm có mấy cực?", a:["2","1","3","4"], c:0},
+    {s:"Lý", q:"Dụng cụ đo nhiệt độ là?", a:["Nhiệt kế","Áp kế","Vôn kế","Ampe kế"], c:0},
+
+    // Hóa Học
+    {s:"Hóa", q:"Công thức hóa học của nước là?", a:["H2O","CO2","O2","NaCl"], c:0},
+    {s:"Hóa", q:"Khí nào duy trì sự cháy?", a:["Oxy","Nito","Hidro","Cacbonic"], c:0},
+    {s:"Hóa", q:"Ký hiệu hóa học của Vàng là?", a:["Au","Ag","Fe","Cu"], c:0},
+    {s:"Hóa", q:"Muối ăn có vị gì?", a:["Mặn","Ngọt","Chua","Đắng"], c:0},
+    {s:"Hóa", q:"Khí nào làm đục nước vôi trong?", a:["CO2","O2","N2","H2"], c:0},
+    {s:"Hóa", q:"Kim loại nào ở thể lỏng ở nhiệt độ thường?", a:["Thủy ngân","Sắt","Nhôm","Chì"], c:0},
+    {s:"Hóa", q:"Quỳ tím hóa gì khi gặp Axit?", a:["Đỏ","Xanh","Vàng","Không đổi"], c:0},
+    {s:"Hóa", q:"Nguyên tố phổ biến nhất trong vỏ Trái Đất?", a:["Oxy","Sắt","Nhôm","Silic"], c:0},
+    {s:"Hóa", q:"Kim cương được cấu tạo từ nguyên tố nào?", a:["Cacbon","Sắt","Vàng","Đá"], c:0},
+    {s:"Hóa", q:"Công thức của muối ăn là?", a:["NaCl","KCl","HCl","NaOH"], c:0},
+
+    // Sinh Học
+    {s:"Sinh", q:"Động vật nào là động vật có vú?", a:["Cá Heo","Cá Mập","Cá Sấu","Chim Cánh Cụt"], c:0},
+    {s:"Sinh", q:"Lá cây màu xanh là do chất gì?", a:["Diệp lục","Xenlulozo","Tinh bột","Vitamin"], c:0},
+    {s:"Sinh", q:"Con người có bao nhiêu đôi nhiễm sắc thể?", a:["23","24","46","22"], c:0},
+    {s:"Sinh", q:"Tim người có mấy ngăn?", a:["4","2","3","5"], c:0},
+    {s:"Sinh", q:"Động vật nào chạy nhanh nhất trên cạn?", a:["Báo Cheetah","Sư tử","Ngựa","Đà điểu"], c:0},
+    {s:"Sinh", q:"Loài vật nào ngủ đứng?", a:["Ngựa","Chó","Mèo","Khỉ"], c:0},
+    {s:"Sinh", q:"Cây xương rồng sống ở đâu?", a:["Sa mạc","Rừng mưa","Đầm lầy","Biển"], c:0},
+    {s:"Sinh", q:"Vitamin nào tốt cho mắt?", a:["Vitamin A","Vitamin C","Vitamin D","Vitamin K"], c:0},
+    {s:"Sinh", q:"Cá thở bằng gì?", a:["Mang","Phổi","Da","Mũi"], c:0},
+    {s:"Sinh", q:"Con vật nào đẻ trứng?", a:["Gà","Chó","Mèo","Bò"], c:0},
+
+    // Lịch Sử
+    {s:"Sử", q:"Chiến thắng Bạch Đằng năm 938 do ai lãnh đạo?", a:["Ngô Quyền","Trần Hưng Đạo","Lý Thường Kiệt","Lê Lợi"], c:0},
+    {s:"Sử", q:"Bác Hồ đọc Tuyên ngôn độc lập năm nào?", a:["1945","1954","1975","1930"], c:0},
+    {s:"Sử", q:"Vua Hùng dựng nước đặt tên nước là gì?", a:["Văn Lang","Âu Lạc","Đại Việt","Vạn Xuân"], c:0},
+    {s:"Sử", q:"Chiến thắng Điện Biên Phủ vào năm nào?", a:["1954","1945","1972","1975"], c:0},
+    {s:"Sử", q:"Ai là người dời đô về Thăng Long?", a:["Lý Thái Tổ","Đinh Tiên Hoàng","Lê Hoàn","Trần Cảnh"], c:0},
+    {s:"Sử", q:"Vị vua cuối cùng của Việt Nam là ai?", a:["Bảo Đại","Khải Định","Tự Đức","Duy Tân"], c:0},
+    {s:"Sử", q:"Hai Bà Trưng cưỡi con gì ra trận?", a:["Voi","Ngựa","Trâu","Hổ"], c:0},
+    {s:"Sử", q:"Tác giả Bình Ngô Đại Cáo là ai?", a:["Nguyễn Trãi","Lê Lợi","Nguyễn Du","Quang Trung"], c:0},
+    {s:"Sử", q:"Ai là người tìm ra Châu Mỹ?", a:["Columbus","Magellan","Cook","Vasco da Gama"], c:0},
+    {s:"Sử", q:"Thành Cổ Loa gắn với truyền thuyết nào?", a:["An Dương Vương","Sơn Tinh Thủy Tinh","Thánh Gióng","Sự tích Trầu Cau"], c:0},
+
+    // Địa Lí
+    {s:"Địa", q:"Thủ đô của Việt Nam là?", a:["Hà Nội","TP.HCM","Đà Nẵng","Huế"], c:0},
+    {s:"Địa", q:"Đỉnh núi cao nhất thế giới?", a:["Everest","Phú Sĩ","Fansipan","K2"], c:0},
+    {s:"Địa", q:"Châu lục nào lớn nhất thế giới?", a:["Châu Á","Châu Phi","Châu Mỹ","Châu Âu"], c:0},
+    {s:"Địa", q:"Sông nào dài nhất thế giới?", a:["Sông Nile","Sông Amazon","Sông Mê Kông","Sông Hằng"], c:0},
+    {s:"Địa", q:"Nước nào có hình chiếc ủng?", a:["Ý","Pháp","Anh","Đức"], c:0},
+    {s:"Địa", q:"Việt Nam có bao nhiêu tỉnh thành (cũ)?", a:["63","64","60","58"], c:0},
+    {s:"Địa", q:"Hành tinh nào gần Mặt Trời nhất?", a:["Sao Thủy","Sao Kim","Trái Đất","Sao Hỏa"], c:0},
+    {s:"Địa", q:"Đại dương nào lớn nhất?", a:["Thái Bình Dương","Đại Tây Dương","Ấn Độ Dương","Bắc Băng Dương"], c:0},
+    {s:"Địa", q:"Nước nào đông dân nhất thế giới (2023)?", a:["Ấn Độ","Trung Quốc","Mỹ","Nga"], c:0},
+    {s:"Địa", q:"Thành phố nào là Hòn ngọc Viễn Đông?", a:["Sài Gòn","Hà Nội","Đà Lạt","Nha Trang"], c:0},
+
+    // Văn Học & Tiếng Anh
+    {s:"Văn", q:"Truyện Kiều là của ai?", a:["Nguyễn Du","Nguyễn Trãi","Hồ Xuân Hương","Nam Cao"], c:0},
+    {s:"Văn", q:"Thánh Gióng dùng gì đánh giặc?", a:["Tre ngà","Súng","Gươm","Nỏ"], c:0},
+    {s:"Văn", q:"Ai là tác giả Dế Mèn Phiêu Lưu Ký?", a:["Tô Hoài","Nam Cao","Vũ Trọng Phụng","Thạch Lam"], c:0},
+    {s:"Văn", q:"Sọ Dừa là thể loại truyện gì?", a:["Cổ tích","Truyền thuyết","Ngụ ngôn","Thần thoại"], c:0},
+    {s:"Anh", q:"'Hello' nghĩa là gì?", a:["Xin chào","Tạm biệt","Cảm ơn","Xin lỗi"], c:0},
+    {s:"Anh", q:"Con mèo trong tiếng Anh là?", a:["Cat","Dog","Bird","Fish"], c:0},
+    {s:"Anh", q:"Màu đỏ tiếng Anh là?", a:["Red","Blue","Green","Yellow"], c:0},
+    {s:"Anh", q:"'Thank you' nghĩa là?", a:["Cảm ơn","Xin chào","Tạm biệt","Xin lỗi"], c:0},
+    {s:"Anh", q:"Số 10 tiếng Anh là?", a:["Ten","One","Two","Five"], c:0},
+    {s:"Anh", q:"Quả táo tiếng Anh là?", a:["Apple","Banana","Orange","Grape"], c:0},
+
+    // Tổng hợp khác
+    {s:"Khác", q:"Đèn giao thông có mấy màu?", a:["3","2","4","5"], c:0},
+    {s:"Khác", q:"1 năm có bao nhiêu tháng?", a:["12","10","11","13"], c:0},
+    {s:"Khác", q:"Bóng đá có bao nhiêu người mỗi đội?", a:["11","10","7","5"], c:0},
+    {s:"Khác", q:"Tháng 2 năm nhuận có bao nhiêu ngày?", a:["29","28","30","31"], c:0},
+    {s:"Khác", q:"Ai phát minh ra bóng đèn?", a:["Edison","Einstein","Newton","Tesla"], c:0},
+    {s:"Khác", q:"CPU là bộ phận của thiết bị nào?", a:["Máy tính","Tủ lạnh","Máy giặt","Lò vi sóng"], c:0},
+    {s:"Khác", q:"Mạng xã hội lớn nhất thế giới?", a:["Facebook","Twitter","Instagram","TikTok"], c:0},
+    {s:"Khác", q:"Nobita là nhân vật trong truyện nào?", a:["Doraemon","Conan","Naruto","Dragon Ball"], c:0},
+    {s:"Khác", q:"Châu lục nào lạnh nhất?", a:["Nam Cực","Bắc Cực","Châu Âu","Châu Á"], c:0},
+    {s:"Khác", q:"Động vật nào cao nhất thế giới?", a:["Hươu cao cổ","Voi","Đà điểu","Khủng long"], c:0},
+    {s:"Khác", q:"Loài hoa nào hướng về mặt trời?", a:["Hướng dương","Hoa hồng","Hoa lan","Hoa cúc"], c:0},
+    {s:"Khác", q:"Tết Nguyên Đán là tết gì?", a:["Tết Âm lịch","Tết Dương lịch","Tết Trung thu","Tết Đoan ngọ"], c:0},
+    {s:"Khác", q:"Đơn vị tiền tệ của Việt Nam?", a:["Đồng","Đô la","Yên","Euro"], c:0},
+    {s:"Khác", q:"Ai là người đầu tiên bay vào vũ trụ?", a:["Yuri Gagarin","Neil Armstrong","Phạm Tuân","Buzz Aldrin"], c:0},
+    {s:"Khác", q:"Biểu tượng của hòa bình là con gì?", a:["Bồ câu","Đại bàng","Cú mèo","Chim sẻ"], c:0}
+];
+
+// --- CẤU HÌNH GAME ---
+const MAP_W = 2500; 
+const MAP_H = 2000;
+let timeLeft = 300; // 5 phút = 300 giây
+
+// --- BIẾN TOÀN CỤC ---
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let cw, ch;
+
+let gameState = 'MENU';
+let player = { x: 200, y: MAP_H/2, r: 25, speed: 6, angle: 0, dx: 0, dy: 0 };
+let camera = { x: 0, y: 0 };
+let keys = {};
+
+// Dữ liệu hành tinh
+let planets = [];
+let sun = {}; 
+let moon = {};
+let asteroids = [];
+let stars = [];
+let particles = [];
+
+let questionQueue = []; // Hàng đợi câu hỏi cho modal
+let activePlanet = null; // Hành tinh đang tương tác
+let questionStreak = 0; // Số câu đúng liên tiếp hiện tại
+let conqueredCount = 0; // Số hành tinh đã chinh phục
+let phase = 1; // 1: Planets, 2: Sun & Moon
+
+let timerInterval;
+
+// --- KHỞI TẠO ---
+function init() {
+    resize();
+    window.addEventListener('resize', resize);
+    setupInputs();
+    requestAnimationFrame(gameLoop);
+}
+
+function resize() {
+    cw = canvas.width = window.innerWidth;
+    ch = canvas.height = window.innerHeight;
+}
+
+function setupInputs() {
+    // Keyboard
+    window.addEventListener('keydown', e => keys[e.code] = true);
+    window.addEventListener('keyup', e => keys[e.code] = false);
+
+    // Touch Controls
+    const bindTouch = (cls, code) => {
+        const el = document.querySelector(cls);
+        el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[code] = true; });
+        el.addEventListener('touchend', (e) => { e.preventDefault(); keys[code] = false; });
+    };
+    bindTouch('.d-up', 'ArrowUp');
+    bindTouch('.d-down', 'ArrowDown');
+    bindTouch('.d-left', 'ArrowLeft');
+    bindTouch('.d-right', 'ArrowRight');
+    
+    const boostBtn = document.getElementById('btn-boost');
+    boostBtn.addEventListener('touchstart', (e) => { e.preventDefault(); keys['Space'] = true; });
+    boostBtn.addEventListener('touchend', (e) => { e.preventDefault(); keys['Space'] = false; });
+}
+
+function generateWorld() {
+    planets = [];
+    const planetData = [
+        {n: "Sao Thủy", c: "#95a5a6", r: 40},
+        {n: "Sao Kim", c: "#e67e22", r: 50},
+        {n: "Trái Đất", c: "#3498db", r: 55},
+        {n: "Sao Hỏa", c: "#c0392b", r: 45},
+        {n: "Sao Mộc", c: "#d35400", r: 90},
+        {n: "Sao Thổ", c: "#f1c40f", r: 80, ring: true},
+        {n: "Sao T.Vương", c: "#1abc9c", r: 60},
+        {n: "Sao H.Vương", c: "#2980b9", r: 60}
+    ];
+
+    // Rải rác hành tinh
+    for(let i=0; i<8; i++) {
+        let px, py, safe;
+        do {
+            safe = true;
+            px = 200 + Math.random() * (MAP_W - 400);
+            py = 200 + Math.random() * (MAP_H - 400);
+            // Check distance from player start
+            if(Math.hypot(px - 200, py - MAP_H/2) < 300) safe = false;
+            // Check distance from other planets
+            for(let p of planets) {
+                if(Math.hypot(px - p.x, py - p.y) < 300) safe = false;
+            }
+        } while(!safe);
+
+        planets.push({
+            x: px, y: py, ...planetData[i], 
+            conquered: false, req: 3, 
+            angle: 0 // dùng cho phase 2 xoay quanh boss
+        });
+    }
+
+    // Boss (Ẩn lúc đầu)
+    sun = { x: MAP_W/2, y: MAP_H/2, r: 120, n: "Mặt Trời", c: "#f39c12", active: false, conquered: false, req: 5 };
+    moon = { x: MAP_W/2, y: MAP_H/2, r: 60, n: "Mặt Trăng", c: "#bdc3c7", active: false, conquered: false, req: 5 };
+
+    // Đá bay (Asteroids)
+    asteroids = [];
+    for(let i=0; i<40; i++) {
+        asteroids.push({
+            x: Math.random()*MAP_W, y: Math.random()*MAP_H,
+            r: 15 + Math.random()*25,
+            dx: (Math.random()-0.5)*3, dy: (Math.random()-0.5)*3,
+            rot: Math.random(), rSpeed: (Math.random()-0.5)*0.1
+        });
+    }
+
+    // Sao nền
+    stars = [];
+    for(let i=0; i<400; i++) {
+        stars.push({x: Math.random()*MAP_W, y: Math.random()*MAP_H, s: Math.random()*3, a: Math.random()});
+    }
+}
+
+function startGame() {
+    document.getElementById('start-screen').classList.remove('active');
+    generateWorld();
+    conqueredCount = 0;
+    phase = 1;
+    timeLeft = 300;
+    player.x = 200; player.y = MAP_H/2;
+    gameState = 'PLAY';
+    
+    // Timer
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        if(gameState === 'PLAY') {
+            timeLeft--;
+            updateTimerUI();
+            if(timeLeft <= 0) endGame(false);
+        }
+    }, 1000);
+    updateHUD();
+}
+
+function updateTimerUI() {
+    let m = Math.floor(timeLeft / 60);
+    let s = timeLeft % 60;
+    let timeStr = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+    const el = document.getElementById('timer');
+    el.innerText = timeStr;
+    if(timeLeft < 60) el.classList.add('critical');
+    else el.classList.remove('critical');
+}
+
+// --- LOGIC GAME LOOP ---
+function gameLoop() {
+    if(gameState === 'PLAY') update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+function update() {
+    // 1. Di chuyển Tự Do (Direct Movement)
+    let speed = keys['Space'] ? 10 : 5; // Boost
+    player.dx = 0; player.dy = 0;
+
+    if (keys['ArrowUp']) player.dy = -speed;
+    if (keys['ArrowDown']) player.dy = speed;
+    if (keys['ArrowLeft']) player.dx = -speed;
+    if (keys['ArrowRight']) player.dx = speed;
+
+    player.x += player.dx;
+    player.y += player.dy;
+
+    // Giới hạn bản đồ
+    player.x = Math.max(player.r, Math.min(MAP_W - player.r, player.x));
+    player.y = Math.max(player.r, Math.min(MAP_H - player.r, player.y));
+
+    // Camera bám theo
+    camera.x += (player.x - cw/2 - camera.x) * 0.1;
+    camera.y += (player.y - ch/2 - camera.y) * 0.1;
+    camera.x = Math.max(0, Math.min(MAP_W - cw, camera.x));
+    camera.y = Math.max(0, Math.min(MAP_H - ch, camera.y));
+
+    // Hướng xoay của tàu (cho đẹp)
+    if (player.dx !== 0 || player.dy !== 0) {
+        player.angle = Math.atan2(player.dy, player.dx);
+        // Tạo hạt động cơ
+        spawnThrust();
+    }
+
+    // 2. Va chạm với Hành tinh (Phase 1)
+    if(phase === 1) {
+        for(let p of planets) {
+            if(!p.conquered && checkCollision(player, p)) {
+                startQuiz(p);
+                return; // Dừng update để vào modal
+            }
+        }
+        if(conqueredCount >= 8) startPhase2();
+    } 
+    // Phase 2: Boss
+    else {
+        // Xoay các hành tinh xung quanh Sun/Moon
+        let cx = MAP_W/2; let cy = MAP_H/2;
+        let time = Date.now() / 1000;
+        
+        // Sun & Moon position update (Moon orbits Sun slightly)
+        moon.x = cx + Math.cos(time) * 300;
+        moon.y = cy + Math.sin(time) * 300;
+
+        // Các hành tinh khác xoay vòng tròn lớn
+        planets.forEach((p, idx) => {
+            let orbitR = 600 + idx * 50;
+            let speed = 0.5 - idx * 0.02;
+            p.x = cx + Math.cos(time * speed + idx) * orbitR;
+            p.y = cy + Math.sin(time * speed + idx) * orbitR;
+        });
+
+        // Va chạm Boss
+        if(!sun.conquered && checkCollision(player, sun)) startQuiz(sun);
+        if(!moon.conquered && checkCollision(player, moon)) startQuiz(moon);
+
+        if(sun.conquered && moon.conquered) endGame(true);
+    }
+
+    // 3. Va chạm đá (Bật lại)
+    for(let a of asteroids) {
+        a.x += a.dx; a.y += a.dy; a.rot += a.rSpeed;
+        // Wrap around map
+        if(a.x < 0) a.x = MAP_W; if(a.x > MAP_W) a.x = 0;
+        if(a.y < 0) a.y = MAP_H; if(a.y > MAP_H) a.y = 0;
+
+        if(checkCollision(player, a)) {
+            // Đẩy lùi player
+            let ang = Math.atan2(player.y - a.y, player.x - a.x);
+            player.x += Math.cos(ang) * 20;
+            player.y += Math.sin(ang) * 20;
+            spawnExplosion(player.x, player.y, 5, '#fff');
+        }
+    }
+
+    // Particles
+    for(let i=particles.length-1; i>=0; i--) {
+        let p = particles[i]; p.x += p.vx; p.y += p.vy; p.l -= 0.05;
+        if(p.l <= 0) particles.splice(i, 1);
+    }
+}
+
+function checkCollision(c1, c2) {
+    let dist = Math.hypot(c1.x - c2.x, c1.y - c2.y);
+    return dist < c1.r + c2.r;
+}
+
+function spawnThrust() {
+    let bx = player.x - Math.cos(player.angle) * 20;
+    let by = player.y - Math.sin(player.angle) * 20;
+    particles.push({x: bx, y: by, vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2, l: 1, c: '#f1c40f'});
+}
+
+function spawnExplosion(x, y, count, color) {
+    for(let i=0; i<count; i++) {
+        particles.push({x: x, y: y, vx: (Math.random()-0.5)*10, vy: (Math.random()-0.5)*10, l: 1, c: color});
+    }
+}
+
+// --- LOGIC QUIZ ---
+function startQuiz(target) {
+    gameState = 'MODAL';
+    activePlanet = target;
+    questionStreak = 0;
+    
+    // Lấy câu hỏi ngẫu nhiên không trùng lặp (đơn giản hóa bằng cách shuffle mỗi lần)
+    // Để đảm bảo "không trùng lặp" tuyệt đối trong phiên, ta có thể dùng 1 mảng đã shuffle
+    // Ở đây ta pick ngẫu nhiên từ DB lớn
+    questionQueue = [];
+    let tempDB = [...QUESTION_DB].sort(() => 0.5 - Math.random());
+    for(let i=0; i<target.req; i++) {
+        questionQueue.push(tempDB[i]);
+    }
+
+    document.getElementById('quiz-modal').classList.add('active');
+    document.getElementById('q-planet-name').innerText = target.n;
+    // Icon
+    document.getElementById('q-icon').innerText = (target.n === 'Mặt Trời') ? '☀️' : (target.n === 'Mặt Trăng' ? '🌙' : '🪐');
+    
+    showNextQuestion();
+}
+
+function showNextQuestion() {
+    if(questionStreak >= activePlanet.req) {
+        // Hoàn thành hành tinh
+        finishPlanet();
+        return;
+    }
+
+    let q = questionQueue[questionStreak];
+    document.getElementById('q-progress').innerText = questionStreak + 1;
+    document.getElementById('q-total').innerText = activePlanet.req;
+    document.getElementById('q-content').innerHTML = `<span class="subject-tag" style="font-size:16px;">${q.s}</span><br>${q.q}`;
+    
+    const grid = document.getElementById('q-options');
+    grid.innerHTML = '';
+    
+    q.a.forEach((ans, idx) => {
+        let btn = document.createElement('button');
+        btn.className = 'ans-btn';
+        btn.innerText = ans;
+        btn.onclick = () => checkAnswer(idx, q.c, btn);
+        grid.appendChild(btn);
+    });
+}
+
+function checkAnswer(selected, correct, btn) {
+    // Disable all btns
+    let btns = document.querySelectorAll('.ans-btn');
+    btns.forEach(b => b.disabled = true);
+
+    if(selected === correct) {
+        btn.style.background = 'var(--success)';
+        questionStreak++;
+        setTimeout(showNextQuestion, 800);
+    } else {
+        btn.style.background = 'var(--danger)';
+        btns[correct].style.background = 'var(--success)'; // Show correct
+        // Sai thì không reset streak, nhưng phải trả lời lại câu khác hoặc câu đó?
+        // Theo yêu cầu: "Bắt buộc trả lời 3 câu". Nếu sai, ta sẽ thay bằng 1 câu mới vào vị trí đó để người chơi phải trả lời đúng đủ số lượng.
+        // Penalty: trừ thời gian
+        timeLeft -= 10; updateTimerUI();
+        
+        setTimeout(() => {
+            // Thay câu hỏi hiện tại bằng câu mới
+            let newQ = QUESTION_DB[Math.floor(Math.random() * QUESTION_DB.length)];
+            questionQueue[questionStreak] = newQ;
+            showNextQuestion();
+        }, 1200);
+    }
+}
+
+function finishPlanet() {
+    document.getElementById('quiz-modal').classList.remove('active');
+    gameState = 'PLAY';
+    activePlanet.conquered = true;
+    
+    // Đẩy player ra xa chút để ko bị dính loop
+    player.x += Math.cos(player.angle + Math.PI) * 100;
+    player.y += Math.sin(player.angle + Math.PI) * 100;
+
+    spawnExplosion(activePlanet.x, activePlanet.y, 50, activePlanet.c);
+    
+    if(phase === 1) {
+        conqueredCount++;
+        updateHUD();
+    } else {
+        // Boss conquered
+        spawnExplosion(activePlanet.x, activePlanet.y, 100, '#fff');
+    }
+}
+
+function startPhase2() {
+    phase = 2;
+    sun.active = true;
+    moon.active = true;
+    // Move player to safe spot
+    player.x = 200; player.y = 200;
+    
+    // Hiệu ứng "Tỏa sáng"
+    let overlay = document.createElement('div');
+    overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:999;animation: flash 2s forwards;";
+    document.body.appendChild(overlay);
+    setTimeout(() => overlay.remove(), 2000);
+    
+    // CSS animation for flash
+    const style = document.createElement('style');
+    style.innerHTML = `@keyframes flash { 0%{opacity:0;} 50%{opacity:1;} 100%{opacity:0;} }`;
+    document.head.appendChild(style);
+}
+
+function endGame(win) {
+    gameState = 'OVER';
+    clearInterval(timerInterval);
+    document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+    let endScreen = document.getElementById('end-screen');
+    
+    if(win) {
+        document.getElementById('end-title').innerText = "VÔ ĐỊCH VŨ TRỤ!";
+        document.getElementById('end-title').style.color = "var(--success)";
+        document.getElementById('end-msg').innerText = "Bạn đã chinh phục hoàn toàn Hệ Mặt Trời!";
+    } else {
+        document.getElementById('end-title').innerText = "THẤT BẠI!";
+        document.getElementById('end-title').style.color = "var(--danger)";
+        document.getElementById('end-msg').innerText = "Hết thời gian rồi! Hãy thử lại nhé.";
+    }
+    endScreen.classList.add('active');
+}
+
+function updateHUD() {
+    document.getElementById('conquered-count').innerText = conqueredCount;
+}
+
+// --- RENDER ---
+function draw() {
+    let dx = -camera.x; let dy = -camera.y;
+    ctx.fillStyle = 'var(--bg-color)'; ctx.fillRect(0, 0, cw, ch);
+
+    ctx.save();
+    ctx.translate(dx, dy);
+
+    // Sao nền
+    for(let s of stars) {
+        ctx.fillStyle = '#fff'; ctx.globalAlpha = Math.random();
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Vẽ Bosses (Phase 2)
+    if(phase === 2) {
+        // Orbit lines
+        ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(MAP_W/2, MAP_H/2, 300, 0, Math.PI*2); ctx.stroke(); // Moon orbit
+        
+        drawBody(sun);
+        drawBody(moon);
+    }
+
+    // Vẽ Hành tinh
+    for(let p of planets) {
+        drawBody(p);
+    }
+
+    // Asteroids
+    for(let a of asteroids) {
+        ctx.save(); ctx.translate(a.x, a.y); ctx.rotate(a.rot);
+        ctx.fillStyle = '#7f8c8d';
+        ctx.beginPath(); 
+        ctx.moveTo(a.r, 0);
+        for(let i=1; i<7; i++) {
+            let angle = i * Math.PI * 2 / 7;
+            let r = a.r * (0.8 + Math.random()*0.4);
+            ctx.lineTo(Math.cos(angle)*r, Math.sin(angle)*r);
+        }
+        ctx.closePath(); ctx.fill();
+        ctx.restore();
+    }
+
+    // Particles
+    for(let p of particles) {
+        ctx.globalAlpha = p.l; ctx.fillStyle = p.c;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Player
+    ctx.save();
+    ctx.translate(player.x, player.y);
+    ctx.rotate(player.angle);
+    // Ship Body
+    ctx.fillStyle = '#ecf0f1'; ctx.beginPath(); ctx.ellipse(0, 0, 25, 12, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#3498db'; ctx.beginPath(); ctx.arc(0, -5, 8, 0, Math.PI*2); ctx.fill(); // Cockpit
+    // Wings
+    ctx.fillStyle = '#e74c3c'; 
+    ctx.beginPath(); ctx.moveTo(-10, 10); ctx.lineTo(-20, 20); ctx.lineTo(0, 10); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-10, -10); ctx.lineTo(-20, -20); ctx.lineTo(0, -10); ctx.fill();
+    // Engine flame
+    if(keys['ArrowUp'] || keys['ArrowDown'] || keys['ArrowLeft'] || keys['ArrowRight']) {
+        ctx.fillStyle = '#f1c40f';
+        ctx.beginPath(); ctx.moveTo(-25, -5); ctx.lineTo(-40 - Math.random()*10, 0); ctx.lineTo(-25, 5); ctx.fill();
+    }
+    ctx.restore();
+
+    ctx.restore();
+}
+
+function drawBody(b) {
+    if(b.conquered) {
+        // Hành tinh đã xong thì mờ đi hoặc có dấu tích
+        ctx.globalAlpha = 0.5;
+    }
+    
+    // Glow effect
+    let grad = ctx.createRadialGradient(b.x, b.y, b.r*0.2, b.x, b.y, b.r);
+    grad.addColorStop(0, b.c);
+    grad.addColorStop(1, '#000');
+    
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI*2); ctx.fill();
+
+    // Vành đai cho sao Thổ
+    if(b.ring) {
+        ctx.strokeStyle = 'rgba(200, 200, 150, 0.6)'; ctx.lineWidth = 10;
+        ctx.beginPath(); ctx.ellipse(b.x, b.y, b.r*1.6, b.r*0.4, -0.3, 0, Math.PI*2); ctx.stroke();
+    }
+
+    // Tên
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#fff'; ctx.font = '20px VT323'; ctx.textAlign = 'center';
+    ctx.fillText(b.n, b.x, b.y + b.r + 25);
+    
+    if(b.conquered) {
+        ctx.fillStyle = '#2ecc71'; ctx.font = '30px VT323';
+        ctx.fillText("✓", b.x, b.y);
+    }
+}
+
+init();
+
+</script>
+</body>
+</html>
