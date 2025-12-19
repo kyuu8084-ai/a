@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EduCraft: Ultimate Monster Collection</title>
+    <title>EduCraft: Dragon Slayer (Super Audio)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
@@ -167,7 +167,7 @@
                     <div class="hp-container"><div class="hp-fill" id="hp-bar"></div></div>
                 </div>
                 <div class="stat-box" style="text-align: right;">
-                    KILLS: <span id="score" style="color: var(--accent)">0</span>/30<br>
+                    KILLS: <span id="score" style="color: var(--accent)">0</span>/40<br>
                     <span style="font-size: 18px; color: #aaa;">Sẽ Bị Phục Kích Sau: <span id="ambush-timer">10</span>s</span>
                 </div>
             </div>
@@ -180,7 +180,7 @@
                     <div class="dbtn d-right" data-key="ArrowRight">▶</div>
                 </div>
                 <div class="fire-group">
-                    <div class="ammo-count">ĐẠN: <span id="ammo-val">15</span></div>
+                    <div class="ammo-count">ĐẠN: <span id="ammo-val">20</span></div>
                     <div class="fire-btn" id="btn-fire">BẮN</div>
                 </div>
             </div>
@@ -189,13 +189,13 @@
         <div id="start-screen" class="modal active">
             <div class="dialog-box" style="background: linear-gradient(to bottom, #2c3e50, #000);">
                 <h1 style="font-size: 70px; color: #9b59b6; margin: 0; text-shadow: 4px 4px #000;">THỦ LĨNH DIỆT RỒNG</h1>
-                <h3 style="color: #fff; letter-spacing: 3px;">FULL MONSTER EDITION</h3>
+                <h3 style="color: #fff; letter-spacing: 3px;">🔥 SUPER AUDIO EDITION 🔥</h3>
                 <p style="font-size: 22px;">Nhiệm vụ: Tiêu diệt RỒNG ENDER </p>
                 <div style="font-size: 18px; background: rgba(0,0,0,0.5); padding: 15px; margin: 20px; border: 2px solid #8e44ad; text-align: left;">
-                    ⚔️ <b>HARDCORE:</b> Bạn chỉ có <b>15 viên đạn</b>. Không thể hồi đạn!<br>
-                    🧟 <b>NHIỆM VỤ:</b> Hạ gục <b>30 Quái vật</b> để khiến RỒNG ENDER thức giấc.<br>
-                    🐉 <b>BOSS:</b> RỒNG ENDER đã hiện nguyên hình (Full Body).<br>
-                    🧠 <b>TRÍ TUỆ:</b> Trả lời 10 câu hỏi khi đấu RỒNG ENDER để chiến thắng.
+                    ⚔️ <b>CỐT TRUYỆN:</b> Hòn đảo đang bị xâm chiếm. Bạn là dũng sĩ cuối cùng.<br>
+                    🧟 <b>NHIỆM VỤ:</b> Hạ gục <b>40 Quái vật</b> để RỒNG ENDER xuất hiện.<br>
+                    🐉 <b>BOSS FIGHT:</b> Nhạc nền sẽ thay đổi! Rồng sẽ gầm thét!<br>
+                    🔊 <b>LƯU Ý:</b> Game có âm thanh sống động. Hãy mở loa!
                 </div>
                 <button class="ans-btn" style="background: #27ae60; border-color: #fff; width: 200px; font-size: 30px;" onclick="startGame()">KHỞI HÀNH</button>
             </div>
@@ -228,12 +228,170 @@
                 <h2 id="end-title" style="font-size: 60px;">VICTORY!</h2>
                 <p id="end-msg" style="font-size: 30px;">...</p>
                 <div id="firework-container"></div>
-                <p style="color: #aaa; font-size: 20px;">(Tự động chơi lại sau 4 giây...)</p>
+                <p style="color: #aaa; font-size: 20px;">(Tự động chơi lại sau 6 giây...)</p>
             </div>
         </div>
     </div>
 
 <script>
+// --- ADVANCED AUDIO ENGINE (Web Audio API) ---
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const Music = {
+    bgmOscillators: [],
+    bgmInterval: null,
+    isPlaying: false,
+    mode: 'adventure', // 'adventure', 'boss', 'none'
+    
+    playNote: (freq, duration, type='triangle', vol=0.1) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + duration);
+    },
+
+    startBGM: (mode) => {
+        Music.stopBGM();
+        Music.mode = mode;
+        Music.isPlaying = true;
+        let step = 0;
+
+        Music.bgmInterval = setInterval(() => {
+            if(!Music.isPlaying) return;
+
+            if (Music.mode === 'adventure') {
+                // Happy, upbeat, adventure style (C Major Arpeggio ish)
+                let scale = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
+                let bass = [130.81, 196.00]; // C3, G3
+                
+                // Melody
+                if(step % 2 === 0) {
+                    let note = scale[Math.floor(step/4) % scale.length];
+                    Music.playNote(note, 0.3, 'sine', 0.05);
+                }
+                // Bass
+                if(step % 8 === 0) {
+                    Music.playNote(bass[(step/8)%2], 0.8, 'triangle', 0.08);
+                }
+                step++;
+            } 
+            else if (Music.mode === 'boss') {
+                // Scary, fast, dissonant (Tritones, Low frequecies)
+                let melody = [110, 116, 110, 103, 87, 82]; // Dissonant low notes
+                
+                // Deep drone bass
+                if(step % 16 === 0) Music.playNote(55, 2.0, 'sawtooth', 0.15); // Low A
+
+                // Urgent Melody
+                let note = melody[step % melody.length];
+                // Randomly octave up for chaos
+                if(Math.random() > 0.7) note *= 2; 
+                
+                Music.playNote(note, 0.15, 'sawtooth', 0.08);
+                
+                // Heartbeat / Drum
+                if(step % 4 === 0) {
+                    Music.noiseBurst(0.05, 0.1); // Snare/Kick simulation
+                }
+                step++;
+            }
+        }, Music.mode === 'boss' ? 150 : 250); // Boss music is faster
+    },
+
+    stopBGM: () => {
+        if(Music.bgmInterval) clearInterval(Music.bgmInterval);
+        Music.isPlaying = false;
+    },
+
+    noiseBurst: (duration, vol) => {
+        const bufferSize = audioCtx.sampleRate * duration;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration);
+        noise.connect(gain); gain.connect(audioCtx.destination);
+        noise.start();
+    }
+};
+
+const SFX = {
+    shoot: () => {
+        // Pew pew (Frequency sweep down)
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    },
+    explosion: () => {
+        // Retro explosion (Noise + Volume decay)
+        Music.noiseBurst(0.3, 0.3);
+    },
+    ambushAlarm: () => {
+        // Siren sound (High-Low-High)
+        let now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(800, now);
+        osc.frequency.linearRampToValueAtTime(400, now + 0.2);
+        osc.frequency.linearRampToValueAtTime(800, now + 0.4);
+        gain.gain.value = 0.2;
+        gain.gain.linearRampToValueAtTime(0, now + 0.5);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(now + 0.5);
+    },
+    dragonRoar: () => {
+        // SCARY BOSS SOUND: Low Sawtooth + Noise
+        let now = audioCtx.currentTime;
+        
+        // Low Growl
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 2.0); // Pitch drop
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.linearRampToValueAtTime(0, now + 2.5);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(now + 2.5);
+
+        // Hissing noise overlay
+        Music.noiseBurst(2.0, 0.4);
+    },
+    dragonFire: () => {
+        // Fire breath: White noise with filter
+        Music.noiseBurst(0.8, 0.5);
+        // Add a tone "hit"
+        Music.playNote(100, 0.5, 'sawtooth', 0.2);
+    },
+    correct: () => {
+        Music.playNote(600, 0.1, 'sine', 0.1);
+        setTimeout(() => Music.playNote(1200, 0.2, 'sine', 0.1), 100);
+    },
+    wrong: () => {
+        Music.playNote(150, 0.4, 'sawtooth', 0.2);
+    },
+    win: () => {
+        let now = audioCtx.currentTime;
+        // Fanfare
+        [523, 659, 783, 1046, 783, 1046].forEach((f, i) => {
+            setTimeout(() => Music.playNote(f, 0.2, 'square', 0.2), i*150);
+        });
+    }
+};
+
 // --- DATA WAREHOUSE ---
 const RAW_QUESTIONS = [
     
@@ -987,6 +1145,7 @@ const RAW_BOSS_QUESTIONS = [
     { q: "Một trong những món ăn nào mà người nước ngoài sợ nhất ở Việt Nam? ( Đáp án không dấu, vì tính nhân văn)", a: "Hot vit lon" },
     { q: "Thành phố sương mù ở Anh là thành phố nào? ", a: "London" }
 ];
+
 let questionDeck = [];
 let bossDeck = [];
 function refreshDeck() { questionDeck = [...RAW_QUESTIONS]; }
@@ -1004,16 +1163,17 @@ let cw, ch;
 // Config Maps
 const MAP_W = 4000;
 const MAP_H = 2000;
+const BOSS_REQUIREMENT = 40; 
+const BOSS_QUESTIONS_COUNT = 10;
 
 // Colors Palette (Day & Night)
-// UPDATE: PATH COLOR CHANGED to Brighter Earthy Tone (#e0c097)
 const C_DAY = { DIRT: '#27ae60', PATH: '#e0c097', SKY: '#87CEEB' };
 const C_NIGHT = { DIRT: '#000000', PATH: '#2c3e50', SKY: '#000000' };
 let C = {...C_DAY};
 
 // Game State
 let gameState = 'MENU'; 
-let player = { x: 100, y: MAP_H/2, w: 32, h: 48, hp: 100, score: 0, speed: 10, face: 1, ammo: 15 };
+let player = { x: 100, y: MAP_H/2, w: 32, h: 48, hp: 100, score: 0, speed: 10, face: 1, ammo: 20 };
 let camera = { x: 0, y: 0 };
 let bullets = [];
 let monsters = [];
@@ -1103,7 +1263,6 @@ function getPathY(x) {
 
 function spawnMonster() {
     if (bossActive) return; 
-    // EXPANDED TO 8 TYPES (0-7)
     let type = Math.floor(Math.random() * 8); 
     
     let mx = 600 + Math.random() * (MAP_W - 800);
@@ -1111,12 +1270,10 @@ function spawnMonster() {
     if(my < 50) my = 50; if(my > MAP_H-50) my = MAP_H-50;
 
     let w = 32, h = 32;
-    // New types
     if (type === 0) { w = 24; h = 24; } // Bee
     if (type === 1) { w = 40; h = 28; } // Fox
     if (type === 2) { w = 36; h = 20; } // Axolotl
     if (type === 3) { w = 48; h = 56; } // Wither
-    // Old types (Imported)
     if (type === 4) { w = 32; h = 48; } // Zombie
     if (type === 5) { w = 32; h = 48; } // Skeleton
     if (type === 6) { w = 32; h = 44; } // Creeper
@@ -1179,9 +1336,11 @@ function setupControls() {
 function fire() {
     if (player.ammo <= 0) {
         addFloatText(player.x, player.y - 40, "HẾT ĐẠN!", "#fff");
+        SFX.wrong(); // Wrong sound for empty click
         return;
     }
     player.ammo--;
+    SFX.shoot();
     updateHUD();
     
     bullets.push({
@@ -1192,10 +1351,12 @@ function fire() {
 }
 
 function startGame() {
+    audioCtx.resume(); // CRITICAL: Unlock audio on user interaction
+    Music.startBGM('adventure'); // Start Adventure Music
     document.getElementById('start-screen').classList.remove('active');
     gameState = 'PLAY';
     ambushTime = Date.now();
-    player.hp = 100; player.score = 0; player.ammo = 15;
+    player.hp = 100; player.score = 0; player.ammo = 20;
     bossActive = false;
     C = {...C_DAY}; 
     updateHUD();
@@ -1248,12 +1409,13 @@ function update() {
             let m = monsters[j];
             if (b.x < m.x + m.w && b.x + b.w > m.x && b.y < m.y + m.h && b.y + b.h > m.y) {
                 spawnExplosion(m.x + m.w/2, m.y + m.h/2);
+                SFX.explosion();
                 addFloatText(m.x, m.y, "+1 KILL");
                 monsters.splice(j, 1);
                 bullets.splice(i, 1);
                 player.score++;
                 
-                if (player.score >= 30 && !bossActive) {
+                if (player.score >= BOSS_REQUIREMENT && !bossActive) {
                     activateBossMode();
                 } else if (!bossActive) {
                     spawnMonster(); 
@@ -1266,11 +1428,7 @@ function update() {
 
     for (let m of monsters) {
         let dist = Math.hypot(player.x - m.x, player.y - m.y);
-        
-        // Float logic for Bee(0), Wither(3)
-        if (m.type === 0 || m.type === 3) {
-            m.y += Math.sin(Date.now()/200)*0.5;
-        }
+        if (m.type === 0 || m.type === 3) m.y += Math.sin(Date.now()/200)*0.5;
 
         if (dist < 350) { 
             let angle = Math.atan2(player.y - m.y, player.x - m.x);
@@ -1296,7 +1454,7 @@ function update() {
     if (player.x > MAP_W - 400) {
         if (!bossActive) {
             player.x = MAP_W - 420;
-            showToast("CẦN 30 KILLS ĐỂ GẶP BOSS!");
+            showToast(`CẦN ${BOSS_REQUIREMENT} KILLS ĐỂ GẶP BOSS!`);
         } else {
             startBossFight();
         }
@@ -1311,6 +1469,8 @@ function activateBossMode() {
     monsters = []; 
     C = {...C_NIGHT};
     showToast("THỜI KHẮC ĐÃ ĐẾN, RỒNG ENDER GIÁNG LÂM!");
+    Music.startBGM('boss'); // Switch to Boss Music
+    SFX.dragonRoar(); // Play scary roar
     for(let i=0; i<50; i++) spawnExplosion(camera.x + cw/2, camera.y + ch/2, 50);
 }
 
@@ -1325,6 +1485,7 @@ function showToast(msg) {
     let t = document.getElementById('toast-msg');
     t.innerText = msg;
     t.classList.add('show');
+    SFX.wrong(); // Alert sound
     setTimeout(()=>t.classList.remove('show'), 3000);
 }
 
@@ -1342,8 +1503,11 @@ function triggerBattle(enemy, mode) {
     currentEnemy = enemy;
     
     if(mode === 'AMBUSH') {
+        SFX.ambushAlarm(); // Ambush Siren
         document.getElementById('ambush-overlay').style.display = 'flex';
         setTimeout(() => document.getElementById('ambush-overlay').style.display = 'none', 1500);
+    } else {
+        SFX.wrong(); // Monster encounter sound
     }
 
     const modal = document.getElementById('battle-modal');
@@ -1373,6 +1537,7 @@ function resolveBattle(correct, mode) {
     
     if (correct) {
         player.score++;
+        SFX.correct();
         addFloatText(player.x, player.y - 40, "ĐÚNG RỒI!", "#f1c40f");
 
         if (currentEnemy && mode !== 'AMBUSH') {
@@ -1381,7 +1546,7 @@ function resolveBattle(correct, mode) {
                 spawnExplosion(currentEnemy.x, currentEnemy.y);
                 monsters.splice(idx, 1);
                 
-                if (player.score >= 30 && !bossActive) activateBossMode();
+                if (player.score >= BOSS_REQUIREMENT && !bossActive) activateBossMode();
                 else if (!bossActive) spawnMonster(); 
             }
         }
@@ -1391,6 +1556,7 @@ function resolveBattle(correct, mode) {
 
     } else {
         player.hp -= 15;
+        SFX.wrong();
         addFloatText(player.x, player.y - 20, "-15 HP", "red");
         if (currentEnemy) currentEnemy.x += (currentEnemy.x > player.x ? 100 : -100);
         updateHUD();
@@ -1404,19 +1570,21 @@ function resolveBattle(correct, mode) {
 function startBossFight() {
     gameState = 'BOSS';
     bossStage = 0;
-    bossDeck = [...RAW_BOSS_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 8);
+    // Set Boss Deck to 10 questions
+    bossDeck = [...RAW_BOSS_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, BOSS_QUESTIONS_COUNT);
     
     document.getElementById('boss-modal').classList.add('active');
+    SFX.dragonRoar(); // Roar when modal opens
     loadBossQuestion();
 }
 
 function loadBossQuestion() {
-    if (bossStage >= 8) { endGame(true); return; }
+    if (bossStage >= BOSS_QUESTIONS_COUNT) { endGame(true); return; }
 
     let q = bossDeck[bossStage];
     document.getElementById('boss-question').innerText = q.q;
     document.getElementById('boss-input').value = '';
-    document.getElementById('boss-progress').innerText = (bossStage + 1);
+    document.getElementById('boss-progress').innerText = (bossStage + 1) + "/" + BOSS_QUESTIONS_COUNT;
     document.getElementById('boss-input').focus();
 
     let time = 30;
@@ -1437,10 +1605,12 @@ function checkBossAnswer() {
 
     if (input === correct || input.includes(correct)) {
         bossStage++;
+        SFX.correct();
         spawnExplosion(player.x + 200, player.y, 40); 
         loadBossQuestion();
     } else {
         player.hp -= 20;
+        SFX.dragonFire(); // DRAGON ATTACK SOUND!
         document.getElementById('boss-input').style.borderColor = "red";
         setTimeout(() => document.getElementById('boss-input').style.borderColor = "#9b59b6", 500);
         if(player.hp <= 0) { clearInterval(bossTimer); endGame(false); }
@@ -1450,6 +1620,7 @@ function checkBossAnswer() {
 
 function endGame(win) {
     gameState = 'OVER';
+    Music.stopBGM();
     document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
     document.getElementById('end-screen').classList.add('active');
     
@@ -1457,20 +1628,21 @@ function endGame(win) {
     let msg = document.getElementById('end-msg');
     
     if (win) {
+        SFX.win();
         title.innerHTML = "CHIẾN THẮNG HUY HOÀNG!";
         title.style.color = "#f1c40f";
         msg.innerHTML = "Bạn đã tiêu diệt RỒNG ENDER và bảo vệ thế giới!<br>🏆 Kỷ lục: " + player.score + " Kills";
         setInterval(() => spawnExplosion(Math.random()*cw, Math.random()*ch, 20), 200);
     } else {
+        SFX.dragonRoar(); // Roar one last time
         title.innerText = "GAME OVER";
         title.style.color = "#e74c3c";
         msg.innerText = "RỒNG ENDER đã thiêu rụi tất cả...";
     }
     
-    // AUTO RELOAD ADDED HERE
     setTimeout(() => {
         location.reload();
-    }, 4000);
+    }, 6000);
 }
 
 // --- RENDER ---
@@ -1612,7 +1784,6 @@ function drawMonsterSprite(m) {
         ctx.fillRect(x-4, y, 2, 2); ctx.fillRect(x+4, y, 2, 2);
         ctx.fillRect(x+44, y, 2, 2); ctx.fillRect(x+52, y, 2, 2);
     }
-    // IMPORTED MONSTERS FROM MAU.HTML
     // Type 4: ZOMBIE
     else if (m.type === 4) {
         ctx.fillStyle = '#228B22'; ctx.fillRect(x+4, y-4-h, 24, 20); // Green Head
@@ -1665,36 +1836,23 @@ function drawEnderDragon(bx, by) {
 
     let hx = bx, hy = by + float;
     
-    // --- ADDED DRAGON BODY (INVERSE KINEMATICS SIMULATION) ---
     ctx.fillStyle = '#c0392b'; // Body Red
     for(let i=10; i>0; i--) {
-        // Create snake-like movement behind head
         let bodyX = hx + i * 40 + Math.sin(Date.now()/300 + i)*20; 
         let bodyY = hy + Math.sin(Date.now()/400 + i)*30;
-        
         ctx.fillRect(bodyX, bodyY, 60, 50); // Body Segment
-        
-        // Spines on back
-        ctx.fillStyle = '#111';
-        ctx.fillRect(bodyX+20, bodyY-10, 20, 10);
-        
-        ctx.fillStyle = '#c0392b'; // Reset color
+        ctx.fillStyle = '#111'; ctx.fillRect(bodyX+20, bodyY-10, 20, 10);
+        ctx.fillStyle = '#c0392b'; 
     }
-    // ---------------------------------------------------------
 
     // HEAD
     ctx.fillStyle = '#c0392b'; ctx.fillRect(hx-80, hy-60, 100, 80); 
     ctx.fillStyle = '#a93226'; ctx.fillRect(hx-140, hy-30, 60, 50);
     
-    ctx.fillStyle = '#f1c40f'; 
-    ctx.fillRect(hx-70, hy-40, 25, 12);
-    ctx.shadowBlur = 10; ctx.shadowColor = '#f39c12';
-    ctx.fillRect(hx-120, hy-40, 10, 10); 
-    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#f1c40f'; ctx.fillRect(hx-70, hy-40, 25, 12);
+    ctx.shadowBlur = 10; ctx.shadowColor = '#f39c12'; ctx.fillRect(hx-120, hy-40, 10, 10); ctx.shadowBlur = 0;
     
-    ctx.fillStyle = '#111';
-    ctx.fillRect(hx-20, hy-80, 20, 30);
-    ctx.fillRect(hx+10, hy-70, 20, 20);
+    ctx.fillStyle = '#111'; ctx.fillRect(hx-20, hy-80, 20, 30); ctx.fillRect(hx+10, hy-70, 20, 20);
 
     if(Math.random() > 0.5) {
         particles.push({x: hx-140, y: hy+10, vx: -5-Math.random()*5, vy: (Math.random()-0.5)*2, l: 0.8, c: '#e67e22'});
@@ -1722,31 +1880,13 @@ function drawRock(o) {
 
 function drawFlower(o) {
     if(bossActive) return; 
-    
     let x = o.x, y = o.y;
     ctx.fillStyle = '#2ecc71'; ctx.fillRect(x+4, y+10, 2, 10); 
-    
-    if (o.type === 0) { 
-        ctx.fillStyle = '#c0392b'; ctx.fillRect(x, y+2, 10, 8); 
-        ctx.fillStyle = '#e74c3c'; ctx.fillRect(x+2, y+4, 6, 4);
-        ctx.fillStyle = '#000'; ctx.fillRect(x+4, y+6, 2, 2);
-    } 
-    else if (o.type === 1) { 
-        ctx.fillStyle = '#f1c40f'; ctx.fillRect(x+1, y+2, 8, 8); 
-        ctx.fillStyle = '#f39c12'; ctx.fillRect(x+3, y+4, 4, 4);
-    } 
-    else if (o.type === 2) { 
-        ctx.fillStyle = '#3498db'; ctx.fillRect(x, y, 10, 10);
-        ctx.fillStyle = '#fff'; ctx.fillRect(x+3, y+3, 4, 4);
-    }
-    else if (o.type === 3) { 
-        ctx.fillStyle = '#9b59b6'; ctx.fillRect(x, y, 10, 10); 
-        ctx.fillStyle = '#8e44ad'; ctx.fillRect(x+2, y+2, 6, 6);
-    }
-    else if (o.type === 4) { 
-        ctx.fillStyle = '#e67e22'; ctx.fillRect(x+2, y, 6, 10);
-        ctx.fillStyle = '#d35400'; ctx.fillRect(x+2, y+6, 6, 4);
-    }
+    if (o.type === 0) { ctx.fillStyle = '#c0392b'; ctx.fillRect(x, y+2, 10, 8); ctx.fillStyle = '#e74c3c'; ctx.fillRect(x+2, y+4, 6, 4); ctx.fillStyle = '#000'; ctx.fillRect(x+4, y+6, 2, 2); } 
+    else if (o.type === 1) { ctx.fillStyle = '#f1c40f'; ctx.fillRect(x+1, y+2, 8, 8); ctx.fillStyle = '#f39c12'; ctx.fillRect(x+3, y+4, 4, 4); } 
+    else if (o.type === 2) { ctx.fillStyle = '#3498db'; ctx.fillRect(x, y, 10, 10); ctx.fillStyle = '#fff'; ctx.fillRect(x+3, y+3, 4, 4); }
+    else if (o.type === 3) { ctx.fillStyle = '#9b59b6'; ctx.fillRect(x, y, 10, 10); ctx.fillStyle = '#8e44ad'; ctx.fillRect(x+2, y+2, 6, 6); }
+    else if (o.type === 4) { ctx.fillStyle = '#e67e22'; ctx.fillRect(x+2, y, 6, 10); ctx.fillStyle = '#d35400'; ctx.fillRect(x+2, y+6, 6, 4); }
 }
 
 let particles = [];
