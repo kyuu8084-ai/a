@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>StudyWithMe - Thời Khóa Biểu Thông Minh</title>
+    <title>StudyWithMe - Thời Khóa Biểu (Luxury Edition)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -38,7 +39,13 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Cập nhật Font chữ nội dung */
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Cập nhật Font chữ tiêu đề cho Sang trọng */
+        h1, h2, h3, .logo h1, .clock {
+            font-family: 'Playfair Display', serif;
         }
 
         body {
@@ -50,12 +57,43 @@
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             -webkit-tap-highlight-color: transparent;
+            position: relative; /* Để chứa bong bóng */
         }
+
+        /* --- HIỆU ỨNG BONG BÓNG --- */
+        #bubble-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Nằm dưới nội dung */
+            pointer-events: none; /* Không chặn click chuột */
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: floatUp linear forwards;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+        /* --- KẾT THÚC HIỆU ỨNG BONG BÓNG --- */
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 15px;
+            position: relative; 
+            z-index: 1; /* Nổi lên trên bong bóng */
         }
 
         /* Header */
@@ -288,6 +326,7 @@
             min-height: 100vh;
             animation: fadeIn 1s ease;
             padding: 20px;
+            position: relative; z-index: 1;
         }
 
         .login-card {
@@ -962,95 +1001,11 @@
                 font-size: 0.8rem;
             }
         }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 10px;
-            }
-
-            .app {
-                padding: 100px 0 20px;
-            }
-
-            .app-logo h1 {
-                font-size: 1.8rem;
-            }
-
-            .tagline {
-                font-size: 1rem;
-            }
-
-            .clock {
-                font-size: 2rem;
-            }
-
-            .date {
-                font-size: 1rem;
-            }
-
-            .login-card {
-                padding: 30px 20px;
-            }
-
-            .card-body {
-                padding: 15px;
-            }
-
-            .weekly-schedule {
-                min-width: 700px;
-                grid-template-columns: 70px repeat(7, 1fr);
-            }
-
-            .time-slot {
-                padding: 6px 3px;
-                font-size: 0.8rem;
-            }
-
-            .day-header {
-                padding: 10px 3px;
-                font-size: 0.8rem;
-            }
-
-            .schedule-cell {
-                min-height: 60px;
-                padding: 4px;
-            }
-
-            .schedule-item {
-                font-size: 0.7rem;
-            }
-        }
-
-        /* Tối ưu hóa cho màn hình 1080x2340 */
-        @media (min-width: 400px) and (max-width: 500px) and (min-height: 800px) {
-            .app-logo h1 {
-                font-size: 2rem;
-            }
-
-            .tagline {
-                font-size: 1.1rem;
-            }
-
-            .clock {
-                font-size: 2.5rem;
-            }
-
-            .date {
-                font-size: 1.1rem;
-            }
-
-            .card-body {
-                padding: 20px;
-            }
-
-            .weekly-schedule {
-                min-width: 800px;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Header -->
+    <div id="bubble-container"></div>
+
     <header id="mainHeader">
         <div class="container">
             <div class="header-content">
@@ -1065,7 +1020,6 @@
                     <ul>
                         <li><a href="index.html"><i class="fas fa-home"></i> Trang Chủ</a></li>
                         <li><a href="gioi_thieu.html"><i class="fas fa-info-circle"></i> Giới Thiệu</a></li>
-                    
                         <li><a href="lien_he.html"><i class="fas fa-envelope"></i> Liên Hệ</a></li>
                     </ul>
                 </nav>
@@ -1078,14 +1032,12 @@
                     <span class="user-name" id="userName">Tài khoản</span>
                 </div>
                 <div class="user-dropdown" id="userDropdown">
-                    
                     <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h3>StudyWithMe</h3>
@@ -1099,16 +1051,16 @@
             <li><a href="dinh_huong.html"><i class="fas fa-compass"></i> Định Hướng Nghề Nghiệp</a></li>
             <li><a href="phuong_phap.html"><i class="fas fa-book-open"></i> Phương Pháp Học Tập</a></li>
             <li><a href="#" id="class12Link"><i class="fas fa-chalkboard-teacher"></i> Khóa Học Lớp 12</a></li>
-            <li><a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/k%C3%AAnh-h%E1%BB%8Dc-t%E1%BA%ADp?authuser=0"><i class="fas fa-play-circle"></i> Kênh Học Tập</a></li>
+            
             <li><a href="thoi_bieu.html"><i class="fas fa-calendar-alt"></i> Thời Khóa Biểu</a></li>
             <li><a href="tai_lieu.html"><i class="fas fa-file-alt"></i> Tài Liệu</a></li>
             <li><a href="https://discord.gg/uHYE9VWp5e"><i class="fab fa-discord"></i> Cộng Đồng Discord</a></li>
             <li><a href="https://studywithme.forumvi.com/"><i class="fas fa-users"></i> Diễn Đàn Học Tập</a></li>
             <li><a href="https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/quiz-ng%E1%BA%AFn?authuser=0/"><i class="fa-regular fa-circle-question"></i>Quiz Ngắn</a></li>
+            <li><a href="gamee.html"><i class="fa-solid fa-gamepad"></i> EduGames Hub</a></li>
         </ul>
     </div>
 
-    <!-- Login Screen -->
     <div class="login-container" id="loginScreen">
         <div class="login-card">
             <div class="app-logo">
@@ -1116,7 +1068,6 @@
                 <h1>StudyWithMe</h1>
             </div>
             
-            <!-- Login Form -->
             <div id="loginFormContainer">
                 <h2>Đăng nhập vào tài khoản</h2>
                 <form class="login-form" id="loginForm">
@@ -1140,7 +1091,6 @@
                 </div>
             </div>
             
-            <!-- Register Form -->
             <div id="registerFormContainer" class="register-form">
                 <h2>Đăng ký tài khoản mới</h2>
                 <form class="login-form" id="registerForm">
@@ -1165,7 +1115,6 @@
         </div>
     </div>
 
-    <!-- Main Application -->
     <div class="app" id="mainApp">
         <div class="container">
             <div class="app-header">
@@ -1178,7 +1127,7 @@
 
             <section class="user-info">
                 <div class="current-user" id="currentUser">Chào mừng đến với StudyWithMe!</div>
-                <button id="logoutBtn" class="btn-secondary" style="width: auto; padding: 8px 15px;">
+                <button id="logoutBtnMain" class="btn-secondary" style="width: auto; padding: 8px 15px;">
                     <i class="fas fa-sign-out-alt"></i> Đăng xuất
                 </button>
             </section>
@@ -1257,8 +1206,7 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
                     <div class="card-body">
                         <div class="schedule-container">
                             <div id="weeklySchedule" class="weekly-schedule">
-                                <!-- Weekly schedule will be generated by JavaScript -->
-                            </div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -1270,7 +1218,6 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
         </div>
     </div>
 
-    <!-- Alert Overlay -->
     <div class="alert-overlay" id="alertOverlay">
         <div class="alert-box">
             <h3>Đến giờ học!</h3>
@@ -1282,8 +1229,7 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
     </div>
 
     <div class="notification" id="notification">
-        <!-- Nội dung thông báo sẽ được hiển thị ở đây -->
-    </div>
+        </div>
 
     <div class="mode-toggle" id="modeToggle">
         <i class="fas fa-moon"></i>
@@ -1297,6 +1243,99 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
         let notificationCheckInterval;
         let clockInterval;
         let lastNotified = {}; // Để tránh thông báo lặp lại
+
+        // --- BỘ MÁY ÂM THANH 8-BIT (NÂNG CẤP) ---
+        const AudioEngine = {
+            ctx: null,
+            
+            init: function() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
+
+            // Hàm tạo âm thanh có tham số thời gian (startTime)
+            tone: function(freq, duration, type, vol, startTime) {
+                if (!this.ctx) this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                osc.type = type; 
+                osc.frequency.setValueAtTime(freq, startTime);
+                
+                // Tăng âm lượng lên (vol mặc định sẽ là 0.5)
+                gain.gain.setValueAtTime(vol, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+                
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                osc.start(startTime);
+                osc.stop(startTime + duration);
+            },
+
+            playAlarm: function() {
+                this.init();
+                const now = this.ctx.currentTime;
+                
+                // Lặp lại chuỗi âm thanh để kéo dài khoảng 7 giây
+                // Mỗi chu kỳ "Tít-Tít-Tít" mất khoảng 1 giây
+                for (let i = 0; i < 7; i++) {
+                    const t = now + i * 1.0; // Mỗi nhịp cách nhau 1 giây
+                    
+                    // Beep 1
+                    this.tone(880, 0.1, 'square', 0.5, t);
+                    // Beep 2
+                    this.tone(880, 0.1, 'square', 0.5, t + 0.15);
+                    // Beep 3 (Dài hơn một chút)
+                    this.tone(880, 0.2, 'square', 0.5, t + 0.3);
+                }
+            },
+
+            playLoginSuccess: function() {
+                this.init();
+                const now = this.ctx.currentTime;
+                this.tone(440, 0.1, 'sine', 0.5, now);
+                this.tone(554, 0.1, 'sine', 0.5, now + 0.1);
+                this.tone(659, 0.2, 'square', 0.5, now + 0.2);
+            },
+
+            playError: function() {
+                this.init();
+                const now = this.ctx.currentTime;
+                this.tone(150, 0.3, 'sawtooth', 0.5, now);
+            }
+        };
+
+        // --- HÀM TẠO BONG BÓNG ---
+        function createBubbles() {
+            const container = document.getElementById('bubble-container');
+            const bubbleCount = 20; // Số lượng bong bóng
+
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                // Kích thước ngẫu nhiên
+                const size = Math.random() * 60 + 20 + 'px';
+                bubble.style.width = size;
+                bubble.style.height = size;
+                
+                // Vị trí ngang ngẫu nhiên
+                bubble.style.left = Math.random() * 100 + '%';
+                
+                // Thời gian bay ngẫu nhiên (chậm rãi)
+                bubble.style.animationDuration = Math.random() * 10 + 10 + 's';
+                
+                // Độ trễ ngẫu nhiên
+                bubble.style.animationDelay = Math.random() * 10 + 's';
+                
+                container.appendChild(bubble);
+            }
+        }
 
         // DOM Elements
         const loginScreen = document.getElementById('loginScreen');
@@ -1315,6 +1354,7 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
         const weeklySchedule = document.getElementById('weeklySchedule');
         const notification = document.getElementById('notification');
         const logoutBtn = document.getElementById('logoutBtn');
+        const logoutBtnMain = document.getElementById('logoutBtnMain');
         const modeToggle = document.getElementById('modeToggle');
         const currentTimeElement = document.getElementById('currentTime');
         const currentDateElement = document.getElementById('currentDate');
@@ -1322,7 +1362,7 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
         const alertMessage = document.getElementById('alertMessage');
         const closeAlertBtn = document.getElementById('closeAlertBtn');
         
-        // Thêm DOM Elements cho header
+        // Header Elements
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
         const closeSidebar = document.getElementById('closeSidebar');
@@ -1333,13 +1373,14 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
         const userName = document.getElementById('userName');
         const mainHeader = document.getElementById('mainHeader');
 
-        // Đăng ký sự kiện
+        // Events
         tabs.forEach(tab => {
             tab.addEventListener('click', switchTab);
         });
         addScheduleBtn.addEventListener('click', addSchedule);
         quickAddBtn.addEventListener('click', quickAddSchedules);
         logoutBtn.addEventListener('click', handleLogout);
+        logoutBtnMain.addEventListener('click', handleLogout);
         modeToggle.addEventListener('click', toggleDarkMode);
         loginForm.addEventListener('submit', handleLogin);
         registerForm.addEventListener('submit', handleRegister);
@@ -1347,24 +1388,23 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
         showRegisterFormLink.addEventListener('click', showRegisterForm);
         showLoginFormLink.addEventListener('click', showLoginForm);
         
-        // Thêm sự kiện cho header
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.add('active');
-        });
-        closeSidebar.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-        });
-        userInfo.addEventListener('click', () => {
-            userDropdown.classList.toggle('active');
-        });
+        menuToggle.addEventListener('click', () => sidebar.classList.add('active'));
+        closeSidebar.addEventListener('click', () => sidebar.classList.remove('active'));
+        userInfo.addEventListener('click', () => userDropdown.classList.toggle('active'));
+        
+        // Kích hoạt AudioContext lần đầu chạm vào trang
         document.addEventListener('click', (e) => {
+            AudioEngine.init();
             if (!userInfo.contains(e.target) && !userDropdown.contains(e.target)) {
                 userDropdown.classList.remove('active');
             }
-        });
+        }, { once: true });
 
-        // Kiểm tra trạng thái đăng nhập khi trang được tải
+        // Khởi tạo
         document.addEventListener('DOMContentLoaded', function() {
+            // Tạo bong bóng nền
+            createBubbles();
+
             const savedUser = localStorage.getItem('studyWithMeCurrentUser');
             if (savedUser) {
                 currentUser = savedUser;
@@ -1375,37 +1415,29 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
                 showLoginScreen();
             }
 
-            // Yêu cầu quyền thông báo
             if ("Notification" in window && Notification.permission === "default") {
                 Notification.requestPermission();
             }
 
-            // Kiểm tra chế độ tối
             if (localStorage.getItem('studyWithMeDarkMode') === 'enabled') {
                 document.body.classList.add('dark-mode');
                 modeToggle.innerHTML = '<i class="fas fa-sun"></i>';
             }
             
-            // Thêm hiệu ứng ẩn/hiện header khi cuộn
+            // Header scroll effect
             let lastScrollTop = 0;
             const scrollThreshold = 50;
-            
             window.addEventListener('scroll', function() {
                 let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                
                 if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
-                    // Cuộn xuống và vượt quá ngưỡng -> ẩn header
                     mainHeader.classList.add('hidden');
                 } else {
-                    // Cuộn lên -> hiện header
                     mainHeader.classList.remove('hidden');
                 }
-                
                 lastScrollTop = scrollTop;
             }, { passive: true });
         });
 
-        // Hàm cập nhật giao diện khi đã đăng nhập
         function updateUserInterface(userName) {
             authButtons.style.display = 'none';
             userInfo.style.display = 'flex';
@@ -1413,88 +1445,88 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
             userAvatar.textContent = userName.charAt(0).toUpperCase();
         }
 
-        // Hàm hiển thị form đăng ký
         function showRegisterForm(e) {
             e.preventDefault();
             loginFormContainer.style.display = 'none';
             registerFormContainer.style.display = 'block';
         }
 
-        // Hàm hiển thị form đăng nhập
         function showLoginForm(e) {
             e.preventDefault();
             registerFormContainer.style.display = 'none';
             loginFormContainer.style.display = 'block';
         }
 
-        // Hàm xử lý đăng nhập
         function handleLogin(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe').checked;
 
-            // Kiểm tra đăng nhập
             if (users[username] && users[username].password === password) {
                 currentUser = username;
                 if (rememberMe) {
                     localStorage.setItem('studyWithMeCurrentUser', username);
                 }
+                
+                AudioEngine.playLoginSuccess(); // Phát nhạc
+                
                 loadUserData();
                 showMainApp();
                 updateUserInterface(username);
                 showNotification('Đăng nhập thành công!');
             } else {
+                AudioEngine.playError();
                 showNotification('Tên đăng nhập hoặc mật khẩu không đúng!', 'error');
             }
         }
 
-        // Hàm xử lý đăng ký
         function handleRegister(e) {
             e.preventDefault();
             const username = document.getElementById('regUsername').value;
             const password = document.getElementById('regPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
-            // Kiểm tra thông tin đăng ký
             if (!username || !password || !confirmPassword) {
+                AudioEngine.playError();
                 showNotification('Vui lòng điền đầy đủ thông tin!', 'error');
                 return;
             }
 
             if (password !== confirmPassword) {
+                AudioEngine.playError();
                 showNotification('Mật khẩu xác nhận không khớp!', 'error');
                 return;
             }
 
             if (users[username]) {
+                AudioEngine.playError();
                 showNotification('Tên đăng nhập đã tồn tại!', 'error');
                 return;
             }
 
-            // Tạo tài khoản mới
             users[username] = {
                 password: password,
                 schedules: []
             };
             localStorage.setItem('studyWithMeUsers', JSON.stringify(users));
             
-            // Đăng nhập ngay sau khi đăng ký
             currentUser = username;
             localStorage.setItem('studyWithMeCurrentUser', username);
+            
+            AudioEngine.playLoginSuccess(); // Phát nhạc
+            
             loadUserData();
             showMainApp();
             updateUserInterface(username);
             showNotification('Đăng ký thành công!');
         }
 
-        // Hàm hiển thị màn hình đăng nhập
         function showLoginScreen() {
             loginScreen.style.display = 'flex';
             mainApp.style.display = 'none';
         }
 
-        // Hàm hiển thị ứng dụng chính
         function showMainApp() {
             loginScreen.style.display = 'none';
             mainApp.style.display = 'block';
@@ -1504,7 +1536,6 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
             startNotificationChecker();
         }
 
-        // Hàm tải dữ liệu người dùng
         function loadUserData() {
             if (currentUser && users[currentUser]) {
                 schedules = users[currentUser].schedules || [];
@@ -1513,7 +1544,6 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
             }
         }
 
-        // Hàm lưu dữ liệu người dùng
         function saveUserData() {
             if (currentUser) {
                 if (!users[currentUser]) {
@@ -1524,23 +1554,14 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
             }
         }
 
-        // Hàm chuyển tab
         function switchTab(e) {
             const tabId = e.target.getAttribute('data-tab');
-            
-            tabs.forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            tabContents.forEach(content => {
-                content.classList.remove('active');
-            });
-            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
             e.target.classList.add('active');
             document.getElementById(`${tabId}-tab`).classList.add('active');
         }
 
-        // Hàm thêm lịch học (từng môn)
         function addSchedule() {
             const subject = document.getElementById('subject').value;
             const day = document.getElementById('day').value;
@@ -1563,7 +1584,6 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
             schedules.push(schedule);
             saveUserData();
             
-            // Xóa form nhập
             document.getElementById('subject').value = '';
             document.getElementById('startTime').value = '';
             document.getElementById('endTime').value = '';
@@ -1572,10 +1592,8 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
             showNotification('Đã thêm môn học vào thời khóa biểu');
         }
 
-        // Hàm thêm nhanh nhiều môn học
         function quickAddSchedules() {
             const quickInput = document.getElementById('quickInput').value;
-            
             if (!quickInput.trim()) {
                 showNotification('Vui lòng nhập danh sách môn học', 'error');
                 return;
@@ -1587,21 +1605,14 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
             lines.forEach(line => {
                 line = line.trim();
                 if (!line) return;
-                
                 const parts = line.split('-').map(part => part.trim());
-                
                 if (parts.length === 4) {
                     const [subject, day, startTime, endTime] = parts;
-                    
                     if (subject && day && startTime && endTime) {
                         const schedule = {
                             id: Date.now() + Math.random(),
-                            subject,
-                            day,
-                            startTime,
-                            endTime
+                            subject, day, startTime, endTime
                         };
-                        
                         schedules.push(schedule);
                         addedCount++;
                     }
@@ -1611,14 +1622,13 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
             if (addedCount > 0) {
                 saveUserData();
                 loadWeeklySchedule();
-                showNotification(`Đã thêm ${addedCount} môn học vào thời khóa biểu`);
+                showNotification(`Đã thêm ${addedCount} môn học`);
                 document.getElementById('quickInput').value = '';
             } else {
-                showNotification('Không tìm thấy môn học hợp lệ trong định dạng đã nhập', 'error');
+                showNotification('Không tìm thấy môn học hợp lệ', 'error');
             }
         }
 
-        // Hàm xóa lịch học
         function deleteSchedule(id) {
             if (confirm('Bạn có chắc chắn muốn xóa môn học này?')) {
                 schedules = schedules.filter(item => item.id !== id);
@@ -1628,18 +1638,14 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
             }
         }
 
-        // Hàm tải và hiển thị thời khóa biểu hàng tuần
         function loadWeeklySchedule() {
-            // Tạo khung lưới cho thời khóa biểu
             weeklySchedule.innerHTML = '';
             
-            // Tạo tiêu đề cột thời gian
             const timeHeader = document.createElement('div');
             timeHeader.className = 'time-slot';
             timeHeader.textContent = 'Giờ';
             weeklySchedule.appendChild(timeHeader);
             
-            // Tạo tiêu đề các ngày
             const days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'];
             days.forEach(day => {
                 const dayHeader = document.createElement('div');
@@ -1648,22 +1654,18 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
                 weeklySchedule.appendChild(dayHeader);
             });
             
-            // Tạo các khung giờ từ 6:00 đến 22:00
             for (let hour = 6; hour <= 22; hour++) {
-                // Tạo ô thời gian
                 const timeSlot = document.createElement('div');
                 timeSlot.className = 'time-slot';
                 timeSlot.textContent = `${hour}:00`;
                 weeklySchedule.appendChild(timeSlot);
                 
-                // Tạo ô cho mỗi ngày trong tuần
                 days.forEach(day => {
                     const cell = document.createElement('div');
                     cell.className = 'schedule-cell';
                     cell.setAttribute('data-day', day);
                     cell.setAttribute('data-hour', hour);
                     
-                    // Tìm các môn học trong khung giờ này
                     const classesInThisSlot = schedules.filter(schedule => 
                         schedule.day === day && 
                         parseInt(schedule.startTime.split(':')[0]) === hour
@@ -1684,66 +1686,43 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
                             cell.appendChild(classElement);
                         });
                     }
-                    
                     weeklySchedule.appendChild(cell);
                 });
             }
-            
-            // Cập nhật ô thời gian hiện tại
             updateCurrentTimeCell();
         }
 
-        // Hàm cập nhật ô thời gian hiện tại
         function updateCurrentTimeCell() {
-            // Xóa lớp current-time từ tất cả các ô
             document.querySelectorAll('.schedule-cell').forEach(cell => {
                 cell.classList.remove('current-time');
             });
-            
             const now = new Date();
             const currentDay = getCurrentDayInVietnamese();
             const currentHour = now.getHours();
-            
-            // Tìm ô tương ứng với thời gian hiện tại
             const currentCell = document.querySelector(`.schedule-cell[data-day="${currentDay}"][data-hour="${currentHour}"]`);
-            if (currentCell) {
-                currentCell.classList.add('current-time');
-            }
+            if (currentCell) currentCell.classList.add('current-time');
         }
 
-        // Hàm bắt đầu đồng hồ chính xác
         function startClock() {
             updateClock();
             clockInterval = setInterval(updateClock, 1000);
         }
 
-        // Hàm cập nhật đồng hồ
         function updateClock() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             
-            const timeString = `${hours}:${minutes}:${seconds}`;
-            const dateString = now.toLocaleDateString('vi-VN', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'numeric', 
-                day: 'numeric' 
+            currentTimeElement.textContent = `${hours}:${minutes}:${seconds}`;
+            currentDateElement.textContent = now.toLocaleDateString('vi-VN', { 
+                weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' 
             });
             
-            currentTimeElement.textContent = timeString;
-            currentDateElement.textContent = dateString;
-            
-            // Cập nhật ô thời gian hiện tại mỗi phút
-            if (now.getSeconds() === 0) {
-                updateCurrentTimeCell();
-            }
+            if (now.getSeconds() === 0) updateCurrentTimeCell();
         }
 
-        // Hàm kiểm tra thông báo - CHÍNH XÁC ĐẾN TỪNG GIÂY
         function startNotificationChecker() {
-            // Kiểm tra mỗi giây để đảm bảo độ chính xác
             notificationCheckInterval = setInterval(() => {
                 if (!schedules || schedules.length === 0) return;
                 
@@ -1756,76 +1735,46 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
                 schedules.forEach(schedule => {
                     const scheduleKey = `${schedule.id}-${schedule.startTime}`;
                     
-                    // Kiểm tra xem đã thông báo cho lịch học này chưa
                     if (lastNotified[scheduleKey]) {
                         const timeDiff = now - lastNotified[scheduleKey];
-                        // Nếu đã thông báo trong vòng 1 phút trước đó, bỏ qua
                         if (timeDiff < 60000) return;
                     }
                     
-                    // Thông báo 5 phút trước khi bắt đầu
                     const notificationTime = subtractMinutes(schedule.startTime, 5);
                     
-                    if (schedule.day === currentDay && notificationTime === currentTime) {
+                    if (schedule.day === currentDay && (notificationTime === currentTime || schedule.startTime === currentTime)) {
                         lastNotified[scheduleKey] = now;
-                        showAlert(`Sắp đến giờ học: ${schedule.subject} (Bắt đầu lúc ${schedule.startTime})`);
-                    }
-                    
-                    // Thông báo khi bắt đầu - CHÍNH XÁC ĐẾN PHÚT
-                    if (schedule.day === currentDay && schedule.startTime === currentTime) {
-                        lastNotified[scheduleKey] = now;
-                        showAlert(`Đến giờ học: ${schedule.subject}`);
+                        AudioEngine.playAlarm(); // Phát nhạc báo thức
+                        showAlert(schedule.startTime === currentTime ? `Đến giờ học: ${schedule.subject}` : `Sắp đến giờ học: ${schedule.subject}`);
                     }
                 });
-            }, 1000); // Kiểm tra mỗi giây
+            }, 1000);
         }
 
-        // Hàm hiển thị cảnh báo
         function showAlert(message) {
             alertMessage.textContent = message;
             alertOverlay.style.display = 'flex';
-            
-            // Hiển thị thông báo trình duyệt
             showBrowserNotification(message);
         }
 
-        // Hàm đóng cảnh báo
         function closeAlert() {
             alertOverlay.style.display = 'none';
         }
 
-        // Hàm hiển thị thông báo trình duyệt
         function showBrowserNotification(message) {
-            // Kiểm tra xem trình duyệt có hỗ trợ thông báo không
-            if (!("Notification" in window)) {
-                console.log("Trình duyệt này không hỗ trợ thông báo trên desktop");
-                return;
-            }
-            
-            // Kiểm tra quyền thông báo
+            if (!("Notification" in window)) return;
             if (Notification.permission === "granted") {
-                // Tạo thông báo
-                const notification = new Notification("StudyWithMe", {
-                    body: message,
-                    icon: "/favicon.ico"
-                });
+                new Notification("StudyWithMe", { body: message, icon: "/favicon.ico" });
             } else if (Notification.permission !== "denied") {
-                // Yêu cầu quyền
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
-                        const notification = new Notification("StudyWithMe", {
-                            body: message,
-                            icon: "/favicon.ico"
-                        });
+                        new Notification("StudyWithMe", { body: message, icon: "/favicon.ico" });
                     }
                 });
             }
-            
-            // Hiển thị thông báo trong ứng dụng
             showNotification(message);
         }
 
-        // Hàm xử lý đăng xuất
         function handleLogout() {
             if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
                 currentUser = null;
@@ -1835,7 +1784,6 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
             }
         }
 
-        // Hàm chuyển đổi chế độ tối/sáng
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             if (document.body.classList.contains('dark-mode')) {
@@ -1847,53 +1795,26 @@ Hóa - Thứ 4 - 13:00 - 14:30"></textarea>
             }
         }
 
-        // Hàm hiển thị thông báo trong ứng dụng
         function showNotification(message, type = 'success') {
             notification.textContent = message;
             notification.className = 'notification';
-            if (type === 'error') {
-                notification.classList.add('error');
-            }
+            if (type === 'error') notification.classList.add('error');
             notification.style.display = 'block';
-            
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 5000);
+            setTimeout(() => { notification.style.display = 'none'; }, 5000);
         }
 
-        // Hàm định dạng thời gian
-        function formatTime(timeString) {
-            if (!timeString) return '';
-            
-            // Nếu timeString đã ở định dạng HH:MM
-            if (timeString.includes(':')) {
-                const [hours, minutes] = timeString.split(':');
-                return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
-            }
-            
-            return timeString;
-        }
-
-        // Hàm trừ phút từ thời gian
         function subtractMinutes(timeString, minutes) {
             const [hours, mins] = timeString.split(':').map(Number);
             let totalMinutes = hours * 60 + mins - minutes;
-            
             if (totalMinutes < 0) totalMinutes += 24 * 60;
-            
             const newHours = Math.floor(totalMinutes / 60) % 24;
             const newMinutes = totalMinutes % 60;
-            
             return `${newHours.toString().padStart(2, '0')}:${newMinutes.toString().padStart(2, '0')}`;
         }
 
-        // Hàm lấy ngày hiện tại bằng tiếng Việt
         function getCurrentDayInVietnamese() {
-            const days = [
-                'Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'
-            ];
-            const today = new Date().getDay();
-            return days[today];
+            const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+            return days[new Date().getDay()];
         }
     </script>
 </body>

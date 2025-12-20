@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ai Là Triệu Phú - V13 Retro Gate</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-main: 'VT323', monospace;
+            --color-text: #fff;
+            --color-ui-bg: rgba(0, 0, 0, 0.8);
+            --color-accent: #f1c40f;
+        }
+
+        * { box-sizing: border-box; user-select: none; }
+        
+        body {
+            margin: 0; padding: 0; overflow: hidden;
+            font-family: var(--font-main);
+            color: var(--color-text);
+            height: 100vh; width: 100vw;
+            background: #000;
+            font-size: 24px;
+        }
+
+        /* --- BACKGROUND ENGINE --- */
+        #world-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; transition: background 1s ease; overflow: hidden;
+        }
+        .pixel-obj { position: absolute; image-rendering: pixelated; }
+
+        /* CÁC STYLE NỀN (Giữ nguyên) */
+        .bg-desert { background: linear-gradient(to bottom, #FF8C00, #F4A460, #D2691E); }
+        .sand-storm {
+            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background-image: radial-gradient(circle at center, transparent 0%, transparent 4px, rgba(255, 223, 0, 0.6) 4px, rgba(255, 223, 0, 0.6) 8px);
+            background-size: 80px 80px; animation: intenseSandstorm 4s linear infinite;
+        }
+        @keyframes intenseSandstorm { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .bg-ocean { background: linear-gradient(to bottom, #6abada, #4682b4); }
+        .pixel-dolphin-base { position: absolute; width: 8px; height: 8px; background: transparent; color: #95a5a6; opacity: 1; box-shadow: 8px 0, 16px 0, 24px 0, 32px 0, 40px 0, 0px 8px, 8px 8px, 16px 8px, 24px 8px, 32px 8px, 40px 8px, 48px 8px, 8px 16px #bdc3c7, 16px 16px #bdc3c7, 24px 16px #bdc3c7, 32px 16px #bdc3c7, 40px 16px #bdc3c7, 24px -8px #7f8c8d, 32px -8px #7f8c8d, 16px 16px #7f8c8d, 16px 24px #7f8c8d, 56px 8px, 64px 0, 64px 16px; }
+        .pixel-whale { position: absolute; width: 10px; height: 10px; background: transparent; color: #34495e; box-shadow: 20px 0, 30px 0, 40px 0, 50px 0, 60px 0, 70px 0, 10px 10px, 20px 10px, 30px 10px, 40px 10px, 50px 10px, 60px 10px, 70px 10px, 80px 10px, 0px 20px, 10px 20px, 20px 20px, 30px 20px, 40px 20px, 50px 20px, 60px 20px, 70px 20px, 80px 20px, 90px 20px, 10px 30px #ecf0f1, 20px 30px #ecf0f1, 30px 30px #ecf0f1, 40px 30px #ecf0f1, 50px 30px #ecf0f1, 60px 30px #ecf0f1, 70px 30px #ecf0f1, 100px 10px, 110px 0, 110px 20px; }
+        .pixel-starfish { position: absolute; width: 5px; height: 5px; background: transparent; color: #e74c3c; box-shadow: 10px 0, 5px 5px, 10px 5px, 15px 5px, 0px 10px, 5px 10px, 10px 10px, 15px 10px, 20px 10px, 5px 15px, 15px 15px, 0px 20px, 20px 20px; animation: rotateStar 8s linear infinite; }
+        @keyframes rotateStar { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .swim-left { animation: swimLeft linear infinite; transform: scale(3); } .swim-left-whale { animation: swimLeft linear infinite; transform: scale(4); }
+        .swim-right { animation: swimRight linear infinite; } .swim-right-whale { animation: swimRightWhale linear infinite; }
+        @keyframes swimLeft { from { left: 110%; } to { left: -30%; } }
+        @keyframes swimRight { from { left: -30%; transform: scaleX(-1) scaleY(1) scale(3); } to { left: 110%; transform: scaleX(-1) scaleY(1) scale(3); } }
+        @keyframes swimRightWhale { from { left: -30%; transform: scaleX(-1) scaleY(1) scale(4); } to { left: 110%; transform: scaleX(-1) scaleY(1) scale(4); } }
+        .tiny-bubble { position: absolute; width: 3px; height: 3px; background: rgba(255,255,255,0.6); animation: bubbleRise linear infinite; }
+        @keyframes bubbleRise { from { bottom: -10px; } to { bottom: 110%; } }
+
+        .bg-retro { background: linear-gradient(to right, #fdbb2d, #b21f1f, #1a2a6c);}
+        .swirl { position: absolute; width: 250px; height: 250px; border-radius: 50%; border: 15px dashed rgba(255, 255, 0, 0.4); box-shadow: 0 0 20px rgba(255,255,0,0.2); animation: spinSwirl 25s linear infinite; }
+        @keyframes spinSwirl { 100% { transform: rotate(360deg); scale: 1.2; } }
+
+        .bg-sakura { background: linear-gradient(to bottom, #dff9fb, #c7f1c8); }
+        .sakura-tree { position: absolute; bottom: 20px; width: 25px; height: 90px; background: #8B4513; box-shadow: 10px 0 0 #6b340f inset; z-index: 1; }
+        .sakura-tree::after { content: ''; position: absolute; top: -90px; left: -60px; width: 140px; height: 110px; background: #FFB7C5; box-shadow: 30px 20px 0 #FF69B4, -20px 30px 0 #FFC0CB, 10px -20px 0 #FFB7C5, 40px -10px 0 #FF69B4, -10px 10px 0 #fa8fa6 inset; border-radius: 40% 60% 50% 40%; }
+        .sakura-petal { position: absolute; width: 10px; height: 10px; background: #FFC0CB; box-shadow: 3px 3px 0 #FF69B4; border-radius: 2px 8px 2px 8px; animation: fallingPetal linear infinite; z-index: 2; }
+        @keyframes fallingPetal { 0% { transform: translate(0, -10vh) rotate(0deg); opacity: 1; } 100% { transform: translate(0, 110vh) rotate(360deg); opacity: 0; } }
+        .sakura-ground { position:absolute; bottom:0; width:100%; height:30px; background:#90EE90; border-top: 5px solid #32CD32; z-index: 1;}
+
+        .bg-cloud { background: #6FA8DC;}
+        .blocky-cloud { position: absolute; background: #fff; width: 100px; height: 30px; opacity: 0.9; box-shadow: 30px -20px 0 0 #fff, 60px -10px 0 0 #fff, 30px 20px 0 0 #eee, -20px 10px 0 0 #eee; animation: cloudFloat linear infinite; }
+        @keyframes cloudFloat { from { left: -200px; } to { left: 110%; } }
+
+        .bg-inferno { background: #4a0000; background-image: radial-gradient(circle at 10% 20%, rgba(0,0,0,0.4) 2px, transparent 2.5px), radial-gradient(circle at 30% 60%, rgba(0,0,0,0.4) 1.5px, transparent 2px), linear-gradient(to bottom, #600000, #300000); background-size: 60px 60px, 60px 60px, 100% 100%; position: relative; }
+        .lava-flow { position: absolute; bottom: 0; left: 0; width: 100%; height: 150px; background: linear-gradient(to bottom, #ff4500, #ff8c00, #cf1020); border-top: 5px solid #ffdd00; box-shadow: 0 -10px 30px rgba(255, 69, 0, 0.6); z-index: 1; }
+        .lava-flow::after { content: ''; position: absolute; top:0; left:0; width: 200%; height: 100%; background-image: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,0,0.2) 20px, rgba(255,255,0,0.2) 40px); animation: lavaFlowAnim 10s linear infinite; }
+        @keyframes lavaFlowAnim { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .ember { position: absolute; width: 4px; height: 4px; background-color: #ffcc00; box-shadow: 0 0 5px #ff4500; border-radius: 50%; opacity: 0; animation: rise 4s linear infinite; }
+        @keyframes rise { 0% { transform: translateY(100vh) scale(1); opacity: 1; } 100% { transform: translateY(-10vh) scale(0.5); opacity: 0; } }
+
+        .bg-galaxy { background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);}
+        .pixel-star { position: absolute; width: 3px; height: 3px; background: white; animation: starTwinkle linear infinite; }
+        @keyframes starTwinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        .pixel-planet { position: absolute; border-radius: 50%; box-shadow: -10px -10px 0 rgba(0,0,0,0.7) inset; }
+        .planet-mercury { width: 60px; height: 60px; top: 20%; left: 15%; background: repeating-linear-gradient(45deg, #7f8c8d, #7f8c8d 5px, #95a5a6 5px, #95a5a6 10px); animation: floatPlanet 40s linear infinite; }
+        .planet-venus { width: 90px; height: 90px; top: 60%; right: 20%; background: repeating-linear-gradient(-45deg, #d35400, #d35400 10px, #e67e22 10px, #e67e22 20px); animation: floatPlanet 60s linear infinite reverse; }
+        @keyframes floatPlanet { from { transform: rotate(0deg) translateY(0); } to { transform: rotate(360deg) translateY(20px); } }
+        .shooting-star { position: absolute; width: 4px; height: 4px; background: #fff; box-shadow: 0 0 10px #fff, 0 0 20px #fff; animation: shoot 3s linear infinite; opacity: 0; }
+        .shooting-star::before { content: ''; position: absolute; top: 50%; transform: translateY(-50%); right: 4px; width: 100px; height: 2px; background: linear-gradient(to right, transparent, #fff); }
+        @keyframes shoot { 0% { transform: translate(0, 0) rotate(-45deg); opacity: 1; } 100% { transform: translate(-50vw, 50vh) rotate(-45deg); opacity: 0; } }
+
+        /* --- UI CHÍNH --- */
+        #ui-container { position: relative; width: 90%; max-width: 900px; margin: 30px auto; background: var(--color-ui-bg); border: 4px solid #fff; padding: 20px; text-align: center; color: #fff; box-shadow: 10px 10px 0 rgba(0,0,0,0.5); z-index: 10; transition: all 0.5s ease; }
+        #ui-container.theme-desert { background: rgba(160, 82, 45, 0.9); border-color: #FFD700; color: #FFF8DC; }
+        #ui-container.theme-ocean { background: rgba(0, 105, 148, 0.9); border-color: #AFEEEE; }
+        #ui-container.theme-retro { background: rgba(26, 42, 108, 0.9); border-color: #fdbb2d; }
+        #ui-container.theme-sakura { background: rgba(255, 183, 197, 0.9); border-color: #FF69B4; color: #8B0000; }
+        #ui-container.theme-cloud { background: rgba(111, 168, 220, 0.9); border-color: #fff; color: #000; }
+        #ui-container.theme-inferno { background: rgba(80, 0, 0, 0.95); border-color: #ff4500; color: #ffdd00; box-shadow: 0 0 20px #ff0000; }
+        #ui-container.theme-galaxy { background: rgba(27, 39, 53, 0.95); border-color: #C0C0C0; }
+
+        .header-bar { display: flex; justify-content: space-between; border-bottom: 2px dashed currentColor; padding-bottom: 15px; margin-bottom: 20px; font-size: 1.3rem; }
+        #timer-box { font-size: 1.8rem; font-weight: bold; transition: color 0.5s ease; }
+        .timer-low { color: #e74c3c !important; animation: shakeTimer 0.2s infinite; }
+        @keyframes shakeTimer { 0% { transform: translate(0, 0); } 25% { transform: translate(2px, 0); } 75% { transform: translate(-2px, 0); } }
+
+        #question-text { font-size: 2rem; line-height: 1.4; margin-bottom: 30px; min-height: 120px; display: flex; align-items: center; justify-content: center; text-shadow: 2px 2px 0 rgba(0,0,0,0.2); }
+        .answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .btn-answer { background: rgba(0,0,0,0.5); color: inherit; border: 3px solid currentColor; padding: 25px; font-family: var(--font-main); font-size: 1.5rem; cursor: pointer; text-align: left; transition: transform 0.1s, background 0.2s; }
+        .btn-answer:hover { background: rgba(255,255,255,0.2); transform: translate(-4px, -4px); box-shadow: 4px 4px 0 #000; }
+        .btn-answer:active { transform: translate(0, 0); box-shadow: none; }
+        .btn-answer.correct { background: #27ae60 !important; color: #fff !important; border-color: #2ecc71 !important; }
+        .btn-answer.wrong { background: #c0392b !important; color: #fff !important; border-color: #e74c3c !important; }
+        .btn-answer.hidden { visibility: hidden; }
+
+        #lifeline-area { margin-top: 30px; text-align: right; }
+        #btn-5050 { background: var(--color-accent); color: #000; font-weight: bold; border: 3px solid #000; padding: 10px 25px; font-family: var(--font-main); font-size: 1.3rem; cursor: pointer; box-shadow: 4px 4px 0 #000; }
+        #btn-5050:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #000; }
+        #btn-5050:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(100%); }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; display: none; }
+        .overlay h1 { font-size: 5rem; margin-bottom: 20px; color: var(--color-accent); text-shadow: 5px 5px 0 #000; }
+        .overlay p { font-size: 2.5rem; }
+        #lose-reason { color: #e74c3c; font-weight: bold; margin-bottom: 30px; }
+        .btn-restart { margin-top: 40px; padding: 20px 40px; font-size: 2rem; font-family: var(--font-main); background: #fff; color: #000; border: 4px solid #000; cursor: pointer; box-shadow: 8px 8px 0 var(--color-accent); }
+        .btn-restart:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0 var(--color-accent); }
+
+        #screen-start h1 { animation: rainbowText 3s linear infinite; font-size: 6rem; text-shadow: 4px 4px 0 #000; }
+        @keyframes rainbowText { 0% { color: #ff0000; } 14% { color: #ff7f00; } 28% { color: #ffff00; } 42% { color: #00ff00; } 57% { color: #0000ff; } 71% { color: #4b0082; } 85% { color: #9400d3; } 100% { color: #ff0000; } }
+        .btn-start-pulse { animation: pulseBtn 1.5s infinite; background: linear-gradient(45deg, #FFD700, #FFA500); border-color: #fff; color: #000; font-weight: bold; }
+        @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
+
+        /* --- CÁNH CỔNG RETRO GATE (HIỆU ỨNG CHUYỂN CẢNH MỚI) --- */
+        #gate-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none; }
+        .gate-door {
+            position: absolute; width: 100%; height: 50%; left: 0;
+            background: #111;
+            border-bottom: 5px solid #333; /* Viền cửa */
+            transition: transform 0.8s ease-in-out;
+        }
+        #gate-top { top: 0; transform: translateY(-100%); border-bottom: 5px solid #0f0; } /* Cửa trên */
+        #gate-bottom { bottom: 0; transform: translateY(100%); border-top: 5px solid #0f0; } /* Cửa dưới */
+        
+        #gate-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: #0f0; font-size: 3rem; font-family: 'VT323', monospace;
+            text-shadow: 0 0 10px #0f0; opacity: 0;
+            transition: opacity 0.3s;
+        }
+        /* Class để kích hoạt đóng cửa */
+        .gate-closed #gate-top { transform: translateY(0); }
+        .gate-closed #gate-bottom { transform: translateY(0); }
+        .gate-closed #gate-text { opacity: 1; animation: blinkText 0.5s infinite alternate; }
+        @keyframes blinkText { from { opacity: 0.5; } to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <div id="world-layer" class="bg-desert"></div>
+    
+    <div id="gate-container">
+        <div id="gate-top" class="gate-door"></div>
+        <div id="gate-bottom" class="gate-door"></div>
+        <div id="gate-text">LOADING LEVEL...</div>
+    </div>
+
+    <div id="ui-container" style="display:none;">
+        <div class="header-bar">
+            <div>CẤP ĐỘ <span id="ui-level">1</span>/7</div>
+            <div>TIẾN ĐỘ: <span id="ui-q-progress">0/2</span> CÂU</div>
+            <div id="timer-box" class="timer-running">THỜI GIAN: <span id="timer-val">10</span>s</div>
+        </div>
+        <div id="question-text">...</div>
+        <div class="answers-grid">
+            <button class="btn-answer" onclick="selectAnswer(0)">A</button>
+            <button class="btn-answer" onclick="selectAnswer(1)">B</button>
+            <button class="btn-answer" onclick="selectAnswer(2)">C</button>
+            <button class="btn-answer" onclick="selectAnswer(3)">D</button>
+        </div>
+        <div id="lifeline-area">
+            <button id="btn-5050" onclick="useLifeline()">TRỢ GIÚP 50/50 (<span id="lifeline-count">4</span>)</button>
+        </div>
+    </div>
+
+    <div id="screen-start" class="overlay" style="display: flex; background: radial-gradient(circle, #2c3e50 0%, #000000 100%);">
+        <div style="position: absolute; top:0; left:0; width:100%; height:100%; z-index:-1; overflow:hidden;">
+             <div class="pixel-star" style="top:10%; left:20%; animation: starTwinkle 2s infinite"></div>
+             <div class="pixel-star" style="top:30%; left:80%; animation: starTwinkle 3s infinite"></div>
+             <div class="pixel-star" style="top:70%; left:50%; animation: starTwinkle 1.5s infinite"></div>
+             <div class="pixel-star" style="top:80%; left:10%; animation: starTwinkle 2.5s infinite"></div>
+        </div>
+        <h1>THÁCH ĐẤU TRÍ TUỆ PIXEL</h1>
+        <p style="color: #ccc; margin-bottom: 40px;">Thử thách kiến thức 7 cấp độ</p>
+        <button class="btn-restart btn-start-pulse" onclick="initGameAudioAndStart()">BẮT ĐẦU CHƠI ▶</button>
+    </div>
+
+    <div id="screen-lose" class="overlay">
+        <h1>GAME OVER</h1>
+        <p id="lose-reason">...</p> 
+        <p>Tự động chơi lại sau <span id="lose-count">5</span>s</p>
+    </div>
+
+    <div id="screen-win" class="overlay">
+        <h1>VICTORY!</h1>
+        <p>Bạn là bậc thầy Pixel!</p>
+        <p style="font-size: 1.5rem; margin-top: 20px; color: #ccc;">Tự động chơi lại sau 5s...</p>
+    </div>
+
+    <script>
+        const LEVELS = [
+            { id: 1, totalQ: 2, totalTime: 10, themeBg: 'bg-desert', themeUi: 'theme-desert', timerColor: '#00FFFF' },
+            { id: 2, totalQ: 3, totalTime: 20, themeBg: 'bg-ocean', themeUi: 'theme-ocean', timerColor: '#FFD700' },
+            { id: 3, totalQ: 4, totalTime: 30, themeBg: 'bg-retro', themeUi: 'theme-retro', timerColor: '#FFFFFF' },
+            { id: 4, totalQ: 4, totalTime: 40, themeBg: 'bg-sakura', themeUi: 'theme-sakura', timerColor: '#00008B' },
+            { id: 5, totalQ: 5, totalTime: 50, themeBg: 'bg-cloud', themeUi: 'theme-cloud', timerColor: '#000000' },
+            { id: 6, totalQ: 5, totalTime: 60, themeBg: 'bg-inferno', themeUi: 'theme-inferno', timerColor: '#00FFFF' },
+            { id: 7, totalQ: 7, totalTime: 150, themeBg: 'bg-galaxy', themeUi: 'theme-galaxy', timerColor: '#FFFFFF' }
+        ];
+
+        /* --- DATABASE CÂU HỎI ĐẦY ĐỦ (V10 Data) --- */
+        const QUESTION_DATABASE = {
+            1: [ 
+                {q: "Con gì có cái vòi rất dài?", a: ["Con voi", "Con gà", "Con chó", "Con mèo"], correct: "Con voi"},
+                {q: "1 + 1 bằng mấy?", a: ["3", "1", "2", "4"], correct: "2"},
+                {q: "Mặt trời mọc ở hướng nào?", a: ["Tây", "Đông", "Nam", "Bắc"], correct: "Đông"},
+                {q: "Bánh chưng hình gì?", a: ["Hình tròn", "Hình vuông", "Hình tam giác", "Hình thang"], correct: "Hình vuông"},
+                {q: "Con gì là chúa sơn lâm?", a: ["Hổ", "Sư tử", "Voi", "Gấu"], correct: "Hổ"},
+                {q: "Màu đỏ pha với màu vàng ra màu gì?", a: ["Tím", "Xanh lá", "Cam", "Đen"], correct: "Cam"},
+                {q: "Con gì kêu meo meo?", a: ["Chó", "Mèo", "Lợn", "Gà"], correct: "Mèo"},
+                {q: "Số chân của con gà là?", a: ["2", "4", "6", "8"], correct: "2"},
+                {q: "Quả gì màu đỏ thường dùng để nấu canh chua?", a: ["Cà chua", "Dưa hấu", "Táo", "Cam"], correct: "Cà chua"},
+                {q: "Xe máy có mấy bánh?", a: ["1", "2", "3", "4"], correct: "2"},
+                {q: "Cá thở bằng gì?", a: ["Mang", "Phổi", "Da", "Mũi"], correct: "Mang"},
+                {q: "Một năm có mấy mùa?", a: ["2", "3", "4", "5"], correct: "4"},
+                {q: "Tháng 2 có bao nhiêu ngày (năm không nhuận)?", a: ["28", "29", "30", "31"], correct: "28"},
+                {q: "Nước biển có vị gì?", a: ["Ngọt", "Mặn", "Chua", "Cay"], correct: "Mặn"},
+                {q: "Ai là người sáng tác bài 'Tiến quân ca'?", a: ["Trịnh Công Sơn", "Phạm Tuyên", "Văn Cao", "Hoàng Việt"], correct: "Văn Cao"},
+                {q: "Con cua có mấy càng?", a: ["2", "4", "6", "8"], correct: "2"},
+                {q: "Chữ cái đầu tiên trong bảng chữ cái tiếng Việt?", a: ["B", "C", "A", "D"], correct: "A"},
+                {q: "5 x 5 bằng mấy?", a: ["10", "20", "25", "30"], correct: "25"},
+                {q: "Con gì đập thì sống, không đập thì chết?", a: ["Con muỗi", "Con tim", "Con quay", "Con cá"], correct: "Con tim"},
+                {q: "Cái gì càng thắng lại càng thua?", a: ["Đua xe", "Cái phanh (thắng)", "Cờ bạc", "Đánh nhau"], correct: "Cái phanh (thắng)"},
+                {q: "Bóng đá chơi bằng gì?", a: ["Tay", "Chân", "Đầu", "Gậy"], correct: "Chân"},
+                {q: "Đèn giao thông có mấy màu?", a: ["2", "3", "4", "5"], correct: "3"},
+                {q: "Con gì biết bay mà không phải chim?", a: ["Dơi", "Gà", "Đà điểu", "Cánh cụt"], correct: "Dơi"},
+                {q: "Thủ đô của Việt Nam là gì?", a: ["Đà Nẵng", "TP.HCM", "Hà Nội", "Huế"], correct: "Hà Nội"},
+                {q: "Sông nào dài nhất Việt Nam?", a: ["Sông Hồng", "Sông Đà", "Sông Mê Kông", "Sông Đồng Nai"], correct: "Sông Mê Kông"},
+                {q: "Bác Hồ sinh năm nào?", a: ["1890", "1900", "1911", "1945"], correct: "1890"},
+                {q: "Ngày Quốc khánh Việt Nam là ngày nào?", a: ["30/4", "1/5", "2/9", "20/11"], correct: "2/9"},
+                {q: "Con gì ăn cỏ, đầu có sừng?", a: ["Chó", "Mèo", "Trâu", "Gà"], correct: "Trâu"},
+                {q: "Cái gì của bạn nhưng người khác dùng nhiều hơn?", a: ["Tiền", "Tên", "Xe", "Nhà"], correct: "Tên"},
+                {q: "Tháng nào ngắn nhất trong năm?", a: ["Tháng 2", "Tháng 4", "Tháng 6", "Tháng 12"], correct: "Tháng 2"},
+                {q: "Mặt trăng quay quanh cái gì?", a: ["Mặt trời", "Trái đất", "Sao hỏa", "Sao kim"], correct: "Trái đất"},
+                {q: "Con nhện có mấy chân?", a: ["6", "8", "10", "12"], correct: "8"},
+                {q: "Tỉnh nào ở cực Bắc Việt Nam?", a: ["Cà Mau", "Hà Giang", "Quảng Ninh", "Điện Biên"], correct: "Hà Giang"},
+                {q: "Dụng cụ nào dùng để đo nhiệt độ?", a: ["Thước kẻ", "Cân", "Nhiệt kế", "Đồng hồ"], correct: "Nhiệt kế"},
+                {q: "Lá cờ Việt Nam có ngôi sao màu gì?", a: ["Đỏ", "Vàng", "Xanh", "Trắng"], correct: "Vàng"},
+                {q: "Con vịt kêu thế nào?", a: ["Gâu gâu", "Meo meo", "Cạp cạp", "Ò ó o"], correct: "Cạp cạp"},
+                {q: "Quả gì năm múi bốn khe?", a: ["Quả cam", "Quả khế", "Quả táo", "Quả ổi"], correct: "Quả khế"},
+                {q: "Môn thể thao vua là môn gì?", a: ["Bóng chuyền", "Bóng rổ", "Bóng đá", "Bơi lội"], correct: "Bóng đá"},
+                {q: "Con gì sinh ra đã già?", a: ["Con người", "Ông già Noel", "Con gà con", "Con bò"], correct: "Ông già Noel"},
+                {q: "Một ly thủy tinh đựng đầy nước, làm sao lấy nước dưới đáy ly mà không đổ nước ra?", a: ["Dùng ống hút", "Đập vỡ ly", "Đổ ra ly khác", "Không làm được"], correct: "Dùng ống hút"}
+            ],
+
+
+
+            2: [
+                {q: "Thủ đô của nước Anh là gì?", a: ["Paris", "London", "Berlin", "New York"], correct: "London"},
+                {q: "Đội tuyển bóng đá nào vô địch World Cup 2018?", a: ["Đức", "Pháp", "Brazil", "Argentina"], correct: "Pháp"},
+                {q: "Từ 'Hello' trong tiếng Anh nghĩa là gì?", a: ["Tạm biệt", "Xin chào", "Cảm ơn", "Xin lỗi"], correct: "Xin chào"},
+                {q: "Sông Hàn nổi tiếng ở thành phố nào?", a: ["Hà Nội", "Đà Nẵng", "TP.HCM", "Huế"], correct: "Đà Nẵng"},
+                {q: "Đỉnh núi cao nhất thế giới?", a: ["Fansipan", "Everest", "Phú Sĩ", "K2"], correct: "Everest"},
+                {q: "Ai là người đầu tiên đặt chân lên mặt trăng?", a: ["Gagarin", "Armstrong", "Aldrin", "Collins"], correct: "Armstrong"},
+                {q: "Vịnh Hạ Long thuộc tỉnh nào?", a: ["Quảng Ninh", "Hải Phòng", "Thái Bình", "Nam Định"], correct: "Quảng Ninh"},
+                {q: "Nước nào có diện tích lớn nhất thế giới?", a: ["Mỹ", "Trung Quốc", "Nga", "Canada"], correct: "Nga"},
+                {q: "Ronaldo là cầu thủ nước nào?", a: ["Brazil", "Bồ Đào Nha", "Tây Ban Nha", "Argentina"], correct: "Bồ Đào Nha"},
+                {q: "Từ 'Apple' nghĩa là quả gì?", a: ["Cam", "Táo", "Chuối", "Nho"], correct: "Táo"},
+                {q: "Đà Lạt thuộc tỉnh nào?", a: ["Đắk Lắk", "Lâm Đồng", "Gia Lai", "Kon Tum"], correct: "Lâm Đồng"},
+                {q: "Môn bóng rổ mỗi đội có mấy người trên sân?", a: ["4", "5", "6", "7"], correct: "5"},
+                {q: "Châu lục nào lạnh nhất thế giới?", a: ["Châu Á", "Châu Âu", "Châu Nam Cực", "Châu Bắc Cực"], correct: "Châu Nam Cực"},
+                {q: "Từ 'Cat' nghĩa là con gì?", a: ["Chó", "Mèo", "Chuột", "Chim"], correct: "Mèo"},
+                {q: "Hồ Gươm nằm ở đâu?", a: ["Hà Nội", "Huế", "Đà Nẵng", "Cần Thơ"], correct: "Hà Nội"},
+                {q: "SEA Games là đại hội thể thao khu vực nào?", a: ["Châu Á", "Đông Nam Á", "Thế giới", "Châu Âu"], correct: "Đông Nam Á"},
+                {q: "Nước nào được gọi là xứ sở hoa anh đào?", a: ["Hàn Quốc", "Trung Quốc", "Nhật Bản", "Việt Nam"], correct: "Nhật Bản"},
+                {q: "Số La Mã 'X' giá trị bao nhiêu?", a: ["5", "10", "50", "100"], correct: "10"},
+                {q: "Con sông nào chảy qua Ai Cập?", a: ["Sông Amazon", "Sông Nin", "Sông Mê Kông", "Sông Dương Tử"], correct: "Sông Nin"},
+                {q: "Từ 'Book' nghĩa là gì?", a: ["Cái bút", "Quyển sách", "Cái bảng", "Cái bàn"], correct: "Quyển sách"},
+                {q: "Ai là người chạy nhanh nhất thế giới (điền kinh)?", a: ["Usain Bolt", "Carl Lewis", "Justin Gatlin", "Tyson Gay"], correct: "Usain Bolt"},
+                {q: "Đất nước hình chiếc ủng là nước nào?", a: ["Pháp", "Ý (Italy)", "Đức", "Tây Ban Nha"], correct: "Ý (Italy)"},
+                {q: "Cầu Rồng nằm ở thành phố nào?", a: ["Cần Thơ", "Hải Phòng", "Đà Nẵng", "Nha Trang"], correct: "Đà Nẵng"},
+                {q: "Từ 'Red' nghĩa là màu gì?", a: ["Xanh", "Đỏ", "Vàng", "Tím"], correct: "Đỏ"},
+                {q: "World Cup tổ chức mấy năm một lần?", a: ["2", "3", "4", "5"], correct: "4"},
+                {q: "Sa mạc lớn nhất thế giới?", a: ["Sahara", "Gobi", "Kalahari", "Nam Cực (Sa mạc băng)"], correct: "Sahara"},
+                {q: "Tháp Eiffel nằm ở đâu?", a: ["London", "Paris", "Rome", "Berlin"], correct: "Paris"},
+                {q: "Từ 'School' nghĩa là gì?", a: ["Bệnh viện", "Trường học", "Công viên", "Chợ"], correct: "Trường học"},
+                {q: "Môn thể thao nào dùng vợt và quả cầu lông?", a: ["Tennis", "Bóng bàn", "Cầu lông", "Bóng chày"], correct: "Cầu lông"},
+                {q: "Thành phố nào được mệnh danh là Hòn ngọc Viễn Đông?", a: ["Hà Nội", "Sài Gòn (TP.HCM)", "Đà Nẵng", "Hải Phòng"], correct: "Sài Gòn (TP.HCM)"},
+                {q: "Nước nào nằm ở phía tây của Việt Nam?", a: ["Lào", "Trung Quốc", "Campuchia", "Cả Lào và Campuchia"], correct: "Cả Lào và Campuchia"},
+                {q: "Từ 'Water' nghĩa là gì?", a: ["Lửa", "Nước", "Đất", "Khí"], correct: "Nước"},
+                {q: "Vận động viên Ánh Viên thi đấu môn gì?", a: ["Điền kinh", "Bơi lội", "Bắn súng", "Cờ vua"], correct: "Bơi lội"},
+                {q: "Kim Tự Tháp nằm ở nước nào?", a: ["Ấn Độ", "Ai Cập", "Mexico", "Peru"], correct: "Ai Cập"},
+                {q: "Từ 'Thank you' dùng để làm gì?", a: ["Chào hỏi", "Xin lỗi", "Cảm ơn", "Tạm biệt"], correct: "Cảm ơn"},
+                {q: "Quốc kỳ Việt Nam có nền màu gì?", a: ["Vàng", "Đỏ", "Xanh", "Trắng"], correct: "Đỏ"},
+                {q: "Biển Đông thuộc đại dương nào?", a: ["Ấn Độ Dương", "Đại Tây Dương", "Thái Bình Dương", "Bắc Băng Dương"], correct: "Thái Bình Dương"},
+                {q: "Bóng bàn có nguồn gốc từ nước nào?", a: ["Trung Quốc", "Anh", "Mỹ", "Nhật"], correct: "Anh"},
+                {q: "Từ 'Dog' nghĩa là con gì?", a: ["Mèo", "Chó", "Lợn", "Gà"], correct: "Chó"},
+                {q: "Hang Sơn Đoòng nằm ở tỉnh nào?", a: ["Quảng Bình", "Quảng Trị", "Quảng Nam", "Nghệ An"], correct: "Quảng Bình"}
+            ],
+            3: [
+                {q: "Truyện Kiều là tác phẩm của ai?", a: ["Nguyễn Trãi", "Nguyễn Du", "Nguyễn Khuyến", "Hồ Xuân Hương"], correct: "Nguyễn Du"},
+                {q: "Chiến thắng Điện Biên Phủ vào năm nào?", a: ["1945", "1954", "1975", "1972"], correct: "1954"},
+                {q: "Cây xanh quang hợp nhả ra khí gì?", a: ["CO2", "Oxy", "Nitơ", "Hydro"], correct: "Oxy"},
+                {q: "Ai là người dẹp loạn 12 sứ quân?", a: ["Đinh Bộ Lĩnh", "Lê Hoàn", "Ngô Quyền", "Lý Thái Tổ"], correct: "Đinh Bộ Lĩnh"},
+                {q: "Tác phẩm 'Dế Mèn phiêu lưu ký' của ai?", a: ["Nam Cao", "Tô Hoài", "Ngô Tất Tố", "Kim Lân"], correct: "Tô Hoài"},
+                {q: "Lá cây có màu xanh là do chất gì?", a: ["Diệp lục", "Xanthophyll", "Caroten", "Anthocyanin"], correct: "Diệp lục"},
+                {q: "Vua Hùng dựng nước đặt tên nước là gì?", a: ["Vạn Xuân", "Đại Cồ Việt", "Văn Lang", "Âu Lạc"], correct: "Văn Lang"},
+                {q: "Nhà thơ nào được mệnh danh là 'Bà chúa thơ Nôm'?", a: ["Đoàn Thị Điểm", "Hồ Xuân Hương", "Bà Huyện Thanh Quan", "Sương Nguyệt Anh"], correct: "Hồ Xuân Hương"},
+                {q: "Tim người có mấy ngăn?", a: ["2", "3", "4", "5"], correct: "4"},
+                {q: "Trận Bạch Đằng năm 938 do ai lãnh đạo?", a: ["Trần Hưng Đạo", "Ngô Quyền", "Lê Lợi", "Quang Trung"], correct: "Ngô Quyền"},
+                {q: "Tác phẩm 'Lão Hạc' là của nhà văn nào?", a: ["Ngô Tất Tố", "Vũ Trọng Phụng", "Nam Cao", "Thạch Lam"], correct: "Nam Cao"},
+                {q: "Động vật nào đẻ trứng?", a: ["Cá voi", "Dơi", "Thú mỏ vịt", "Mèo"], correct: "Thú mỏ vịt"},
+                {q: "Kinh đô đầu tiên của nước ta là?", a: ["Cổ Loa", "Phong Châu", "Hoa Lư", "Thăng Long"], correct: "Phong Châu"},
+                {q: "Bài thơ 'Nam quốc sơn hà' được coi là gì?", a: ["Bản tuyên ngôn độc lập đầu tiên", "Bài hịch tướng sĩ", "Bài cáo bình ngô", "Bài phú"], correct: "Bản tuyên ngôn độc lập đầu tiên"},
+                {q: "Cơ quan nào lọc máu trong cơ thể?", a: ["Tim", "Gan", "Thận", "Phổi"], correct: "Thận"},
+                {q: "Triều đại nào tồn tại lâu nhất trong lịch sử phong kiến VN?", a: ["Nhà Lý", "Nhà Trần", "Nhà Lê (Hậu Lê)", "Nhà Nguyễn"], correct: "Nhà Lê (Hậu Lê)"},
+                {q: "Nhân vật chị Dậu xuất hiện trong tác phẩm nào?", a: ["Tắt đèn", "Chí Phèo", "Vợ nhặt", "Đời thừa"], correct: "Tắt đèn"},
+                {q: "Loài vật nào ngủ đứng?", a: ["Chó", "Ngựa", "Mèo", "Hổ"], correct: "Ngựa"},
+                {q: "Ai là vị vua cuối cùng của triều Nguyễn?", a: ["Khải Định", "Bảo Đại", "Duy Tân", "Hàm Nghi"], correct: "Bảo Đại"},
+                {q: "Tác giả của 'Hịch tướng sĩ'?", a: ["Lý Thường Kiệt", "Trần Hưng Đạo", "Nguyễn Trãi", "Quang Trung"], correct: "Trần Hưng Đạo"},
+                {q: "Ếch hô hấp bằng gì?", a: ["Phổi", "Da", "Mang", "Cả phổi và da"], correct: "Cả phổi và da"},
+                {q: "Sự kiện 30/4/1975 là sự kiện gì?", a: ["Giải phóng miền Nam", "Quốc khánh", "Thành lập Đảng", "Chiến thắng Điện Biên Phủ"], correct: "Giải phóng miền Nam"},
+                {q: "Nhà văn nào được gọi là 'Ông vua phóng sự đất Bắc'?", a: ["Ngô Tất Tố", "Vũ Trọng Phụng", "Nam Cao", "Nguyễn Công Hoan"], correct: "Vũ Trọng Phụng"},
+                {q: "Con người có bao nhiêu cặp nhiễm sắc thể?", a: ["22", "23", "24", "46"], correct: "23"},
+                {q: "Tên thật của vua Quang Trung là gì?", a: ["Nguyễn Nhạc", "Nguyễn Lữ", "Nguyễn Huệ", "Nguyễn Ánh"], correct: "Nguyễn Huệ"},
+                {q: "Bài thơ 'Qua Đèo Ngang' của ai?", a: ["Hồ Xuân Hương", "Bà Huyện Thanh Quan", "Nguyễn Khuyến", "Trần Tế Xương"], correct: "Bà Huyện Thanh Quan"},
+                {q: "Vitamin nào tốt cho mắt?", a: ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D"], correct: "Vitamin A"},
+                {q: "Lý Thái Tổ dời đô về Thăng Long năm nào?", a: ["1009", "1010", "1011", "1012"], correct: "1010"},
+                {q: "Tác phẩm 'Vợ chồng A Phủ' viết về dân tộc nào?", a: ["Thái", "Mông", "Tày", "Dao"], correct: "Mông"},
+                {q: "Cá heo thuộc lớp động vật nào?", a: ["Cá", "Lưỡng cư", "Bò sát", "Thú"], correct: "Thú"},
+                {q: "Cuộc khởi nghĩa Hai Bà Trưng diễn ra năm nào?", a: ["Năm 40", "Năm 43", "Năm 938", "Năm 248"], correct: "Năm 40"},
+                {q: "Nhà thơ nào viết bài 'Đồng chí'?", a: ["Chính Hữu", "Phạm Tiến Duật", "Quang Dũng", "Hữu Thỉnh"], correct: "Chính Hữu"},
+                {q: "Máu người màu đỏ là do chứa chất gì?", a: ["Huyết tương", "Hemoglobin", "Bạch cầu", "Tiểu cầu"], correct: "Hemoglobin"},
+                {q: "Vị vua nào đã đánh tan quân Thanh năm 1789?", a: ["Lê Lợi", "Nguyễn Huệ", "Ngô Quyền", "Trần Hưng Đạo"], correct: "Nguyễn Huệ"},
+                {q: "Tác giả 'Bình Ngô Đại Cáo'?", a: ["Lê Lợi", "Nguyễn Trãi", "Lý Thường Kiệt", "Trần Quốc Tuấn"], correct: "Nguyễn Trãi"},
+                {q: "Răng khôn thường mọc ở độ tuổi nào?", a: ["Dưới 10", "10-15", "17-25", "Sau 40"], correct: "17-25"},
+                {q: "Tên nước ta thời nhà Nguyễn là gì?", a: ["Đại Việt", "Đại Nam", "Vạn Xuân", "Đại Cồ Việt"], correct: "Đại Nam"},
+                {q: "Tác phẩm 'Sống mòn' là của ai?", a: ["Nam Cao", "Vũ Trọng Phụng", "Nguyên Hồng", "Tô Hoài"], correct: "Nam Cao"},
+                {q: "Xương nào dài nhất trong cơ thể người?", a: ["Xương sống", "Xương đùi", "Xương cánh tay", "Xương chậu"], correct: "Xương đùi"},
+                {q: "Ai là người sáng lập ra nhà Trần?", a: ["Trần Thái Tông", "Trần Thủ Độ", "Trần Cảnh", "Trần Hưng Đạo"], correct: "Trần Thủ Độ"}
+            ],
+            4: [
+                {q: "Ký hiệu hóa học của Vàng là gì?", a: ["Ag", "Au", "Fe", "Cu"], correct: "Au"},
+                {q: "Công thức hóa học của muối ăn?", a: ["H2O", "NaCl", "HCl", "NaOH"], correct: "NaCl"},
+                {q: "Định luật 3 Newton nói về điều gì?", a: ["Quán tính", "Gia tốc", "Phản lực", "Vạn vật hấp dẫn"], correct: "Phản lực"},
+                {q: "Quốc gia nào có diện tích nhỏ nhất thế giới?", a: ["Monaco", "Vatican", "Nauru", "San Marino"], correct: "Vatican"},
+                {q: "Nước sôi ở bao nhiêu độ C (áp suất thường)?", a: ["80", "90", "100", "110"], correct: "100"},
+                {q: "Khí nào chiếm tỉ lệ cao nhất trong không khí?", a: ["Oxy", "Nitơ", "Cacbonic", "Hydro"], correct: "Nitơ"},
+                {q: "Đơn vị đo điện trở là gì?", a: ["Ampe", "Volt", "Ohm", "Watt"], correct: "Ohm"},
+                {q: "Sông nào dài nhất thế giới?", a: ["Sông Amazon", "Sông Nin", "Sông Dương Tử", "Sông Mississipi"], correct: "Sông Nin"},
+                {q: "Kim loại nào lỏng ở nhiệt độ thường?", a: ["Sắt", "Đồng", "Thủy ngân", "Kẽm"], correct: "Thủy ngân"},
+                {q: "Tốc độ ánh sáng trong chân không là bao nhiêu?", a: ["300.000 km/s", "150.000 km/s", "340 m/s", "1000 km/s"], correct: "300.000 km/s"},
+                {q: "Hồ nước ngọt sâu nhất thế giới?", a: ["Hồ Victoria", "Hồ Baikal", "Hồ Superior", "Hồ Tanganyika"], correct: "Hồ Baikal"},
+                {q: "Đá vôi có thành phần chính là gì?", a: ["CaSO4", "CaCO3", "CaO", "NaCl"], correct: "CaCO3"},
+                {q: "Lực nào giữ Trái đất quay quanh Mặt trời?", a: ["Lực ma sát", "Lực đàn hồi", "Lực hấp dẫn", "Lực từ"], correct: "Lực hấp dẫn"},
+                {q: "Thủ đô của Úc (Australia) là gì?", a: ["Sydney", "Melbourne", "Canberra", "Perth"], correct: "Canberra"},
+                {q: "PH < 7 là môi trường gì?", a: ["Axit", "Bazơ", "Trung tính", "Muối"], correct: "Axit"},
+                {q: "Ai tìm ra định luật Vạn vật hấp dẫn?", a: ["Einstein", "Newton", "Galileo", "Tesla"], correct: "Newton"},
+                {q: "Đất nước nào được mệnh danh là Lục địa già?", a: ["Châu Á", "Châu Âu", "Châu Phi", "Châu Mỹ"], correct: "Châu Âu"},
+                {q: "Nguyên tố phổ biến nhất trong vỏ Trái đất?", a: ["Sắt", "Nhôm", "Oxy", "Silic"], correct: "Oxy"},
+                {q: "Đơn vị đo cường độ dòng điện?", a: ["Volt", "Ampe", "Watt", "Joule"], correct: "Ampe"},
+                {q: "Núi Phú Sĩ nằm ở nước nào?", a: ["Trung Quốc", "Hàn Quốc", "Nhật Bản", "Triều Tiên"], correct: "Nhật Bản"},
+                {q: "Khí cười là khí nào?", a: ["NO", "N2O", "NO2", "NH3"], correct: "N2O"},
+                {q: "Hiện tượng cầu vồng do tán sắc ánh sáng tạo ra mấy màu chính?", a: ["5", "6", "7", "8"], correct: "7"},
+                {q: "Biển nào mặn nhất thế giới?", a: ["Biển Đen", "Biển Chết", "Biển Đỏ", "Biển Đông"], correct: "Biển Chết"},
+                {q: "Kim cương được cấu tạo từ nguyên tố nào?", a: ["Sắt", "Cacbon", "Silic", "Vàng"], correct: "Cacbon"},
+                {q: "Máy hơi nước do ai phát minh?", a: ["James Watt", "Edison", "Faraday", "Bell"], correct: "James Watt"},
+                {q: "Đất nước nào có nhiều đảo nhất thế giới?", a: ["Indonesia", "Philippines", "Thụy Điển", "Nhật Bản"], correct: "Thụy Điển"},
+                {q: "Axit nào có trong dạ dày người?", a: ["H2SO4", "HNO3", "HCl", "CH3COOH"], correct: "HCl"},
+                {q: "Ai phát minh ra bóng đèn điện?", a: ["Tesla", "Edison", "Bell", "Marconi"], correct: "Edison"},
+                {q: "Eo biển nào nối liền Thái Bình Dương và Ấn Độ Dương?", a: ["Eo biển Malacca", "Eo biển Bering", "Eo biển Gibraltar", "Eo biển Panama"], correct: "Eo biển Malacca"},
+                {q: "Ozon là dạng thù hình của nguyên tố nào?", a: ["Nitơ", "Oxy", "Hydro", "Clo"], correct: "Oxy"},
+                {q: "Gia tốc trọng trường g xấp xỉ bằng bao nhiêu?", a: ["9.8 m/s2", "100 m/s2", "3.14 m/s2", "1.6 m/s2"], correct: "9.8 m/s2"},
+                {q: "Thủ đô của Canada là gì?", a: ["Toronto", "Vancouver", "Ottawa", "Montreal"], correct: "Ottawa"},
+                {q: "Nước nào sản xuất cafe lớn nhất thế giới?", a: ["Việt Nam", "Brazil", "Colombia", "Ethiopia"], correct: "Brazil"},
+                {q: "Khí gì được bơm vào vỏ bim bim (snack)?", a: ["Oxy", "Nitơ", "Heli", "Cacbonic"], correct: "Nitơ"},
+                {q: "Sóng âm không truyền được trong môi trường nào?", a: ["Rắn", "Lỏng", "Khí", "Chân không"], correct: "Chân không"},
+                {q: "Dãy núi nào ngăn cách Châu Âu và Châu Á?", a: ["Dãy Andes", "Dãy Alps", "Dãy Ural", "Dãy Himalaya"], correct: "Dãy Ural"},
+                {q: "Chất nào dùng để làm ruột bút chì?", a: ["Chì", "Than đá", "Graphit (Than chì)", "Kim cương"], correct: "Graphit (Than chì)"},
+                {q: "Kính thiên văn do ai phát minh đầu tiên?", a: ["Newton", "Galileo", "Copernicus", "Kepler"], correct: "Galileo"},
+                {q: "Hành tinh nào được gọi là Hành tinh đỏ?", a: ["Sao Kim", "Sao Hỏa", "Sao Mộc", "Sao Thổ"], correct: "Sao Hỏa"},
+                {q: "Nguyên tố hóa học nào nhẹ nhất?", a: ["Heli", "Liti", "Hydro", "Beri"], correct: "Hydro"}
+            ],
+            5: [
+                {q: "Cách mạng Pháp bùng nổ năm nào?", a: ["1776", "1789", "1848", "1917"], correct: "1789"},
+                {q: "Tác giả của bộ tiểu thuyết 'Những người khốn khổ'?", a: ["Balzac", "Victor Hugo", "Zola", "Flaubert"], correct: "Victor Hugo"},
+                {q: "ADN được cấu tạo từ bao nhiêu loại Nu?", a: ["3", "4", "5", "6"], correct: "4"},
+                {q: "Ai là tổng thống đầu tiên của Mỹ?", a: ["Lincoln", "Jefferson", "Washington", "Roosevelt"], correct: "Washington"},
+                {q: "Tác phẩm 'Romeo và Juliet' của ai?", a: ["Shakespeare", "Dickens", "Hemingway", "Twain"], correct: "Shakespeare"},
+                {q: "Bào quan nào là 'nhà máy năng lượng' của tế bào?", a: ["Lục lạp", "Ti thể", "Nhân", "Riboxom"], correct: "Ti thể"},
+                {q: "Thế chiến thứ nhất bắt đầu năm nào?", a: ["1914", "1918", "1939", "1945"], correct: "1914"},
+                {q: "Nhân vật Don Quixote đánh nhau với cái gì?", a: ["Người khổng lồ", "Cối xay gió", "Rồng", "Sư tử"], correct: "Cối xay gió"},
+                {q: "Enzym trong nước bọt phân giải chất gì?", a: ["Protein", "Lipid", "Tinh bột", "Vitamin"], correct: "Tinh bột"},
+                {q: "Ai là người phát hiện ra Châu Mỹ?", a: ["Columbus", "Magellan", "Vasco da Gama", "Cook"], correct: "Columbus"},
+                {q: "Tác giả của 'Harry Potter'?", a: ["J.R.R. Tolkien", "J.K. Rowling", "Stephen King", "Dan Brown"], correct: "J.K. Rowling"},
+                {q: "Hormone Insulin do tuyến nào tiết ra?", a: ["Tuyến giáp", "Tuyến yên", "Tuyến tụy", "Tuyến thượng thận"], correct: "Tuyến tụy"},
+                {q: "Đế quốc La Mã sụp đổ vào thế kỷ nào?", a: ["Thế kỷ 3", "Thế kỷ 5", "Thế kỷ 10", "Thế kỷ 15"], correct: "Thế kỷ 5"},
+                {q: "Tác phẩm 'Chiến tranh và Hòa bình' của ai?", a: ["Dostoevsky", "Tolstoy", "Pushkin", "Chekhov"], correct: "Tolstoy"},
+                {q: "Đơn vị cấu tạo cơ bản của sự sống là gì?", a: ["Mô", "Tế bào", "Cơ quan", "Hệ cơ quan"], correct: "Tế bào"},
+                {q: "Cuộc cách mạng công nghiệp lần thứ nhất bắt đầu ở đâu?", a: ["Pháp", "Đức", "Anh", "Mỹ"], correct: "Anh"},
+                {q: "Nhân vật Sherlock Holmes sống ở đường nào?", a: ["Baker Street", "Downing Street", "Oxford Street", "Bond Street"], correct: "Baker Street"},
+                {q: "Nhóm máu nào là nhóm máu chuyên cho?", a: ["A", "B", "AB", "O"], correct: "O"},
+                {q: "Ai là hoàng đế đầu tiên của Trung Quốc?", a: ["Hán Vũ Đế", "Đường Thái Tông", "Tần Thủy Hoàng", "Khang Hy"], correct: "Tần Thủy Hoàng"},
+                {q: "Tác phẩm 'Thép đã tôi thế đấy' của ai?", a: ["Ostrovsky", "Gorky", "Sholokhov", "Mayakovsky"], correct: "Ostrovsky"},
+                {q: "Loài người thuộc bộ nào trong lớp Thú?", a: ["Bộ Ăn thịt", "Bộ Linh trưởng", "Bộ Gặm nhấm", "Bộ Móng guốc"], correct: "Bộ Linh trưởng"},
+                {q: "Bức tường Berlin sụp đổ năm nào?", a: ["1987", "1989", "1990", "1991"], correct: "1989"},
+                {q: "Giải Nobel Văn học 2016 được trao cho nhạc sĩ nào?", a: ["Bob Dylan", "Leonard Cohen", "Paul McCartney", "Sting"], correct: "Bob Dylan"},
+                {q: "Xương nhỏ nhất trong cơ thể người nằm ở đâu?", a: ["Mắt", "Tai", "Mũi", "Ngón tay"], correct: "Tai"},
+                {q: "Trận Trân Châu Cảng diễn ra năm nào?", a: ["1939", "1940", "1941", "1942"], correct: "1941"},
+                {q: "Tác phẩm 'Ông già và biển cả' của ai?", a: ["Hemingway", "Steinbeck", "Faulkner", "Fitzgerald"], correct: "Hemingway"},
+                {q: "Bộ phận nào của não điều khiển thăng bằng?", a: ["Đại não", "Tiểu não", "Não trung gian", "Hành tủy"], correct: "Tiểu não"},
+                {q: "Nữ hoàng Victoria cai trị nước Anh trong bao nhiêu năm?", a: ["50", "63", "64", "70"], correct: "63"},
+                {q: "Ai là tác giả của 'Thần khúc' (Divine Comedy)?", a: ["Dante", "Petrarch", "Boccaccio", "Machiavelli"], correct: "Dante"},
+                {q: "Vi khuẩn sinh sản chủ yếu bằng hình thức nào?", a: ["Nảy chồi", "Hữu tính", "Phân đôi", "Bào tử"], correct: "Phân đôi"},
+                {q: "Liên Xô tan rã vào năm nào?", a: ["1989", "1990", "1991", "1992"], correct: "1991"},
+                {q: "Cuốn sách 'Nguồn gốc các loài' là của ai?", a: ["Mendel", "Darwin", "Lamarck", "Pasteur"], correct: "Darwin"},
+                {q: "Cặp nhiễm sắc thể giới tính của nam là gì?", a: ["XX", "XY", "YY", "XO"], correct: "XY"},
+                {q: "Vị tướng nào đã đánh bại Napoleon ở Waterloo?", a: ["Nelson", "Wellington", "Blucher", "Kutuzov"], correct: "Wellington"},
+                {q: "Tác giả của 'Trăm năm cô đơn'?", a: ["Marquez", "Llosa", "Borges", "Coelho"], correct: "Marquez"},
+                {q: "Bệnh máu khó đông do đột biến gen nằm trên NST nào?", a: ["NST thường", "NST X", "NST Y", "Ti thể"], correct: "NST X"},
+                {q: "Cuộc Duy tân Minh Trị diễn ra ở nước nào?", a: ["Trung Quốc", "Hàn Quốc", "Nhật Bản", "Thái Lan"], correct: "Nhật Bản"},
+                {q: "Nhà văn nào từ chối nhận giải Nobel Văn học?", a: ["Sartre", "Camus", "Pasternak", "Solzhenitsyn"], correct: "Sartre"},
+                {q: "Cơ thể người có bao nhiêu đốt sống cổ?", a: ["5", "6", "7", "8"], correct: "7"},
+                {q: "Ai là người vẽ bức tranh Mona Lisa?", a: ["Michelangelo", "Raphael", "Da Vinci", "Donatello"], correct: "Da Vinci"}
+            ],
+            6: [ 
+                {q: "Định lý Fermat lớn được chứng minh năm nào?", a: ["1637", "1900", "1994", "2000"], correct: "1994"},
+                {q: "Hạt Quark nào không tồn tại?", a: ["Up", "Down", "Strange", "Light"], correct: "Light"},
+                {q: "Benzen có cấu trúc hình gì?", a: ["Tam giác đều", "Lục giác đều", "Ngũ giác đều", "Hình vuông"], correct: "Lục giác đều"},
+                {q: "Chiến tranh 100 năm giữa Anh và Pháp kéo dài bao lâu?", a: ["99 năm", "100 năm", "116 năm", "120 năm"], correct: "116 năm"},
+                {q: "Số Pi đến chữ số thập phân thứ 2 là bao nhiêu?", a: ["3.12", "3.14", "3.15", "3.16"], correct: "3.14"},
+                {q: "Ai tìm ra tia X?", a: ["Curie", "Rontgen", "Becquerel", "Rutherford"], correct: "Rontgen"},
+                {q: "Phản ứng tráng gương dùng hóa chất nào?", a: ["AgNO3/NH3", "Cu(OH)2", "HCl", "NaOH"], correct: "AgNO3/NH3"},
+                {q: "Đế quốc Byzantine sụp đổ năm nào?", a: ["1204", "1453", "1492", "1517"], correct: "1453"},
+                {q: "Tổng các góc trong một tứ giác lồi?", a: ["180", "270", "360", "540"], correct: "360"},
+                {q: "Thuyết Tương đối hẹp được công bố năm nào?", a: ["1900", "1905", "1915", "1921"], correct: "1905"},
+                {q: "Ancol Etylic có công thức là gì?", a: ["CH3OH", "C2H5OH", "CH3COOH", "C6H5OH"], correct: "C2H5OH"},
+                {q: "Vị vua nào của Anh có 6 người vợ?", a: ["Henry V", "Henry VIII", "Edward VI", "Richard III"], correct: "Henry VIII"},
+                {q: "Số nguyên tố chẵn duy nhất là gì?", a: ["0", "2", "4", "Không có"], correct: "2"},
+                {q: "Hạt nào không mang điện tích?", a: ["Proton", "Electron", "Neutron", "Positron"], correct: "Neutron"},
+                {q: "Polime nào được dùng làm cao su?", a: ["PE", "PVC", "Isopren", "PVA"], correct: "Isopren"},
+                {q: "Hiệp ước Versailles ký kết năm nào?", a: ["1918", "1919", "1920", "1921"], correct: "1919"},
+                {q: "Đạo hàm của sin(x) là gì?", a: ["cos(x)", "-cos(x)", "tan(x)", "-sin(x)"], correct: "cos(x)"},
+                {q: "Đơn vị đo độ phóng xạ?", a: ["Sievert", "Becquerel", "Gray", "Rad"], correct: "Becquerel"},
+                {q: "Axit nào ăn mòn thủy tinh?", a: ["HCl", "H2SO4", "HF", "HNO3"], correct: "HF"},
+                {q: "Cuộc chiến hoa hồng diễn ra ở đâu?", a: ["Pháp", "Anh", "Đức", "Ý"], correct: "Anh"},
+                {q: "Hình đa diện đều loại {3;3} là hình gì?", a: ["Tứ diện đều", "Lập phương", "Bát diện đều", "12 mặt đều"], correct: "Tứ diện đều"},
+                {q: "Ai đề xuất mô hình hành tinh nguyên tử?", a: ["Thomson", "Rutherford", "Bohr", "Schrodinger"], correct: "Rutherford"},
+                {q: "Khí thiên nhiên có thành phần chính là gì?", a: ["Metan", "Etan", "Propan", "Butan"], correct: "Metan"},
+                {q: "Năm 69 sau CN được gọi là năm của mấy vị hoàng đế La Mã?", a: ["2", "3", "4", "5"], correct: "4"},
+                {q: "Số e (cơ số logarit tự nhiên) xấp xỉ bằng?", a: ["2.718", "3.141", "1.618", "1.414"], correct: "2.718"},
+                {q: "Hạt Boson Higgs được tìm thấy năm nào?", a: ["2010", "2012", "2015", "2000"], correct: "2012"},
+                {q: "Thuốc nổ TNT được điều chế từ đâu?", a: ["Benzen", "Toluen", "Phenol", "Stiren"], correct: "Toluen"},
+                {q: "Đại dịch Cái chết đen xảy ra thế kỷ nào?", a: ["12", "13", "14", "15"], correct: "14"},
+                {q: "Tích phân của 1/x dx là gì?", a: ["ln|x|", "e^x", "1/x^2", "x"], correct: "ln|x|"},
+                {q: "Nhiệt độ thấp nhất có thể đạt được (Độ không tuyệt đối)?", a: ["-273.15 C", "-100 C", "0 C", "-500 C"], correct: "-273.15 C"},
+                {q: "Kim loại nào dẫn điện tốt nhất?", a: ["Vàng", "Đồng", "Bạc", "Nhôm"], correct: "Bạc"},
+                {q: "Triều đại nào ở TQ tồn tại ngắn nhất?", a: ["Tần", "Tùy", "Hán", "Đường"], correct: "Tần"},
+                {q: "Định lý Cosin áp dụng cho tam giác nào?", a: ["Tam giác vuông", "Mọi tam giác", "Tam giác đều", "Tam giác cân"], correct: "Mọi tam giác"},
+                {q: "Lực nào không phải là lực cơ bản?", a: ["Hấp dẫn", "Điện từ", "Hạt nhân mạnh", "Ma sát"], correct: "Ma sát"},
+                {q: "Dấm ăn là dung dịch của axit nào?", a: ["Formic", "Acetic", "Propionic", "Lactic"], correct: "Acetic"},
+                {q: "Ai là người thống nhất nước Đức năm 1871?", a: ["Wilhelm I", "Bismarck", "Hitler", "Frederick"], correct: "Bismarck"},
+                {q: "Xác suất để gieo xúc xắc ra mặt 6 chấm?", a: ["1/2", "1/4", "1/6", "1/12"], correct: "1/6"},
+                {q: "Hố đen đầu tiên chụp được ảnh nằm ở thiên hà nào?", a: ["Milky Way", "Andromeda", "M87", "M31"], correct: "M87"},
+                {q: "Nguyên tố nào có độ âm điện lớn nhất?", a: ["Oxy", "Clo", "Flo", "Nitơ"], correct: "Flo"},
+                {q: "Chiến dịch Barbarossa là Đức tấn công nước nào?", a: ["Pháp", "Anh", "Liên Xô", "Ba Lan"], correct: "Liên Xô"}
+            ],
+            7: [ 
+                {q: "Giải Nobel không có lĩnh vực nào?", a: ["Vật lý", "Toán học", "Hóa học", "Văn học"], correct: "Toán học"},
+                {q: "Quốc gia nào có nhiều múi giờ nhất (kể cả lãnh thổ hải ngoại)?", a: ["Nga", "Mỹ", "Pháp", "Anh"], correct: "Pháp"},
+                {q: "Tên thật của danh họa Picasso có bao nhiêu từ?", a: ["3", "12", "23", "5"], correct: "23"},
+                {q: "Sân bay nào có mã IATA là SGN?", a: ["Tân Sơn Nhất", "Nội Bài", "Singapore", "Sydney"], correct: "Tân Sơn Nhất"},
+                {q: "Hành tinh nào trong hệ mặt trời quay ngược chiều kim đồng hồ?", a: ["Sao Kim", "Sao Mộc", "Sao Thổ", "Sao Hỏa"], correct: "Sao Kim"},
+                {q: "Năm nhuận tiếp theo sau năm 2024 là năm nào?", a: ["2026", "2027", "2028", "2030"], correct: "2028"},
+                {q: "Thủ đô của Kazakhstan hiện nay là gì?", a: ["Almaty", "Astana", "Nur-Sultan", "Tashkent"], correct: "Astana"},
+                {q: "Trong bài thơ 'Tây Tiến', đoàn binh không mọc cái gì?", a: ["Râu", "Tóc", "Mắt", "Tai"], correct: "Tóc"},
+                {q: "Ai là người phụ nữ đầu tiên bay vào vũ trụ?", a: ["Valentina Tereshkova", "Sally Ride", "Yang Liwei", "Svetlana Savitskaya"], correct: "Valentina Tereshkova"},
+                {q: "Mã vùng điện thoại của Việt Nam là gì?", a: ["+81", "+82", "+84", "+86"], correct: "+84"},
+                {q: "Bộ phim nào giành giải Oscar Phim hay nhất năm 2020?", a: ["Parasite", "1917", "Joker", "Green Book"], correct: "Parasite"},
+                {q: "Đỉnh núi cao nhất Châu Phi?", a: ["Kilimanjaro", "Kenya", "Atlas", "Everest"], correct: "Kilimanjaro"},
+                {q: "Ngôn ngữ nào được nói nhiều nhất thế giới (bản ngữ)?", a: ["Tiếng Anh", "Tiếng Trung", "Tiếng Tây Ban Nha", "Tiếng Ả Rập"], correct: "Tiếng Trung"},
+                {q: "Loài vật nào có nhịp tim chậm nhất?", a: ["Voi", "Cá voi xanh", "Rùa", "Gấu ngủ đông"], correct: "Cá voi xanh"},
+                {q: "Ai là Tổng thư ký Liên Hợp Quốc hiện nay (2024)?", a: ["Ban Ki-moon", "Antonio Guterres", "Kofi Annan", "Boutros-Ghali"], correct: "Antonio Guterres"},
+                {q: "Đơn vị tiền tệ của Ba Lan là gì?", a: ["Euro", "Zloty", "Krona", "Forint"], correct: "Zloty"},
+                {q: "Tác phẩm điêu khắc 'David' là của ai?", a: ["Michelangelo", "Donatello", "Bernini", "Rodin"], correct: "Michelangelo"},
+                {q: "Vị vua nào có thời gian trị vì ngắn nhất lịch sử Việt Nam?", a: ["Dục Đức", "Hiệp Hòa", "Kiến Phúc", "Đồng Khánh"], correct: "Dục Đức"},
+                {q: "Hệ điều hành Android do công ty nào phát triển ban đầu?", a: ["Google", "Samsung", "Android Inc.", "Apple"], correct: "Android Inc."},
+                {q: "Thành phố nào nằm trên hai châu lục?", a: ["Istanbul", "Moscow", "Cairo", "Rome"], correct: "Istanbul"},
+                {q: "Nguyên tố hóa học thứ 118 có tên là gì?", a: ["Oganesson", "Tennessine", "Moscovium", "Nihonium"], correct: "Oganesson"},
+                {q: "World Cup đầu tiên tổ chức năm nào?", a: ["1928", "1930", "1934", "1938"], correct: "1930"},
+                {q: "Ai viết cuốn 'Lược sử thời gian'?", a: ["Stephen Hawking", "Carl Sagan", "Neil deGrasse Tyson", "Michio Kaku"], correct: "Stephen Hawking"},
+                {q: "Lá cờ quốc gia nào không có hình chữ nhật?", a: ["Nepal", "Thụy Sĩ", "Vatican", "Monaco"], correct: "Nepal"},
+                {q: "Công ty nào có giá trị vốn hóa lớn nhất thế giới (2024)?", a: ["Apple", "Microsoft", "Amazon", "Google"], correct: "Microsoft"},
+                {q: "Hãng xe Lamborghini ban đầu sản xuất gì?", a: ["Máy bay", "Máy cày", "Xe đạp", "Xe máy"], correct: "Máy cày"},
+                {q: "Tác giả của bộ truyện tranh 'Doraemon'?", a: ["Fujiko F. Fujio", "Toriyama Akira", "Oda Eiichiro", "Kishimoto Masashi"], correct: "Fujiko F. Fujio"},
+                {q: "Quốc gia nào không có sông?", a: ["Ả Rập Xê Út", "Ai Cập", "Iran", "Thổ Nhĩ Kỳ"], correct: "Ả Rập Xê Út"},
+                {q: "Ai là người phát minh ra World Wide Web (WWW)?", a: ["Bill Gates", "Steve Jobs", "Tim Berners-Lee", "Mark Zuckerberg"], correct: "Tim Berners-Lee"},
+                {q: "Tòa nhà cao nhất thế giới hiện nay (2024)?", a: ["Shanghai Tower", "Burj Khalifa", "Landmark 81", "Taipei 101"], correct: "Burj Khalifa"},
+                {q: "Bộ phận duy nhất trên cơ thể không có mạch máu?", a: ["Giác mạc", "Móng tay", "Tóc", "Răng"], correct: "Giác mạc"},
+                {q: "Số 0 được phát minh bởi nền văn minh nào?", a: ["Hy Lạp", "La Mã", "Ấn Độ", "Ai Cập"], correct: "Ấn Độ"},
+                {q: "Đảo lớn nhất thế giới?", a: ["Greenland", "Úc", "Borneo", "New Guinea"], correct: "Greenland"},
+                {q: "Ai là người giàu nhất thế giới (theo Forbes 2024)?", a: ["Elon Musk", "Bernard Arnault", "Jeff Bezos", "Bill Gates"], correct: "Bernard Arnault"},
+                {q: "Chất nào cứng nhất trong cơ thể người?", a: ["Xương đùi", "Men răng", "Móng tay", "Sọ"], correct: "Men răng"},
+                {q: "Thành phố nào là nơi sinh của Mozart?", a: ["Vienna", "Salzburg", "Munich", "Berlin"], correct: "Salzburg"},
+                {q: "Quốc hoa của Việt Nam là gì (không chính thức nhưng được công nhận)?", a: ["Hoa Mai", "Hoa Đào", "Hoa Sen", "Hoa Lan"], correct: "Hoa Sen"},
+                {q: "Tốc độ âm thanh trong không khí là bao nhiêu?", a: ["343 m/s", "300 m/s", "1000 m/s", "1500 m/s"], correct: "343 m/s"},
+                {q: "Ai là vị hoàng đế cuối cùng của Trung Hoa?", a: ["Phổ Nghi", "Quang Tự", "Đồng Trị", "Khang Hy"], correct: "Phổ Nghi"},
+                {q: "Đâu là tên một loại cà phê đắt nhất thế giới?", a: ["Kopi Luwak", "Blue Mountain", "Robusta", "Arabica"], correct: "Kopi Luwak"}
+            ]
+        };
+
+        let gameState = { levelIdx: 0, currentLevelQs: [], qIdxInLevel: 0, timeLeft: 0, timerInt: null, lifelines: 4, isLocked: false };
+
+        const UI = {
+            world: document.getElementById('world-layer'), container: document.getElementById('ui-container'),
+            levelDisplay: document.getElementById('ui-level'), progressDisplay: document.getElementById('ui-q-progress'),
+            timerBox: document.getElementById('timer-box'), timerVal: document.getElementById('timer-val'),
+            qText: document.getElementById('question-text'), btns: document.querySelectorAll('.btn-answer'),
+            btn5050: document.getElementById('btn-5050'), count5050: document.getElementById('lifeline-count'),
+            screenStart: document.getElementById('screen-start'),
+            screenLose: document.getElementById('screen-lose'), loseCount: document.getElementById('lose-count'), loseReason: document.getElementById('lose-reason'),
+            screenWin: document.getElementById('screen-win'),
+            gateContainer: document.getElementById('gate-container')
+        };
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        const MusicBox = {
+            interval: null,
+            play: function(theme) {
+                if(this.interval) clearInterval(this.interval);
+                if(theme === 'bg-desert') this.startDesert();
+                else if(theme === 'bg-ocean') this.startOcean();
+                else if(theme === 'bg-retro') this.startRetro();
+                else if(theme === 'bg-sakura') this.startSakura();
+                else if(theme === 'bg-cloud') this.startCloud();
+                else if(theme === 'bg-inferno') this.startInferno();
+                else if(theme === 'bg-galaxy') this.startGalaxy();
+            },
+            stop: function() { if(this.interval) clearInterval(this.interval); },
+            playNote: function(freq, type, duration, vol=0.1) {
+                if(audioCtx.state === 'suspended') return;
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+                osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
+            },
+            startDesert: function() { const notes=[220,233,277,293,311,349,392]; this.interval=setInterval(()=>{if(Math.random()>0.6)this.playNote(notes[Math.floor(Math.random()*notes.length)],'triangle',0.5,0.15);},400); },
+            startOcean: function() { const notes=[261,329,392,493]; this.interval=setInterval(()=>{this.playNote(notes[Math.floor(Math.random()*notes.length)]/(Math.random()>0.5?1:2),'sine',2.0,0.2);},800); },
+            startRetro: function() { const notes=[523,587,659,698,783,880,987]; this.interval=setInterval(()=>{this.playNote(notes[Math.floor(Math.random()*notes.length)],'square',0.1,0.05);},150); },
+            startSakura: function() { const notes=[261,293,329,392,440,523]; this.interval=setInterval(()=>{if(Math.random()>0.4)this.playNote(notes[Math.floor(Math.random()*notes.length)],'triangle',1.0,0.1);},600); },
+            startCloud: function() { const notes=[523,659,783,1046]; this.interval=setInterval(()=>{if(Math.random()>0.7)this.playNote(notes[Math.floor(Math.random()*notes.length)]*2,'sine',1.5,0.05);},300); },
+            startInferno: function() { const notes=[110,116,123]; this.interval=setInterval(()=>{this.playNote(notes[Math.floor(Math.random()*notes.length)],'sawtooth',0.8,0.15); if(Math.random()>0.8)this.playNote(880,'sawtooth',0.1,0.05);},200); },
+            startGalaxy: function() { const notes=[196,246,293,392]; this.interval=setInterval(()=>{this.playNote(notes[Math.floor(Math.random()*notes.length)],'sine',3.0,0.1);},1000); }
+        };
+
+        function playSfx(type) {
+            if(audioCtx.state === 'suspended') return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            if(type === 'correct') {
+                osc.type='sine'; osc.frequency.setValueAtTime(600,audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(1000,audioCtx.currentTime+0.2);
+                gain.gain.setValueAtTime(0.3,audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0,audioCtx.currentTime+0.5); osc.start(); osc.stop(audioCtx.currentTime+0.5);
+            } else if(type === 'wrong') {
+                osc.type='sawtooth'; osc.frequency.setValueAtTime(200,audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.3,audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0,audioCtx.currentTime+0.5); osc.start(); osc.stop(audioCtx.currentTime+0.5);
+            } else if(type === 'tick' && gameState.timeLeft<=5) {
+                 osc.type='square'; osc.frequency.setValueAtTime(800,audioCtx.currentTime); gain.gain.setValueAtTime(0.1,audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime+0.05);
+            }
+        }
+
+        function initGameAudioAndStart() {
+            UI.screenStart.style.display = 'none'; UI.container.style.display = 'block';
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            startGame();
+        }
+
+        function applyEnvironment(lvlConfig) {
+            UI.world.innerHTML = ''; UI.world.className = lvlConfig.themeBg;
+            UI.container.className = ''; void UI.container.offsetWidth; UI.container.classList.add(lvlConfig.themeUi);
+            MusicBox.play(lvlConfig.themeBg);
+
+            switch(lvlConfig.themeBg) {
+                case 'bg-desert': let storm = document.createElement('div'); storm.className='sand-storm'; UI.world.appendChild(storm); break;
+                case 'bg-ocean':
+                    for(let i=0; i<15; i++) { 
+                        let el = document.createElement('div');
+                        let rand = Math.random();
+                        if (rand < 0.4) { el.className = 'pixel-dolphin-base'; if(Math.random()>0.5) el.classList.add('swim-left'); else el.classList.add('swim-right'); } 
+                        else if (rand < 0.7) { el.className = 'pixel-whale'; if(Math.random()>0.5) el.classList.add('swim-left-whale'); else el.classList.add('swim-right-whale'); } 
+                        else { el.className = 'pixel-starfish'; }
+                        el.style.top = Math.random() * 90 + '%';
+                        if (el.className.includes('starfish')) el.style.left = Math.random() * 95 + '%';
+                        else { let dur = 15 + Math.random() * 25; el.style.animationDuration = dur + 's'; el.style.animationDelay = -Math.random() * dur + 's'; }
+                        UI.world.appendChild(el);
+                    }
+                    spawnObjects(40, 'tiny-bubble', 8, 15, true); break;
+                case 'bg-retro': for(let i=0;i<4;i++) spawnRandom('swirl'); break;
+                case 'bg-sakura':
+                    UI.world.innerHTML += '<div class="sakura-ground"></div>';
+                    for(let i=0; i<6; i++) { let tree = document.createElement('div'); tree.className = 'sakura-tree'; tree.style.left = (i*18+Math.random()*5)+'%'; let scale = 0.8+Math.random()*0.5; tree.style.transform = `scale(${scale})`; tree.style.zIndex = Math.floor(scale*10); UI.world.appendChild(tree); }
+                    spawnObjects(30, 'sakura-petal', 5, 12, true); break;
+                case 'bg-cloud': spawnObjects(15, 'blocky-cloud', 15, 35, true); break;
+                case 'bg-inferno': UI.world.innerHTML += '<div class="lava-flow"></div>'; spawnObjects(30, 'ember', 3, 6, true); break;
+                case 'bg-galaxy':
+                    spawnObjects(60, 'pixel-star', 2, 5, true); UI.world.innerHTML += '<div class="pixel-planet planet-mercury"></div><div class="pixel-planet planet-venus"></div>';
+                    setInterval(() => { let star = document.createElement('div'); star.className = 'shooting-star'; star.style.top = Math.random()*50+'%'; star.style.left = Math.random()*100+'%'; UI.world.appendChild(star); setTimeout(() => star.remove(), 3000); }, 2000); break;
+            }
+        }
+
+        function spawnObjects(count, className, minDur, maxDur, randomDelay=false) {
+            for(let i=0; i<count; i++) {
+                let el = document.createElement('div'); el.className = className; el.style.top = Math.random()*95+'%';
+                if(randomDelay) el.style.left = Math.random()*100+'%';
+                if(minDur > 0) { let dur = minDur + Math.random()*(maxDur-minDur); el.style.animationDuration = dur + 's'; if(randomDelay) el.style.animationDelay = -Math.random()*dur + 's'; }
+                UI.world.appendChild(el);
+            }
+        }
+        function spawnRandom(cls) { let el = document.createElement('div'); el.className=cls; el.style.left=Math.random()*80+'%'; el.style.top=Math.random()*80+'%'; UI.world.appendChild(el); }
+
+        function startGame() { gameState.levelIdx = 0; gameState.lifelines = 4; UI.count5050.innerText = gameState.lifelines; UI.btn5050.disabled = false; UI.screenLose.style.display = 'none'; UI.screenWin.style.display = 'none'; startLevel(); }
+        
+        function startLevel() {
+            const config = LEVELS[gameState.levelIdx]; UI.levelDisplay.innerText = config.id; applyEnvironment(config);
+            const pool = QUESTION_DATABASE[config.id]; gameState.currentLevelQs = [...pool].sort(() => 0.5 - Math.random()).slice(0, config.totalQ); gameState.qIdxInLevel = 0;
+            gameState.timeLeft = config.totalTime; UI.timerVal.innerText = gameState.timeLeft; UI.timerBox.style.color = config.timerColor; UI.timerBox.classList.remove('timer-low');
+            clearInterval(gameState.timerInt);
+            gameState.timerInt = setInterval(() => {
+                gameState.timeLeft--; UI.timerVal.innerText = gameState.timeLeft; playSfx('tick');
+                if(gameState.timeLeft <= 5) UI.timerBox.classList.add('timer-low');
+                if(gameState.timeLeft <= 0) { clearInterval(gameState.timerInt); triggerLose('timeout'); }
+            }, 1000);
+            loadQuestionUi();
+        }
+
+        function loadQuestionUi() {
+            if(gameState.qIdxInLevel >= gameState.currentLevelQs.length) { nextLevel(); return; }
+            const qData = gameState.currentLevelQs[gameState.qIdxInLevel]; UI.progressDisplay.innerText = `${gameState.qIdxInLevel + 1}/${gameState.currentLevelQs.length}`; UI.qText.innerText = qData.q;
+            
+            let answers = qData.a.map(ans => ({ text: ans, isCorrect: ans === qData.correct }));
+            answers.sort(() => Math.random() - 0.5);
+
+            UI.btns.forEach((btn, idx) => { 
+                btn.innerText = ["A. ", "B. ", "C. ", "D. "][idx] + answers[idx].text; 
+                btn.dataset.isCorrect = answers[idx].isCorrect; 
+                btn.className = 'btn-answer'; btn.disabled = false; btn.classList.remove('hidden');
+            });
+            gameState.isLocked = false;
+        }
+
+        function selectAnswer(idx) {
+            if(gameState.isLocked) return; gameState.isLocked = true; 
+            let selectedBtn = UI.btns[idx];
+            let isCorrect = selectedBtn.dataset.isCorrect === 'true';
+
+            if(isCorrect) {
+                selectedBtn.classList.add('correct'); playSfx('correct'); 
+                setTimeout(() => { gameState.qIdxInLevel++; loadQuestionUi(); }, 1500); 
+            } else {
+                selectedBtn.classList.add('wrong'); playSfx('wrong');
+                UI.btns.forEach(btn => { if(btn.dataset.isCorrect === 'true') btn.classList.add('correct'); });
+                clearInterval(gameState.timerInt); setTimeout(() => triggerLose('wrong'), 1500); 
+            }
+        }
+
+        // --- HÀM CHUYỂN CẢNH MỚI: RETRO GATE ---
+        function runGateTransition(callback) {
+            UI.gateContainer.style.display = 'block';
+            
+            // Đóng cửa
+            setTimeout(() => {
+                UI.gateContainer.classList.add('gate-closed');
+            }, 50);
+
+            // Chờ cửa đóng kín (0.8s) -> chạy callback (đổi màn)
+            setTimeout(() => {
+                callback();
+            }, 1000);
+
+            // Mở cửa ra
+            setTimeout(() => {
+                UI.gateContainer.classList.remove('gate-closed');
+            }, 2000);
+
+            // Ẩn container
+            setTimeout(() => {
+                UI.gateContainer.style.display = 'none';
+            }, 3000);
+        }
+
+        function nextLevel() { 
+            clearInterval(gameState.timerInt); 
+            gameState.levelIdx++; 
+            if(gameState.levelIdx >= LEVELS.length) { 
+                triggerWin(); 
+            } else { 
+                // Gọi hiệu ứng Gate
+                runGateTransition(() => {
+                    startLevel();
+                });
+            } 
+        }
+        
+        function useLifeline() { 
+            if(gameState.lifelines <= 0 || gameState.isLocked) return; 
+            gameState.lifelines--; UI.count5050.innerText = gameState.lifelines; if(gameState.lifelines === 0) UI.btn5050.disabled = true; 
+            let wrongBtns = [];
+            UI.btns.forEach((btn, index) => {
+                if(btn.dataset.isCorrect === 'false' && !btn.classList.contains('hidden')) wrongBtns.push(index);
+            });
+            wrongBtns.sort(() => 0.5 - Math.random());
+            if(wrongBtns.length >= 2) {
+                UI.btns[wrongBtns[0]].classList.add('hidden');
+                UI.btns[wrongBtns[1]].classList.add('hidden');
+            }
+        }
+
+        function triggerLose(reason) {
+            MusicBox.stop();
+            if (reason === 'timeout') UI.loseReason.innerText = "Thời gian của bạn đã kết thúc!";
+            else UI.loseReason.innerText = "Bạn đã trả lời sai!";
+            UI.screenLose.style.display = 'flex'; let count = 5; UI.loseCount.innerText = count; 
+            let int = setInterval(() => { count--; UI.loseCount.innerText = count; if(count <= 0) { clearInterval(int); startGame(); } }, 1000);
+        }
+
+        function triggerWin() { MusicBox.stop(); UI.screenWin.style.display = 'flex'; playSfx('correct'); setTimeout(startGame, 5000); }
+        function restartGame() { startGame(); }
+        
+    </script>
+</body>
+</html>
