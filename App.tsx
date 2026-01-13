@@ -202,21 +202,7 @@ const App: React.FC = () => {
               </h1>
             </div>
             
-            <nav className="hidden md:block">
-              <ul className="flex list-none">
-                {['Trang Chủ', 'Giới Thiệu', 'Liên Hệ'].map((item) => (
-                  <li key={item} className="ml-6">
-                    <a
-                      href="https://zx-inky-pi.vercel.app/"
-                      className="text-dark font-medium transition-colors relative group hover:text-primary"
-                    >
-                      {item}
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent transition-all duration-300 group-hover:w-full"></span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+           
 
             <div className="flex items-center gap-4">
               {user ? (
