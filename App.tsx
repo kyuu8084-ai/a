@@ -119,17 +119,17 @@ const App: React.FC = () => {
     fab?: boolean; 
     far?: boolean; 
   }[] = [
-    { label: 'Trang Chủ', icon: 'fa-home', href: '#' },
-    { label: 'Người Thắp Đèn', icon: 'fa-user-graduate', href: 'nguoi_thap_den.html' },
+    { label: 'Trang Chủ', icon: 'fa-home', href: 'https://a-beta-gules.vercel.app/' },
+    { label: 'Người Thắp Đèn', icon: 'fa-user-graduate', href: 'https://am-bice-gamma.vercel.app/' },
     { label: 'Định Hướng Nghề Nghiệp', icon: 'fa-compass', href: 'https://ah-henna.vercel.app/' },
-    { label: 'Phương Pháp Học Tập', icon: 'fa-book-open', href: 'phuong_phap.html' },
+    { label: 'Phương Pháp Học Tập', icon: 'fa-book-open', href: 'https://ac-beta-nine.vercel.app/' },
     { label: 'Khóa Học Lớp 12', icon: 'fa-chalkboard-teacher', onClick: () => { setIsSidebarActive(false); scrollToSection('class12'); } },
     { label: 'Thời Khóa Biểu', icon: 'fa-calendar-alt', href: 'https://lk-sand.vercel.app/' },
-    { label: 'Tài Liệu', icon: 'fa-file-alt', href: 'tai_lieu.html' },
+    { label: 'Tài Liệu', icon: 'fa-file-alt', href: 'https://mk-lilac-rho.vercel.app/' },
     { label: 'Cộng Đồng Discord', icon: 'fa-discord', href: 'https://discord.gg/uHYE9VWp5e', fab: true },
     { label: 'Diễn Đàn Học Tập', icon: 'fa-users', href: 'https://ag-peach.vercel.app/' },
     { label: 'Quiz Ngắn', icon: 'fa-circle-question', href: 'https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/quiz-ng%E1%BA%AFn?authuser=0/', far: true },
-    { label: 'EduGames Hub', icon: 'fa-gamepad', href: 'gamee.html' },
+    { label: 'EduGames Hub', icon: 'fa-gamepad', href: 'https://ml-ashen.vercel.app/' },
   ];
 
   if (user) {
@@ -207,7 +207,7 @@ const App: React.FC = () => {
                 {['Trang Chủ', 'Giới Thiệu', 'Liên Hệ'].map((item) => (
                   <li key={item} className="ml-6">
                     <a
-                      href="#"
+                      href="https://zx-inky-pi.vercel.app/"
                       className="text-dark font-medium transition-colors relative group hover:text-primary"
                     >
                       {item}
@@ -265,7 +265,7 @@ const App: React.FC = () => {
                 <i className="fas fa-play-circle"></i> Bắt Đầu Học Ngay
               </a>
               <a
-                href="gioi_thieu.html"
+                href="https://zx-inky-pi.vercel.app/"
                 className="px-8 py-3 rounded-full text-lg font-semibold border-2 border-white text-white bg-transparent transition-transform hover:-translate-y-1 flex items-center gap-2 hover:bg-white hover:text-primary"
               >
                 <i className="fas fa-info-circle"></i> Tìm Hiểu Thêm
@@ -291,12 +291,12 @@ const App: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
             {[
-              { title: 'Người Thắp Đèn', desc: 'Kết nối với những người thầy, người hướng dẫn tâm huyết...', img: 'https://res.cloudinary.com/dhybzbyp3/image/upload/v1762441274/1234_nzaywb.jpg', link: 'nguoi_thap_den.html', icon1: 'fa-users', stats1: 'Nhiều Mentor', icon2: 'fa-star', stats2: '4.7/5 Rating' },
+              { title: 'Người Thắp Đèn', desc: 'Kết nối với những người thầy, người hướng dẫn tâm huyết...', img: 'https://res.cloudinary.com/dhybzbyp3/image/upload/v1762441274/1234_nzaywb.jpg', link: 'https://am-bice-gamma.vercel.app/', icon1: 'fa-users', stats1: 'Nhiều Mentor', icon2: 'fa-star', stats2: '4.7/5 Rating' },
               { title: 'Định Hướng Nghề Nghiệp', desc: 'Tìm hiểu các ngành nghề, xu hướng thị trường lao động...', img: 'https://res.cloudinary.com/dhybzbyp3/image/upload/v1762441423/1236_d6wcup.jpg', link: 'https://ah-henna.vercel.app/', icon1: 'fa-briefcase', stats1: 'Đa Dạng Ngành', icon2: 'fa-chart-line', stats2: 'Xu Hướng Mới' },
-              { title: 'Phương Pháp Học Tập', desc: 'Khám phá các phương pháp học tập hiệu quả, kỹ năng...', img: 'https://res.cloudinary.com/dhybzbyp3/image/upload/v1762441423/1237_chch2x.jpg', link: 'phuong_phap.html', icon1: 'fa-lightbulb', stats1: 'Hiệu Quả Cao', icon2: 'fa-clock', stats2: 'Tiết Kiệm Giờ' },
+              { title: 'Phương Pháp Học Tập', desc: 'Khám phá các phương pháp học tập hiệu quả, kỹ năng...', img: 'https://res.cloudinary.com/dhybzbyp3/image/upload/v1762441423/1237_chch2x.jpg', link: 'https://ac-beta-nine.vercel.app/', icon1: 'fa-lightbulb', stats1: 'Hiệu Quả Cao', icon2: 'fa-clock', stats2: 'Tiết Kiệm Giờ' },
               { title: 'Quiz Ngắn', desc: 'Kiểm tra kiến thức nhanh với các bài quiz ngắn...', img: 'https://res.cloudinary.com/dhybzbyp3/image/upload/v1762441422/1235_j3rtci.jpg', link: 'https://sites.google.com/view/gangmahoc/trang-ch%E1%BB%A7/quiz-ng%E1%BA%AFn?authuser=0', icon1: 'fa-question-circle', stats1: 'Nhiều Chủ Đề', icon2: 'fa-clock', stats2: '5-10 Phút' },
               { title: 'Thời Khoá Biểu', desc: 'Giúp lên lịch cá nhân, làm chủ thời gian, tối ưu hiệu suất.', img: 'https://res.cloudinary.com/dhybzbyp3/image/upload/v1765637563/t%E1%BA%A3i_xu%E1%BB%91ng_1_t1ye5c.jpg', link: 'https://lk-sand.vercel.app/', icon1: 'fa-calendar-check', stats1: 'Kế Hoạch', icon2: 'fa-clock', stats2: 'Quản Lý Giờ' },
-              { title: 'EduGames Hub', desc: 'Trò chơi học tập, rèn luyện kiến thức.', img: 'https://res.cloudinary.com/dhybzbyp3/image/upload/v1765637563/t%E1%BA%A3i_xu%E1%BB%91ng_2_b1aags.jpg', link: 'gamee.html', icon1: 'fa-gamepad', stats1: 'Giải Trí', icon2: 'fa-brain', stats2: 'Thông Minh' },
+              { title: 'EduGames Hub', desc: 'Trò chơi học tập, rèn luyện kiến thức.', img: 'https://res.cloudinary.com/dhybzbyp3/image/upload/v1765637563/t%E1%BA%A3i_xu%E1%BB%91ng_2_b1aags.jpg', link: 'https://ml-ashen.vercel.app/', icon1: 'fa-gamepad', stats1: 'Giải Trí', icon2: 'fa-brain', stats2: 'Thông Minh' },
             ].map((card, i) => (
               <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:-translate-y-3 hover:shadow-2xl transition-all duration-400 flex flex-col h-full group">
                 <div className="h-48 bg-cover bg-center relative" style={{ backgroundImage: `url('${card.img}')` }}>
@@ -334,7 +334,7 @@ const App: React.FC = () => {
                 <div className="p-6">
                     <h3 className="text-xl font-bold mb-3 text-dark font-oswald">Thư Viện Tài Liệu</h3>
                     <p className="text-gray-500 mb-6 text-sm">Thư viện tài liệu phong phú với đề thi, bài giảng, sách tham khảo và tài liệu học tập chất lượng.</p>
-                    <a href="tai_lieu.html" className="block w-full text-center py-2 rounded-full border border-primary text-primary font-bold hover:bg-primary hover:text-white transition-colors">
+                    <a href="https://mk-lilac-rho.vercel.app/" className="block w-full text-center py-2 rounded-full border border-primary text-primary font-bold hover:bg-primary hover:text-white transition-colors">
                         Khám Phá Ngay
                     </a>
                     <div className="flex justify-between mt-4 text-gray-400 text-xs pt-3 border-t border-gray-100">
@@ -436,8 +436,8 @@ const App: React.FC = () => {
                 Về StudyWithMe
               </h3>
               <ul className="space-y-3 text-gray-300">
-                {['Giới thiệu', 'Đội ngũ', 'Sứ mệnh', 'Liên hệ'].map(item => (
-                    <li key={item}><a href="#" className="hover:text-accent transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> {item}</a></li>
+                {['Giới thiệu', 'Đội ngũ', 'Sứ mệnh'].map(item => (
+                    <li key={item}><a href="https://zx-inky-pi.vercel.app/" className="hover:text-accent transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> {item}</a></li>
                 ))}
               </ul>
             </div>
@@ -447,7 +447,7 @@ const App: React.FC = () => {
               </h3>
               <ul className="space-y-3 text-gray-300">
                  {['Câu hỏi thường gặp', 'Chính sách bảo mật', 'Điều khoản dịch vụ'].map(item => (
-                    <li key={item}><a href="#" className="hover:text-accent transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> {item}</a></li>
+                    <li key={item}><a href="https://gb-pearl-two.vercel.app/" className="hover:text-accent transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> {item}</a></li>
                 ))}
               </ul>
             </div>
@@ -487,7 +487,7 @@ const App: React.FC = () => {
             </div>
           </div>
           <div className="text-center pt-8 border-t border-white/10 text-gray-400">
-            <p>&copy; 2024 StudyWithMe - All Rights Reserved</p>
+            <p>&copy; 2026 StudyWithMe</p>
           </div>
         </div>
       </footer>
