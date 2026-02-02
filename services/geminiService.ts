@@ -18,7 +18,7 @@ export const streamMessageFromGemini = async (
   try {
     // 1. ĐÃ SỬA: Nhập trực tiếp API Key của bạn vào đây
     // Lưu ý: Key phải nằm trong dấu ngoặc kép ""
-    const apiKey = "AIzaSyDN_oDmYkgNkTuDiko53xD3lZEQW10zGuc";
+    const apiKey = "AIzaSyD_DKuYfEmMk9pp_w3XbU6_1eTQBkweE44";
 
     if (!apiKey) {
       onChunk("Xin lỗi, chưa có API Key.");
